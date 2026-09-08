@@ -9,10 +9,10 @@ def num(s):
     except ValueError: return 0
 ev = [dict(start=r['Start date'], end=r['End date'] or r['Start date'], name=r['Event'], type=r['Type'], cat=r['Category'] or 'Other',
            town=r['Town'], venue=r['Venue'], km=num(r['~km from Setúbal']), fp=r['Free / Paid'] or 'Unknown', price=r['Price (€)'],
-           desc=r['Description'], freq=r['Frequency'], src=r['Source']) for r in csv.DictReader(open(root/'events.csv', encoding='utf-8'))]
+           desc=r['Description'], freq=r['Frequency'], src=r['Source'], img=r.get('Image','')) for r in csv.DictReader(open(root/'events.csv', encoding='utf-8'))]
 ev = [e for e in ev if e['end'] >= date]  # never ship past events
 mk = [dict(name=r['Market'], cat=r['Category'], town=r['Town'], loc=r['Location'], km=num(r['~km from Setúbal']), freq=r['Frequency'],
-           days=r['Days & hours'], goods=r['Types of goods'], entry=r['Entry'], note=r['Notes'], src=r['Source']) for r in csv.DictReader(open(root/'markets.csv', encoding='utf-8'))]
+           days=r['Days & hours'], goods=r['Types of goods'], entry=r['Entry'], note=r['Notes'], src=r['Source'], img=r.get('Image','')) for r in csv.DictReader(open(root/'markets.csv', encoding='utf-8'))]
 snap = json.dumps({'date': date, 'events': ev, 'markets': mk}, ensure_ascii=False).replace('</', '<\\/')
 body = open(root/'template.html', encoding='utf-8').read().replace('__SNAPSHOT__', snap)
 i = body.index('</style>') + len('</style>')
