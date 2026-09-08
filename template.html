@@ -1,0 +1,377 @@
+<title>Bora Setúbal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#F5F7F4; --bg2:#FFFFFF; --bg3:#EAEFEB; --line:#D4DCD6; --ink:#17211E; --ink2:#4E5C57; --ink3:#7C8A85;
+  --accent:#0F6E73; --accent-ink:#FFFFFF; --accent-soft:#D9EDEE; --ochre:#B7791F;
+  --free:#2E7D4F; --free-soft:#DCEFE3; --paid:#5B6770; --paid-soft:#E6EAED;
+  --shadow:0 1px 2px rgba(23,33,30,.06),0 8px 24px rgba(23,33,30,.08);
+  --c-tour:#3B8A5A; --c-major:#B54A3C; --c-local:#D08A2E; --c-fest:#8B5CB8; --c-art:#C2447A; --c-theatre:#6A5ACD; --c-market:#2F8C8F; --c-cinema:#4B6CB7; --c-sport:#5A8F2E; --c-workshop:#B27A15; --c-family:#E0708A; --c-other:#6E7D78;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
+  --bg:#121816; --bg2:#1A2220; --bg3:#222C29; --line:#2F3B37; --ink:#E7ECE9; --ink2:#AAB7B2; --ink3:#7E8C87;
+  --accent:#4FB3B8; --accent-ink:#0E1614; --accent-soft:#1B3436; --ochre:#D9A24A;
+  --free:#6CC28F; --free-soft:#1D3327; --paid:#A6B2B9; --paid-soft:#28323A;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  --c-tour:#5FB37F; --c-major:#E0705F; --c-local:#E5A24C; --c-fest:#B08AE0; --c-art:#E06A9E; --c-theatre:#9A8CF0; --c-market:#5CC0C3; --c-cinema:#7D98E0; --c-sport:#8DC257; --c-workshop:#DBA43A; --c-family:#F094AA; --c-other:#95A6A0;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#121816; --bg2:#1A2220; --bg3:#222C29; --line:#2F3B37; --ink:#E7ECE9; --ink2:#AAB7B2; --ink3:#7E8C87;
+  --accent:#4FB3B8; --accent-ink:#0E1614; --accent-soft:#1B3436; --ochre:#D9A24A;
+  --free:#6CC28F; --free-soft:#1D3327; --paid:#A6B2B9; --paid-soft:#28323A;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  --c-tour:#5FB37F; --c-major:#E0705F; --c-local:#E5A24C; --c-fest:#B08AE0; --c-art:#E06A9E; --c-theatre:#9A8CF0; --c-market:#5CC0C3; --c-cinema:#7D98E0; --c-sport:#8DC257; --c-workshop:#DBA43A; --c-family:#F094AA; --c-other:#95A6A0;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Manrope",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
+a{color:var(--accent)}
+
+/* header */
+.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1400px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.brand{display:flex;align-items:baseline;gap:10px;margin-right:auto}
+.brand h1{font-family:"Outfit",sans-serif;font-weight:700;font-size:22px;letter-spacing:-.01em;margin:0}
+.brand h1 span{color:var(--accent)}
+.brand small{color:var(--ink3);font-size:12px;letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+.views{display:flex;gap:2px;background:var(--bg3);padding:3px;border-radius:10px}
+.views button{border:0;background:transparent;padding:7px 14px;border-radius:8px;font-weight:600;color:var(--ink2)}
+.views button[aria-pressed="true"]{background:var(--bg2);color:var(--ink);box-shadow:var(--shadow)}
+.status{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink3)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ink3)}
+.dot.live{background:var(--free)} .dot.busy{background:var(--ochre);animation:pulse 1.2s infinite} .dot.err{background:var(--c-major)}
+@keyframes pulse{50%{opacity:.35}}
+@media (prefers-reduced-motion:reduce){.dot.busy{animation:none}}
+.status button{border:1px solid var(--line);background:var(--bg2);border-radius:8px;padding:4px 9px;font-size:12px;font-weight:600}
+
+/* layout */
+.wrap{max-width:1400px;margin:0 auto;padding:18px 20px 60px;display:grid;grid-template-columns:270px 1fr;gap:22px}
+@media (max-width:900px){.wrap{grid-template-columns:1fr}}
+.rail{position:sticky;top:64px;align-self:start;display:flex;flex-direction:column;gap:18px;max-height:calc(100vh - 80px);overflow:auto;padding-right:4px}
+@media (max-width:900px){.rail{position:static;max-height:none}}
+.f{display:flex;flex-direction:column;gap:8px}
+.f label,.f .lbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--ink3)}
+.f input[type=search],.f select{border:1px solid var(--line);background:var(--bg2);border-radius:8px;padding:8px 10px;width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--bg2);border-radius:999px;padding:4px 10px 4px 8px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:6px;color:var(--ink2)}
+.chip i{width:9px;height:9px;border-radius:50%;background:var(--cc);display:inline-block}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+:root[data-theme="dark"] .chip[aria-pressed="true"],.chip[aria-pressed="true"]{}
+.chip .n{font-family:"IBM Plex Mono",monospace;font-size:11px;opacity:.7}
+.seg{display:flex;gap:4px;flex-wrap:wrap}
+.seg button{border:1px solid var(--line);background:var(--bg2);border-radius:8px;padding:6px 10px;font-size:13px;font-weight:600;color:var(--ink2)}
+.seg button[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--ink)}
+.range{display:flex;align-items:center;gap:10px}
+.range input{flex:1;accent-color:var(--accent)}
+.range output{min-width:52px;text-align:right}
+.tgl{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px;cursor:pointer}
+.tgl input{accent-color:var(--free);width:16px;height:16px}
+.reset{align-self:flex-start;border:0;background:transparent;color:var(--accent);font-weight:700;font-size:13px;padding:0}
+
+/* main */
+.main{min-width:0}
+.sum{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+.sum h2{font-family:"Outfit",sans-serif;font-weight:600;font-size:20px;margin:0;text-wrap:balance}
+.sum .meta{color:var(--ink3);font-size:13px}
+.sort{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink3)}
+.sort select{border:1px solid var(--line);background:var(--bg2);border-radius:8px;padding:5px 8px;font-size:13px}
+
+/* list */
+.day{margin:22px 0 8px;display:flex;align-items:baseline;gap:10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+.day b{font-family:"Outfit",sans-serif;font-size:16px}
+.day span{color:var(--ink3);font-size:12px;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.ev{display:grid;grid-template-columns:5px 1fr auto;gap:0 14px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;margin:8px 0;overflow:hidden;transition:transform .12s}
+.ev:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+.ev .bar{background:var(--cc)}
+.ev .body{padding:12px 0 12px 4px;min-width:0}
+.ev h3{margin:0 0 2px;font-size:16px;font-weight:700;line-height:1.3}
+.ev .sub{color:var(--ink2);font-size:13px;display:flex;flex-wrap:wrap;gap:4px 12px}
+.ev .sub .cat{color:var(--cc);font-weight:700}
+.ev p{margin:6px 0 0;color:var(--ink2);font-size:14px;max-width:70ch}
+.ev .side{padding:12px 14px 12px 0;text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:6px;white-space:nowrap}
+.pill{display:inline-block;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700}
+.pill.free{background:var(--free-soft);color:var(--free)} .pill.paid{background:var(--paid-soft);color:var(--paid)} .pill.mixed{background:var(--accent-soft);color:var(--accent)} .pill.unk{background:var(--bg3);color:var(--ink3)}
+.km{font-size:12px;color:var(--ink3)}
+.ev .src{font-size:12px}
+.empty{padding:40px 20px;text-align:center;color:var(--ink3);border:1px dashed var(--line);border-radius:12px}
+
+/* calendar */
+.cal-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.cal-head h2{font-family:"Outfit",sans-serif;font-size:20px;font-weight:600;margin:0 auto 0 0}
+.cal-head button{border:1px solid var(--line);background:var(--bg2);border-radius:8px;padding:6px 12px;font-weight:600}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal .dow{font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--ink3);padding:4px 6px}
+.cell{background:var(--bg2);border:1px solid var(--line);border-radius:8px;min-height:96px;padding:6px;display:flex;flex-direction:column;gap:3px;cursor:pointer;text-align:left}
+.cell.out{opacity:.45}
+.cell.today{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.cell.sel{background:var(--accent-soft)}
+.cell .d{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink3)}
+.cell .e{font-size:11px;line-height:1.25;padding:2px 5px;border-radius:4px;background:color-mix(in srgb,var(--cc) 18%,transparent);border-left:3px solid var(--cc);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cell .more{font-size:11px;color:var(--ink3)}
+@media (max-width:700px){.cell{min-height:64px}.cell .e{display:none}.cell .dots{display:flex;gap:2px;flex-wrap:wrap}.cell .dots i{width:6px;height:6px;border-radius:50%;background:var(--cc)}}
+@media (min-width:701px){.cell .dots{display:none}}
+.daypanel{margin-top:16px}
+
+/* map */
+.mapwrap{background:var(--bg2);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.mapwrap svg{width:100%;height:auto;display:block}
+.mapnote{padding:10px 14px;font-size:12px;color:var(--ink3);border-top:1px solid var(--line);display:flex;gap:16px;flex-wrap:wrap}
+.town-dot{cursor:pointer}
+.town-dot circle.h{fill:var(--accent);fill-opacity:.18;stroke:var(--accent);stroke-width:1.2}
+.town-dot text{font-family:"Manrope",sans-serif;font-size:11px;font-weight:700;fill:var(--ink);paint-order:stroke;stroke:var(--bg2);stroke-width:3px;stroke-linejoin:round}
+.town-dot tspan.n{font-family:"IBM Plex Mono",monospace;font-weight:500;fill:var(--accent);font-size:10px}
+.town-dot.sel circle.h{fill-opacity:.45}
+
+/* markets */
+.mk{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.mkc{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:6px}
+.mkc h3{margin:0;font-size:15px;line-height:1.3}
+.mkc .cat{font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--accent)}
+.mkc .when{font-weight:600;font-size:13px}
+.mkc .goods{color:var(--ink2);font-size:13px}
+.mkc .loc{color:var(--ink3);font-size:12px}
+.mkc .note{color:var(--ochre);font-size:12px}
+.mkc.on{border-color:var(--free);box-shadow:inset 0 0 0 1px var(--free)}
+.mkc .badge{align-self:flex-start;background:var(--free-soft);color:var(--free);border-radius:6px;padding:1px 7px;font-size:11px;font-weight:700}
+
+.foot{max-width:1400px;margin:0 auto;padding:0 20px 40px;color:var(--ink3);font-size:12px;line-height:1.6}
+.hidden{display:none!important}
+</style>
+
+<header class="top"><div class="top-in">
+  <div class="brand"><h1>Bora <span>Setúbal</span></h1><small>everything within 100 km</small></div>
+  <nav class="views" aria-label="View">
+    <button data-view="list" aria-pressed="true">List</button>
+    <button data-view="cal" aria-pressed="false">Calendar</button>
+    <button data-view="map" aria-pressed="false">Map</button>
+    <button data-view="markets" aria-pressed="false">Markets</button>
+  </nav>
+  <div class="status"><span class="dot" id="dot"></span><span id="statusText">Snapshot</span><button id="refresh" type="button" hidden>Refresh</button></div>
+</div></header>
+
+<div class="wrap">
+  <aside class="rail" id="rail">
+    <div class="f"><label for="q">Search</label><input id="q" type="search" placeholder="Fado, jazz, walk, Palmela…"></div>
+    <div class="f"><span class="lbl">When</span><div class="seg" id="when">
+      <button data-w="all" aria-pressed="true">All</button><button data-w="weekend" aria-pressed="false">This weekend</button><button data-w="7" aria-pressed="false">Next 7 days</button><button data-w="30" aria-pressed="false">Next 30 days</button></div></div>
+    <div class="f"><span class="lbl">Category</span><div class="chips" id="cats"></div></div>
+    <div class="f"><label class="tgl"><input type="checkbox" id="freeOnly"> Free only</label></div>
+    <div class="f"><label for="km">Max distance</label><div class="range"><input id="km" type="range" min="0" max="100" step="5" value="100"><output for="km" id="kmOut" class="mono">100 km</output></div></div>
+    <div class="f"><label for="town">Town</label><select id="town"><option value="">All towns</option></select></div>
+    <button class="reset" id="reset" type="button">Reset filters</button>
+  </aside>
+
+  <main class="main">
+    <section id="v-list">
+      <div class="sum"><h2 id="sumTitle">Everything coming up</h2><span class="meta" id="sumMeta"></span>
+        <div class="sort"><label for="sort">Sort</label><select id="sort"><option value="date">Date</option><option value="km">Distance</option><option value="name">Name</option><option value="cat">Category</option></select></div></div>
+      <div id="list"></div>
+    </section>
+    <section id="v-cal" class="hidden">
+      <div class="cal-head"><h2 id="calTitle"></h2><button id="calPrev" type="button" aria-label="Previous month">‹</button><button id="calToday" type="button">Today</button><button id="calNext" type="button" aria-label="Next month">›</button></div>
+      <div class="cal" id="cal"></div>
+      <div class="daypanel" id="dayPanel"></div>
+    </section>
+    <section id="v-map" class="hidden">
+      <div class="sum"><h2>Where things are happening</h2><span class="meta">Circle size = number of upcoming events matching your filters. Click a town to filter the list.</span></div>
+      <div class="mapwrap"><svg id="map" viewBox="0 0 900 560" role="img" aria-label="Schematic map of towns within 100 km of Setúbal"></svg>
+      <div class="mapnote"><span>Schematic — positions are approximate town centres, rings every 25 km from Setúbal.</span><span id="mapSel"></span></div></div>
+      <div id="mapList" style="margin-top:16px"></div>
+    </section>
+    <section id="v-markets" class="hidden">
+      <div class="sum"><h2>Recurring markets</h2><span class="meta" id="mkMeta"></span>
+        <div class="sort"><label class="tgl" style="font-size:13px"><input type="checkbox" id="mkWeekend"> Open this weekend</label></div></div>
+      <div class="mk" id="mk"></div>
+    </section>
+  </main>
+</div>
+<footer class="foot"><b>Bora</b> — Portuguese for “let’s go”. Events are gathered daily from municipal agendas, venue programmes and listings sites around Setúbal, the Lisbon area and the edge of the Alentejo. Prices and dates come from the sources listed on each entry — check before you go. Categories: Tours are guided walks and boat trips; Local concerts are gigs at neighbourhood venues; Major concerts are touring acts at the big Lisbon halls.</footer>
+
+<script id="snapshot" type="application/json">__SNAPSHOT__</script>
+<script>
+(() => {
+const SNAP = JSON.parse(document.getElementById('snapshot').textContent);
+let EVENTS = SNAP.events, MARKETS = SNAP.markets, dataDate = SNAP.date, live = false;
+
+const CATS = [
+  ['Tour','--c-tour'],['Local concert','--c-local'],['Major concert','--c-major'],['Festival','--c-fest'],['Art exhibit','--c-art'],
+  ['Theatre & performance','--c-theatre'],['Market','--c-market'],['Cinema','--c-cinema'],['Sport','--c-sport'],['Workshop','--c-workshop'],['Family','--c-family'],['Other','--c-other']];
+const catVar = c => (CATS.find(x=>x[0]===c)||CATS[CATS.length-1])[1];
+const TOWNS = { // lat, lon (approx town centres)
+  'Setúbal':[38.524,-8.892],'Palmela':[38.569,-8.901],'Azeitão':[38.520,-9.010],'Setúbal / Azeitão':[38.52,-8.95],'Quinta do Anjo (Palmela)':[38.567,-8.940],'Pinhal Novo (Palmela)':[38.631,-8.913],
+  'Sesimbra':[38.444,-9.101],'Moita':[38.650,-8.990],'Barreiro':[38.663,-9.072],'Seixal':[38.640,-9.101],'Corroios (Seixal)':[38.640,-9.150],'Almada':[38.679,-9.158],'Costa da Caparica (Almada)':[38.641,-9.235],
+  'Lisbon':[38.722,-9.139],'Oeiras':[38.692,-9.311],'Amadora':[38.753,-9.231],'Cascais':[38.697,-9.421],'Estoril':[38.706,-9.398],'Carcavelos (Cascais)':[38.690,-9.335],'Tires (Cascais)':[38.722,-9.350],'Alcabideche (Cascais)':[38.733,-9.409],
+  'Sintra':[38.800,-9.388],'São Pedro de Sintra':[38.790,-9.379],'Évora':[38.571,-7.909],'Alcácer do Sal':[38.373,-8.513],'Santiago do Cacém':[38.018,-8.696],'Sines':[37.955,-8.868]};
+
+const $ = s => document.querySelector(s);
+const today = () => { const d=new Date(); return d.toISOString().slice(0,10); };
+const addDays = (iso,n) => { const d=new Date(iso+'T00:00:00'); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); };
+const fmt = iso => new Date(iso+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+const fmtRange = e => e.start===e.end ? fmt(e.start) : `${fmt(e.start)} – ${fmt(e.end)}`;
+const esc = s => String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const priceClass = fp => /^free/i.test(fp)?'free':/^paid/i.test(fp)?'paid':/mixed|donation/i.test(fp)?'mixed':'unk';
+
+// ---------- state ----------
+const state = { view:'list', q:'', when:'all', cats:new Set(), free:false, km:100, town:'', sort:'date', month:today().slice(0,7), day:null, mapTown:'' };
+try { const s = JSON.parse(localStorage.getItem('bora.filters')||'null'); if (s) { Object.assign(state, s, {cats:new Set(s.cats||[])}); } } catch(e){}
+const save = () => { try { localStorage.setItem('bora.filters', JSON.stringify({...state, cats:[...state.cats], day:null})); } catch(e){} };
+
+// ---------- filters ----------
+function weekendRange(){ const t=today(); const d=new Date(t+'T00:00:00'); const dow=d.getDay(); // 0 Sun
+  const toSat = dow===0 ? -1 : 6-dow; const sat = addDays(t,toSat); return [dow===0?t:sat, addDays(sat,1)]; }
+function inWindow(e){ const t=today(); if (e.end < t) return false;
+  if (state.when==='all') return true;
+  let a=t,b; if (state.when==='weekend'){ [a,b]=weekendRange(); } else b=addDays(t, +state.when);
+  return e.start<=b && e.end>=a; }
+function filtered(){ const q=state.q.trim().toLowerCase();
+  return EVENTS.filter(e => inWindow(e)
+    && (!state.cats.size || state.cats.has(e.cat))
+    && (!state.free || /^free/i.test(e.fp))
+    && e.km <= state.km
+    && (!state.town || e.town===state.town)
+    && (!state.mapTown || e.town===state.mapTown)
+    && (!q || (e.name+' '+e.desc+' '+e.venue+' '+e.town+' '+e.type).toLowerCase().includes(q)));
+}
+function sortRows(rows){ const s=state.sort; return rows.slice().sort((a,b)=> s==='km'? a.km-b.km || a.start.localeCompare(b.start)
+  : s==='name'? a.name.localeCompare(b.name) : s==='cat'? a.cat.localeCompare(b.cat)||a.start.localeCompare(b.start)
+  : (a.start>today()?a.start:today()).localeCompare(b.start>today()?b.start:today()) || a.km-b.km); }
+
+// ---------- rail ----------
+function buildRail(){
+  const counts={}; EVENTS.forEach(e=>{ if(e.end>=today()) counts[e.cat]=(counts[e.cat]||0)+1; });
+  $('#cats').innerHTML = CATS.filter(([c])=>counts[c]).map(([c,v])=>`<button class="chip" type="button" data-cat="${esc(c)}" aria-pressed="${state.cats.has(c)}" style="--cc:var(${v})"><i></i>${esc(c)}<span class="n">${counts[c]}</span></button>`).join('');
+  const towns=[...new Set(EVENTS.filter(e=>e.end>=today()).map(e=>e.town))].sort((a,b)=>a.localeCompare(b));
+  $('#town').innerHTML = '<option value="">All towns</option>'+towns.map(t=>`<option ${t===state.town?'selected':''}>${esc(t)}</option>`).join('');
+  $('#q').value=state.q; $('#freeOnly').checked=state.free; $('#km').value=state.km; $('#kmOut').textContent=state.km+' km'; $('#sort').value=state.sort;
+  document.querySelectorAll('#when button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.w===state.when));
+}
+$('#cats').addEventListener('click', e=>{ const b=e.target.closest('.chip'); if(!b) return; const c=b.dataset.cat; state.cats.has(c)?state.cats.delete(c):state.cats.add(c); b.setAttribute('aria-pressed',state.cats.has(c)); render(); });
+$('#when').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return; state.when=b.dataset.w; document.querySelectorAll('#when button').forEach(x=>x.setAttribute('aria-pressed',x===b)); render(); });
+$('#q').addEventListener('input', e=>{ state.q=e.target.value; render(); });
+$('#freeOnly').addEventListener('change', e=>{ state.free=e.target.checked; render(); });
+$('#km').addEventListener('input', e=>{ state.km=+e.target.value; $('#kmOut').textContent=state.km+' km'; render(); });
+$('#town').addEventListener('change', e=>{ state.town=e.target.value; render(); });
+$('#sort').addEventListener('change', e=>{ state.sort=e.target.value; render(); });
+$('#reset').addEventListener('click', ()=>{ Object.assign(state,{q:'',when:'all',cats:new Set(),free:false,km:100,town:'',mapTown:''}); buildRail(); render(); });
+document.querySelectorAll('.views button').forEach(b=>b.addEventListener('click',()=>{ state.view=b.dataset.view; document.querySelectorAll('.views button').forEach(x=>x.setAttribute('aria-pressed',x===b)); render(); }));
+
+// ---------- list ----------
+function card(e){ return `<article class="ev" style="--cc:var(${catVar(e.cat)})"><div class="bar"></div><div class="body">
+  <h3>${esc(e.name)}</h3>
+  <div class="sub"><span class="cat">${esc(e.cat)}</span><span>${esc(e.town)}${e.venue&&e.venue!==e.town?' · '+esc(e.venue):''}</span><span>${esc(e.freq)}</span></div>
+  ${e.desc?`<p>${esc(e.desc)}</p>`:''}
+  </div><div class="side"><span class="mono" style="font-size:12px;color:var(--ink2)">${fmtRange(e)}</span>
+  <span class="pill ${priceClass(e.fp)}">${esc(e.fp)}${e.price&&e.price!=='0'&&!/^free/i.test(e.fp)?' · '+(/^\d/.test(e.price)?'€':'')+esc(e.price):''}</span>
+  <span class="km">${e.km} km</span>${e.src?`<a class="src" href="${esc(e.src)}" target="_blank" rel="noopener">source ↗</a>`:''}</div></article>`; }
+function renderList(){ const rows=sortRows(filtered()); const t=today();
+  $('#sumMeta').textContent = `${rows.length} of ${EVENTS.filter(e=>e.end>=t).length} upcoming · data ${live?'live from your Google Sheet':'snapshot from '+dataDate}`;
+  const w={all:'Everything coming up',weekend:'This weekend',7:'The next 7 days',30:'The next 30 days'}[state.when];
+  $('#sumTitle').textContent = (state.cats.size===1?[...state.cats][0]+'s — ':'')+w+(state.town?' in '+state.town:'')+(state.mapTown?' in '+state.mapTown:'');
+  if(!rows.length){ $('#list').innerHTML='<div class="empty">Nothing matches these filters. Widen the distance or clear a category.</div>'; return; }
+  if(state.sort!=='date'){ $('#list').innerHTML=rows.map(card).join(''); return; }
+  let out='', last=null;
+  rows.forEach(e=>{ const key = e.start<=t ? (e.end>=t? 'NOW':e.start) : e.start;
+    if(key!==last){ last=key; out += key==='NOW' ? `<div class="day"><b>Happening now</b><span>ongoing runs & exhibitions</span></div>` : `<div class="day"><b>${fmt(key)}</b><span>${key===t?'today':key===addDays(t,1)?'tomorrow':''}</span></div>`; }
+    out+=card(e); });
+  $('#list').innerHTML=out; }
+
+// ---------- calendar ----------
+function renderCal(){ const [y,m]=state.month.split('-').map(Number); const first=new Date(y,m-1,1); const t=today();
+  $('#calTitle').textContent = first.toLocaleDateString('en-GB',{month:'long',year:'numeric'});
+  const rows=filtered(); const start=new Date(first); start.setDate(1-((first.getDay()+6)%7));
+  let html=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d=>`<div class="dow">${d}</div>`).join('');
+  for(let i=0;i<42;i++){ const d=new Date(start); d.setDate(start.getDate()+i); const iso=d.toISOString().slice(0,10); if(i>=35 && d.getMonth()!==m-1) break;
+    const evs=rows.filter(e=>e.start<=iso&&e.end>=iso); const show=evs.filter(e=>e.start===iso || d.getDay()===1 || i===0).slice(0,3);
+    html+=`<button type="button" class="cell ${d.getMonth()!==m-1?'out':''} ${iso===t?'today':''} ${iso===state.day?'sel':''}" data-d="${iso}"><span class="d">${d.getDate()}</span>
+      ${show.map(e=>`<span class="e" style="--cc:var(${catVar(e.cat)})" title="${esc(e.name)}">${esc(e.name)}</span>`).join('')}${evs.length>show.length?`<span class="more">+${evs.length-show.length} more</span>`:''}
+      <span class="dots">${evs.slice(0,8).map(e=>`<i style="--cc:var(${catVar(e.cat)})"></i>`).join('')}</span></button>`; }
+  $('#cal').innerHTML=html;
+  const day=state.day; if(day){ const evs=sortRows(rows.filter(e=>e.start<=day&&e.end>=day));
+    $('#dayPanel').innerHTML=`<div class="day"><b>${fmt(day)}</b><span>${evs.length} event${evs.length===1?'':'s'}</span></div>`+(evs.map(card).join('')||'<div class="empty">Nothing on this day with the current filters.</div>'); }
+  else $('#dayPanel').innerHTML='<div class="empty">Click a day to see everything happening on it.</div>'; }
+$('#cal').addEventListener('click',e=>{ const c=e.target.closest('.cell'); if(!c) return; state.day = state.day===c.dataset.d?null:c.dataset.d; renderCal(); });
+$('#calPrev').addEventListener('click',()=>{ const [y,m]=state.month.split('-').map(Number); const d=new Date(y,m-2,1); state.month=d.toISOString().slice(0,7); renderCal(); });
+$('#calNext').addEventListener('click',()=>{ const [y,m]=state.month.split('-').map(Number); const d=new Date(y,m,1); state.month=d.toISOString().slice(0,7); renderCal(); });
+$('#calToday').addEventListener('click',()=>{ state.month=today().slice(0,7); state.day=today(); renderCal(); });
+
+// ---------- map ----------
+const proj = ([lat,lon]) => { const cx=38.524, cy=-8.892; const k=520; // px per degree lat
+  return [470 + (lon-cy)*k*Math.cos(cx*Math.PI/180), 330 - (lat-cx)*k]; };
+const LABEL = {'Lisbon':[8,-6],'Almada':[-52,16],'Barreiro':[8,14],'Seixal':[-44,18],'Corroios (Seixal)':[-58,4],'Costa da Caparica (Almada)':[-118,10],'Oeiras':[-40,16],'Estoril':[-42,-8],'Cascais':[-48,14],'Carcavelos (Cascais)':[-72,14],'Tires (Cascais)':[6,-8],'Alcabideche (Cascais)':[-72,-8],'Amadora':[8,-8],'Sintra':[8,-6],'São Pedro de Sintra':[8,14],'Moita':[8,-6],'Pinhal Novo (Palmela)':[8,-4],'Palmela':[8,-6],'Quinta do Anjo (Palmela)':[-88,-6],'Azeitão':[-46,14],'Setúbal / Azeitão':[-60,24],'Setúbal':[10,18],'Sesimbra':[-56,16]};
+const COAST = [[37.90,-8.80],[38.10,-8.79],[38.30,-8.78],[38.45,-8.82],[38.49,-8.90],[38.47,-8.95],[38.44,-9.05],[38.43,-9.15],[38.42,-9.22],[38.50,-9.20],[38.58,-9.21],[38.64,-9.24],[38.68,-9.23],[38.69,-9.30],[38.69,-9.36],[38.70,-9.42],[38.75,-9.47],[38.78,-9.50],[38.85,-9.42],[38.95,-9.42]];
+const TAGUS = [[38.68,-9.23],[38.70,-9.17],[38.68,-9.10],[38.66,-9.05],[38.68,-8.98],[38.75,-8.95],[38.85,-8.95],[38.80,-9.05],[38.76,-9.09],[38.72,-9.12],[38.72,-9.20]];
+const SADO = [[38.49,-8.90],[38.52,-8.86],[38.50,-8.80],[38.45,-8.72],[38.40,-8.70],[38.38,-8.60],[38.40,-8.78],[38.44,-8.85]];
+function renderMap(){ const rows=EVENTS.filter(e=>{ const mt=state.mapTown; state.mapTown=''; const ok=filtered().includes(e); state.mapTown=mt; return ok; });
+  const by={}; rows.forEach(e=>{ by[e.town]=(by[e.town]||0)+1; });
+  const line = pts => 'M'+pts.map(p=>proj(p).map(v=>v.toFixed(1)).join(',')).join('L');
+  const [sx,sy]=proj(TOWNS['Setúbal']); const kmpx = 520/111;
+  let s=`<rect width="900" height="560" fill="var(--bg2)"/>`;
+  s+=`<path d="${line(COAST)}" fill="none" stroke="var(--line)" stroke-width="2"/><path d="${line(TAGUS)}" fill="none" stroke="var(--line)" stroke-width="1.5"/><path d="${line(SADO)}" fill="none" stroke="var(--line)" stroke-width="1.5"/>`;
+  [25,50,75].forEach(r=>{ s+=`<circle cx="${sx}" cy="${sy}" r="${r*kmpx}" fill="none" stroke="var(--line)" stroke-dasharray="3 5"/><text x="${sx+r*kmpx*0.71+4}" y="${sy+r*kmpx*0.71+12}" font-size="10" fill="var(--ink3)" font-family="IBM Plex Mono,monospace">${r} km</text>`; });
+  const towns=Object.keys(TOWNS).filter(t=>by[t]||t==='Setúbal').sort((a,b)=>(by[b]||0)-(by[a]||0));
+  towns.forEach(t=>{ const [x,y]=proj(TOWNS[t]); const n=by[t]||0; const r=n?6+Math.sqrt(n)*3.2:4; const sel=state.mapTown===t;
+    const [dx,dy]=LABEL[t]||[r+4,4]; const lx=x+(LABEL[t]?dx:r+4), ly=y+dy;
+    s+=`<g class="town-dot ${sel?'sel':''}" data-town="${esc(t)}" tabindex="0" role="button" aria-label="${esc(t)}: ${n} events"><circle class="h" cx="${x}" cy="${y}" r="${r}"/><circle cx="${x}" cy="${y}" r="2.2" fill="var(--accent)"/>
+      <text x="${lx}" y="${ly}">${esc(t.replace(/ \(.*\)/,''))}${n?` <tspan class="n">${n}</tspan>`:''}</text></g>`; });
+  $('#map').innerHTML=s;
+  $('#mapSel').textContent = state.mapTown ? `Showing ${state.mapTown} — click again to clear.` : '';
+  const listRows=sortRows(filtered()); $('#mapList').innerHTML = state.mapTown ? (`<div class="day"><b>${esc(state.mapTown)}</b><span>${listRows.length} events</span></div>`+listRows.map(card).join('')) : ''; }
+$('#map').addEventListener('click',e=>{ const g=e.target.closest('.town-dot'); if(!g) return; state.mapTown = state.mapTown===g.dataset.town?'':g.dataset.town; renderMap(); });
+$('#map').addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ const g=e.target.closest('.town-dot'); if(g){ e.preventDefault(); state.mapTown = state.mapTown===g.dataset.town?'':g.dataset.town; renderMap(); } } });
+
+// ---------- markets ----------
+function openThisWeekend(m){ const s=(m.days+' '+m.freq).toLowerCase(); const [sat,sun]=weekendRange(); const satN=Math.ceil(new Date(sat+'T00:00:00').getDate()/7), sunN=Math.ceil(new Date(sun+'T00:00:00').getDate()/7);
+  const ord={1:'1st',2:'2nd',3:'3rd',4:'4th',5:'5th'}; const hasSat=/saturday|sat–sun|sat-sun|daily|tue–sun|weekend/.test(s), hasSun=/sunday|sat–sun|sat-sun|daily|tue–sun|weekend/.test(s);
+  if(!hasSat&&!hasSun) return false; const nth=s.match(/(\d)(st|nd|rd|th)/g); if(!nth && !/last/.test(s)) return true;
+  if(/last/.test(s)){ const lastSat=new Date(sat+'T00:00:00'); lastSat.setDate(lastSat.getDate()+7); if(lastSat.getMonth()!==new Date(sat+'T00:00:00').getMonth()) return true; }
+  return (hasSat && s.includes(ord[satN]+' ')&&/saturday/.test(s)) || (hasSun && s.includes(ord[sunN]+' ')&&/sunday/.test(s)) || /1st & 3rd|2nd & 4th/.test(s) && (s.includes(ord[satN])||s.includes(ord[sunN])); }
+function renderMarkets(){ const wk=$('#mkWeekend').checked; const q=state.q.trim().toLowerCase();
+  const rows=MARKETS.filter(m=> m.km<=state.km && (!state.town||m.town===state.town) && (!q||(m.name+' '+m.goods+' '+m.town+' '+m.cat).toLowerCase().includes(q)) && (!wk||openThisWeekend(m)));
+  $('#mkMeta').textContent=`${rows.length} markets · sorted by distance`;
+  $('#mk').innerHTML = rows.map(m=>{ const on=openThisWeekend(m); return `<article class="mkc ${wk&&on?'on':''}"><span class="cat">${esc(m.cat)}</span><h3>${esc(m.name)}</h3><span class="when">${esc(m.days)} <span class="km">· ${esc(m.freq)}</span></span>
+    <span class="goods">${esc(m.goods)}</span><span class="loc">${esc(m.town)} · ${esc(m.loc)} · ${m.km} km</span>${m.note?`<span class="note">${esc(m.note)}</span>`:''}${on?'<span class="badge">Likely open this weekend</span>':''}${m.src?`<a class="src" style="font-size:12px" href="${esc(m.src)}" target="_blank" rel="noopener">source ↗</a>`:''}</article>`; }).join('') || '<div class="empty">No markets match.</div>'; }
+$('#mkWeekend').addEventListener('change',renderMarkets);
+
+// ---------- render ----------
+function render(){ save(); ['list','cal','map','markets'].forEach(v=>$('#v-'+v).classList.toggle('hidden',state.view!==v));
+  const railFilters = state.view==='markets'; document.querySelectorAll('#cats,#when,#freeOnly').forEach(el=>{ el.closest('.f').style.display = railFilters?'none':''; });
+  ({list:renderList,cal:renderCal,map:renderMap,markets:renderMarkets})[state.view](); }
+buildRail(); render();
+document.querySelectorAll('.views button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.view===state.view));
+
+// ---------- live data from the Google Sheet ----------
+const SERVER='Google Drive';
+function parseTable(md){ const lines=String(md).split('\n').map(l=>l.trim()).filter(l=>l.startsWith('|'));
+  const cells=l=>l.slice(1,-1).split(' | ').map(c=>c.trim().replace(/\\([~!_&*#|])/g,'$1'));
+  const rows=lines.map(cells).filter(r=>!r.every(c=>!c||/^:?-+:?$/.test(c))); if(!rows.length) return []; const hdr=rows[0]; return rows.slice(1).map(r=>Object.fromEntries(hdr.map((h,i)=>[h,r[i]??'']))); }
+function toEvents(objs){ return objs.filter(o=>/^\d{4}-\d{2}-\d{2}$/.test(o['Start date']||'')).map(o=>({start:o['Start date'],end:o['End date']||o['Start date'],name:o['Event'],type:o['Type'],cat:o['Category']||'Other',town:o['Town'],venue:o['Venue'],km:parseInt(o['~km from Setúbal'])||0,fp:o['Free / Paid']||'Unknown',price:o['Price (€)']||'',desc:o['Description']||'',freq:o['Frequency']||'',src:o['Source']||''})); }
+function toMarkets(objs){ return objs.filter(o=>o['Market']).map(o=>({name:o['Market'],cat:o['Category'],town:o['Town'],loc:o['Location'],km:parseInt(o['~km from Setúbal'])||0,freq:o['Frequency'],days:o['Days & hours'],goods:o['Types of goods'],entry:o['Entry'],note:o['Notes']||'',src:o['Source']||''})); }
+const setStatus=(cls,txt)=>{ $('#dot').className='dot '+cls; $('#statusText').textContent=txt; };
+async function fetchSheet(mcp,title,refresh){ const q=`title = '${title}' and mimeType = 'application/vnd.google-apps.spreadsheet'`;
+  const s=await mcp.callTool(SERVER,'search_files',{query:q,excludeContentSnippets:true},{cache:{staleTime:refresh?0:120000,refresh:!!refresh}});
+  const p=typeof s.payload==='string'?JSON.parse(s.payload):s.payload; const files=(p&&p.files)||[]; if(!files.length) throw {code:'tool_error',message:`No sheet named “${title}” found`};
+  files.sort((a,b)=>String(b.createdTime).localeCompare(String(a.createdTime))); const id=files[0].id;
+  const r=await mcp.callTool(SERVER,'read_file_content',{fileId:id},{cache:{staleTime:refresh?0:120000,refresh:!!refresh}});
+  const rp=typeof r.payload==='string'?JSON.parse(r.payload):r.payload; return {rows:parseTable(rp.fileContent||''), at:(r.cache&&r.cache.storedAt)||Date.now()}; }
+async function loadLive(refresh){ const mcp=await claude.use('mcp'); if(!mcp) return; $('#refresh').hidden=false; setStatus('busy','Loading from Google Sheet…');
+  try{ const [ev,mk]=await Promise.all([fetchSheet(mcp,'Freevent Events',refresh),fetchSheet(mcp,'Freevent Markets',refresh)]);
+    const evs=toEvents(ev.rows), mks=toMarkets(mk.rows); if(!evs.length) throw {code:'tool_error',message:'Sheet had no readable rows'};
+    EVENTS=evs; if(mks.length) MARKETS=mks; live=true; dataDate=new Date(ev.at).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+    setStatus('live',`Live · ${EVENTS.length} events · ${dataDate}`); buildRail(); render(); }
+  catch(err){ const c=err&&err.code; const msg = c==='needs_reauth'?'Reconnect Google Drive in claude.ai Settings → Connectors to see live data'
+    : c==='server_not_connected'||c==='selection_required'?'Add Google Drive in claude.ai Settings → Connectors for live data'
+    : c==='not_granted'||c==='blocked_by_policy'||c==='approval_required'?'Live data not permitted here — showing snapshot'
+    : (err&&err.message)||'Could not read the sheet';
+    setStatus('err',`Snapshot from ${SNAP.date} · ${msg}`);
+    if(c==='server_unavailable'&&err.retryable&&!refresh){ setTimeout(()=>loadLive(true),(err.retryAfterMs||2500)+Math.random()*1500); } } }
+$('#refresh').addEventListener('click',()=>loadLive(true));
+if(window.claude&&window.claude.use) loadLive(false); else setStatus('', `Snapshot from ${SNAP.date}`);
+})();
+</script>
