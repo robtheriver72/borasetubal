@@ -97,12 +97,12 @@ a{color:var(--accent)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin:10px 0}
 .ev{display:flex;flex-direction:column;background:var(--bg2);border:1px solid var(--line);border-radius:16px;overflow:hidden;transition:transform .14s,box-shadow .14s}
 .ev:hover{transform:translateY(-3px) rotate(-.3deg);box-shadow:var(--shadow)}
-.ev .photo{position:relative;aspect-ratio:16/10;background:color-mix(in srgb,var(--cc) 14%,var(--bg3));display:flex;align-items:center;justify-content:center}
+.ev .photo{position:relative;display:flex;align-items:center;gap:8px;padding:8px 10px;background:color-mix(in srgb,var(--cc) 12%,var(--bg3));border-bottom:1px solid color-mix(in srgb,var(--cc) 22%,transparent)}
 .material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;font-size:24px;display:inline-block;white-space:nowrap;word-wrap:normal;direction:ltr;-webkit-font-feature-settings:'liga';font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'opsz' 24,'wght' 350,'FILL' 0,'GRAD' 0;line-height:1;visibility:hidden}
 body.icons-ready .material-symbols-outlined{visibility:visible}
-.ev .photo .material-symbols-outlined{font-size:44px;color:var(--cc)}
-.ev .photo .catpill{position:absolute;left:9px;top:9px;background:var(--cc);color:#fff;font-weight:800;font-size:11px;letter-spacing:.03em;padding:4px 10px;border-radius:999px;box-shadow:0 2px 6px rgba(0,0,0,.25)}
-.ev .photo .pricepill{position:absolute;right:9px;top:9px;font-weight:800;font-size:11px;padding:4px 10px;border-radius:999px}
+.ev .photo .material-symbols-outlined{font-size:20px;color:var(--cc);flex:none}
+.ev .photo .catpill{background:var(--cc);color:#fff;font-weight:800;font-size:11px;letter-spacing:.03em;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.ev .photo .pricepill{margin-left:auto;font-weight:800;font-size:11px;padding:4px 10px;border-radius:999px;white-space:nowrap}
 .ev .body{padding:12px 14px 14px;min-width:0;display:flex;flex-direction:column;gap:6px;flex:1}
 .ev h3{margin:0;font-size:16px;font-weight:800;line-height:1.28;font-family:"Baloo 2",sans-serif}
 .ev .sub{color:var(--ink2);font-size:12.5px;display:flex;flex-wrap:wrap;gap:3px 10px}
@@ -386,7 +386,7 @@ function renderMarkets(){ const wk=$('#mkWeekend').checked; const q=state.q.trim
   const rows=MARKETS.filter(m=> m.km<=state.km && (!state.town||m.town===state.town) && (!q||(m.name+' '+m.goods+' '+m.town+' '+m.cat).toLowerCase().includes(q)) && (!wk||openThisWeekend(m)));
   $('#mkMeta').textContent=`${rows.length} markets · sorted by distance`;
   $('#mk').innerHTML = rows.map(m=>{ const on=openThisWeekend(m); return `<article class="mkc ${wk&&on?'on':''}" style="--cc:var(--c-market)">
-    <div class="photo" style="aspect-ratio:16/9;border-radius:12px;margin:-14px -14px 4px"><span class="material-symbols-outlined">storefront</span><span class="catpill">${esc(m.cat)}</span></div>
+    <div class="photo" style="border-radius:10px;margin:-14px -14px 4px"><span class="material-symbols-outlined">storefront</span><span class="catpill">${esc(m.cat)}</span></div>
     <h3>${esc(m.name)}</h3><span class="when">${esc(m.days)} <span class="km">· ${esc(m.freq)}</span></span>
     <span class="goods">${esc(m.goods)}</span><span class="loc">${esc(m.town)} · ${esc(m.loc)} · ${m.km} km</span>${m.note?`<span class="note">${esc(m.note)}</span>`:''}${on?'<span class="badge">Likely open this weekend</span>':''}${m.src?`<a class="src" style="font-size:12px" href="${esc(m.src)}" target="_blank" rel="noopener">source ↗</a>`:''}</article>`; }).join('') || '<div class="empty">No markets match.</div>'; }
 $('#mkWeekend').addEventListener('change',renderMarkets);
