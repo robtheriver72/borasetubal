@@ -7,7 +7,7 @@
   --accent:#1D5C96; --accent-ink:#FFFFFF; --accent-soft:#DCEAF4; --ochre:#C77F2E; --mustard:#F0B429;
   --free:#2E7D4F; --free-soft:#DCEFE3; --paid:#8A5A3B; --paid-soft:#F3E6D8;
   --shadow:0 2px 4px rgba(15,42,61,.07),0 10px 26px rgba(15,42,61,.12);
-  --c-tour:#2E8A6A; --c-major:#C4472E; --c-local:#C77F2E; --c-fest:#7A54B8; --c-art:#C24E86; --c-theatre:#4F5FC4; --c-market:#1D8C93; --c-cinema:#2E5FA8; --c-sport:#4E8F3A; --c-workshop:#B27A15; --c-family:#D4667F; --c-other:#5D7180;
+  --c-tour:#2E8A6A; --c-major:#C4472E; --c-local:#C77F2E; --c-fest:#7A54B8; --c-art:#C24E86; --c-theatre:#4F5FC4; --c-market:#1D8C93; --c-cinema:#2E5FA8; --c-sport:#4E8F3A; --c-workshop:#B27A15; --c-family:#D4667F; --c-other:#5D7180; --c-food:#B0442E; --c-medieval:#6B4A2E; --c-wine:#7A2048;
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
@@ -15,7 +15,7 @@
   --accent:#5B9CDA; --accent-ink:#0E1B26; --accent-soft:#1E3B52; --ochre:#E3A758; --mustard:#F0C24A;
   --free:#6CC28F; --free-soft:#1D3327; --paid:#D8A87C; --paid-soft:#38301F;
   --shadow:0 2px 4px rgba(0,0,0,.4),0 10px 26px rgba(0,0,0,.35);
-  --c-tour:#5FB89C; --c-major:#E0705F; --c-local:#E5A24C; --c-fest:#B08AE0; --c-art:#E06A9E; --c-theatre:#8D9BF0; --c-market:#5CC0C3; --c-cinema:#7DA6E0; --c-sport:#8DC257; --c-workshop:#DBA43A; --c-family:#F094AA; --c-other:#93A6B5;
+  --c-tour:#5FB89C; --c-major:#E0705F; --c-local:#E5A24C; --c-fest:#B08AE0; --c-art:#E06A9E; --c-theatre:#8D9BF0; --c-market:#5CC0C3; --c-cinema:#7DA6E0; --c-sport:#8DC257; --c-workshop:#DBA43A; --c-family:#F094AA; --c-other:#93A6B5; --c-food:#E5836A; --c-medieval:#C29A6E; --c-wine:#D782A8;
   color-scheme:dark;
 }}
 :root[data-theme="dark"]{
@@ -23,7 +23,7 @@
   --accent:#5B9CDA; --accent-ink:#0E1B26; --accent-soft:#1E3B52; --ochre:#E3A758; --mustard:#F0C24A;
   --free:#6CC28F; --free-soft:#1D3327; --paid:#D8A87C; --paid-soft:#38301F;
   --shadow:0 2px 4px rgba(0,0,0,.4),0 10px 26px rgba(0,0,0,.35);
-  --c-tour:#5FB89C; --c-major:#E0705F; --c-local:#E5A24C; --c-fest:#B08AE0; --c-art:#E06A9E; --c-theatre:#8D9BF0; --c-market:#5CC0C3; --c-cinema:#7DA6E0; --c-sport:#8DC257; --c-workshop:#DBA43A; --c-family:#F094AA; --c-other:#93A6B5;
+  --c-tour:#5FB89C; --c-major:#E0705F; --c-local:#E5A24C; --c-fest:#B08AE0; --c-art:#E06A9E; --c-theatre:#8D9BF0; --c-market:#5CC0C3; --c-cinema:#7DA6E0; --c-sport:#8DC257; --c-workshop:#DBA43A; --c-family:#F094AA; --c-other:#93A6B5; --c-food:#E5836A; --c-medieval:#C29A6E; --c-wine:#D782A8;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -55,7 +55,14 @@ a{color:var(--accent)}
 .wrap{max-width:1400px;margin:0 auto;padding:18px 20px 60px;display:grid;grid-template-columns:270px 1fr;gap:22px}
 @media (max-width:900px){.wrap{grid-template-columns:1fr}}
 .rail{position:sticky;top:64px;align-self:start;display:flex;flex-direction:column;gap:18px;max-height:calc(100vh - 80px);overflow:auto;padding-right:4px;background:var(--accent);border-radius:18px;padding:16px 16px 18px;box-shadow:var(--shadow)}
-@media (max-width:900px){.rail{position:static;max-height:none}}
+@media (max-width:900px){.rail{position:static;max-height:none;order:2}.main{order:1}.wrap{display:flex;flex-direction:column}}
+.railToggle{display:none}
+.railBody{display:flex;flex-direction:column;gap:18px}
+@media (max-width:900px){
+  .railToggle{display:flex;align-items:center;justify-content:space-between;width:100%;border:0;background:transparent;color:var(--accent-ink);font-weight:800;font-size:15px;padding:0 0 2px;cursor:pointer}
+  .railBody{display:none;margin-top:14px}
+  .rail.open .railBody{display:flex}
+}
 .f{display:flex;flex-direction:column;gap:6px}
 .f label,.f .lbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;color:var(--accent-ink);opacity:.85}
 .f input[type=search],.f select{border:0;border-bottom:3px solid var(--mustard);background:color-mix(in srgb,var(--accent-ink) 92%,transparent);color:var(--ink);border-radius:10px 10px 4px 4px;padding:9px 11px;width:100%;font-weight:600}
@@ -89,7 +96,8 @@ a{color:var(--accent)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin:10px 0}
 .ev{display:flex;flex-direction:column;background:var(--bg2);border:1px solid var(--line);border-radius:16px;overflow:hidden;transition:transform .14s,box-shadow .14s}
 .ev:hover{transform:translateY(-3px) rotate(-.3deg);box-shadow:var(--shadow)}
-.ev .photo{position:relative;aspect-ratio:4/3;background:var(--bg3) center/cover no-repeat}
+.ev .photo{position:relative;aspect-ratio:16/10;background:color-mix(in srgb,var(--cc) 14%,var(--bg3));display:flex;align-items:center;justify-content:center}
+.ev .photo svg{width:38%;height:38%;color:var(--cc);opacity:.9}
 .ev .photo .catpill{position:absolute;left:9px;top:9px;background:var(--cc);color:#fff;font-weight:800;font-size:11px;letter-spacing:.03em;padding:4px 10px;border-radius:999px;box-shadow:0 2px 6px rgba(0,0,0,.25)}
 .ev .photo .pricepill{position:absolute;right:9px;top:9px;font-weight:800;font-size:11px;padding:4px 10px;border-radius:999px}
 .ev .body{padding:12px 14px 14px;min-width:0;display:flex;flex-direction:column;gap:6px;flex:1}
@@ -160,14 +168,18 @@ a{color:var(--accent)}
 
 <div class="wrap">
   <aside class="rail" id="rail">
+    <button class="railToggle" id="railToggle" type="button" aria-expanded="false">🔎 Search &amp; filters <span id="railChevron">▾</span></button>
+    <div class="railBody" id="railBody">
     <div class="f"><label for="q">Search</label><input id="q" type="search" placeholder="Fado, jazz, walk, Palmela…"></div>
     <div class="f"><span class="lbl">When</span><div class="seg" id="when">
       <button data-w="all" aria-pressed="true">All</button><button data-w="weekend" aria-pressed="false">This weekend</button><button data-w="7" aria-pressed="false">Next 7 days</button><button data-w="30" aria-pressed="false">Next 30 days</button></div></div>
     <div class="f"><span class="lbl">Category</span><div class="chips" id="cats"></div></div>
     <div class="f"><label class="tgl"><input type="checkbox" id="freeOnly"> Free only</label></div>
-    <div class="f"><label for="km">Max distance from Setúbal</label><div class="range"><input id="km" type="range" min="0" max="650" step="25" value="650"><output for="km" id="kmOut" class="mono">All PT</output></div></div>
+    <div class="f"><label for="near">Near</label><select id="near"><option value="">Anywhere in Portugal</option></select></div>
+    <div class="f"><label for="km" id="kmLbl">Max distance</label><div class="range"><input id="km" type="range" min="0" max="650" step="25" value="650"><output for="km" id="kmOut" class="mono">All PT</output></div></div>
     <div class="f"><label for="town">Town</label><select id="town"><option value="">All towns</option></select></div>
     <button class="reset" id="reset" type="button">Reset filters</button>
+    </div>
   </aside>
 
   <main class="main">
@@ -203,7 +215,8 @@ const SNAP = JSON.parse(document.getElementById('snapshot').textContent);
 let EVENTS = SNAP.events, MARKETS = SNAP.markets, dataDate = SNAP.date, live = false;
 
 const CATS = [
-  ['Tour','--c-tour'],['Local concert','--c-local'],['Major concert','--c-major'],['Festival','--c-fest'],['Art exhibit','--c-art'],
+  ['Tour','--c-tour'],['Local concert','--c-local'],['Major concert','--c-major'],['Festival','--c-fest'],
+  ['Food festival','--c-food'],['Wine festival','--c-wine'],['Medieval festival','--c-medieval'],['Art exhibit','--c-art'],
   ['Theatre & performance','--c-theatre'],['Market','--c-market'],['Cinema','--c-cinema'],['Sport','--c-sport'],['Workshop','--c-workshop'],['Family','--c-family'],['Other','--c-other']];
 const catVar = c => (CATS.find(x=>x[0]===c)||CATS[CATS.length-1])[1];
 const TOWNS = { // lat, lon (approx town centres) — mainland Portugal
@@ -225,7 +238,12 @@ const esc = s => String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>'
 const priceClass = fp => /^free/i.test(fp)?'free':/^paid/i.test(fp)?'paid':/mixed|donation/i.test(fp)?'mixed':'unk';
 
 // ---------- state ----------
-const state = { view:'list', q:'', when:'all', cats:new Set(), free:false, km:650, town:'', sort:'date', month:today().slice(0,7), day:null, mapTown:'' };
+const state = { view:'list', q:'', when:'all', cats:new Set(), free:false, km:650, near:'', town:'', sort:'date', month:today().slice(0,7), day:null, mapTown:'' };
+const R=6371;
+const haversine=(a,b)=>{ if(!a||!b) return null; const [lat1,lon1]=a,[lat2,lon2]=b; const toRad=d=>d*Math.PI/180;
+  const dLat=toRad(lat2-lat1), dLon=toRad(lon2-lon1); const h=Math.sin(dLat/2)**2+Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
+  return Math.round(R*2*Math.atan2(Math.sqrt(h),Math.sqrt(1-h))); };
+const distFor=e=>{ if(!state.near) return null; const from=TOWNS[state.near], to=TOWNS[e.town]; const d=haversine(from,to); return d==null?e.km:d; };
 try { const s = JSON.parse(localStorage.getItem('bora.filters')||'null'); if (s) { Object.assign(state, s, {cats:new Set(s.cats||[])}); } } catch(e){}
 const save = () => { try { localStorage.setItem('bora.filters', JSON.stringify({...state, cats:[...state.cats], day:null})); } catch(e){} };
 
@@ -240,14 +258,15 @@ function filtered(){ const q=state.q.trim().toLowerCase();
   return EVENTS.filter(e => inWindow(e)
     && (!state.cats.size || state.cats.has(e.cat))
     && (!state.free || /^free/i.test(e.fp))
-    && e.km <= state.km
+    && (!state.near || (distFor(e)==null || distFor(e) <= state.km))
     && (!state.town || e.town===state.town)
     && (!state.mapTown || e.town===state.mapTown)
     && (!q || (e.name+' '+e.desc+' '+e.venue+' '+e.town+' '+e.type).toLowerCase().includes(q)));
 }
-function sortRows(rows){ const s=state.sort; return rows.slice().sort((a,b)=> s==='km'? a.km-b.km || a.start.localeCompare(b.start)
+const distOrKm = e => state.near ? (distFor(e) ?? 99999) : e.km;
+function sortRows(rows){ const s=state.sort; return rows.slice().sort((a,b)=> s==='km'? distOrKm(a)-distOrKm(b) || a.start.localeCompare(b.start)
   : s==='name'? a.name.localeCompare(b.name) : s==='cat'? a.cat.localeCompare(b.cat)||a.start.localeCompare(b.start)
-  : (a.start>today()?a.start:today()).localeCompare(b.start>today()?b.start:today()) || a.km-b.km); }
+  : (a.start>today()?a.start:today()).localeCompare(b.start>today()?b.start:today()) || distOrKm(a)-distOrKm(b)); }
 
 // ---------- rail ----------
 function buildRail(){
@@ -255,42 +274,53 @@ function buildRail(){
   $('#cats').innerHTML = CATS.filter(([c])=>counts[c]).map(([c,v])=>`<button class="chip" type="button" data-cat="${esc(c)}" aria-pressed="${state.cats.has(c)}" style="--cc:var(${v})"><i></i>${esc(c)}<span class="n">${counts[c]}</span></button>`).join('');
   const towns=[...new Set(EVENTS.filter(e=>e.end>=today()).map(e=>e.town))].sort((a,b)=>a.localeCompare(b));
   $('#town').innerHTML = '<option value="">All towns</option>'+towns.map(t=>`<option ${t===state.town?'selected':''}>${esc(t)}</option>`).join('');
-  $('#q').value=state.q; $('#freeOnly').checked=state.free; $('#km').value=state.km; $('#kmOut').textContent=state.km>=650?'All PT':state.km+' km'; $('#sort').value=state.sort;
+  const nearTowns=Object.keys(TOWNS).sort((a,b)=>a.localeCompare(b));
+  $('#near').innerHTML = '<option value="">Anywhere in Portugal</option>'+nearTowns.map(t=>`<option ${t===state.near?'selected':''}>${esc(t)}</option>`).join('');
+  $('#kmLbl').textContent = state.near ? `Max distance from ${state.near}` : 'Max distance';
+  $('#km').disabled = !state.near;
+  $('#q').value=state.q; $('#freeOnly').checked=state.free; $('#km').value=state.km; $('#kmOut').textContent=!state.near?'—':(state.km>=650?'All':state.km+' km'); $('#sort').value=state.sort;
   document.querySelectorAll('#when button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.w===state.when));
 }
 $('#cats').addEventListener('click', e=>{ const b=e.target.closest('.chip'); if(!b) return; const c=b.dataset.cat; state.cats.has(c)?state.cats.delete(c):state.cats.add(c); b.setAttribute('aria-pressed',state.cats.has(c)); render(); });
 $('#when').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return; state.when=b.dataset.w; document.querySelectorAll('#when button').forEach(x=>x.setAttribute('aria-pressed',x===b)); render(); });
 $('#q').addEventListener('input', e=>{ state.q=e.target.value; render(); });
 $('#freeOnly').addEventListener('change', e=>{ state.free=e.target.checked; render(); });
-$('#km').addEventListener('input', e=>{ state.km=+e.target.value; $('#kmOut').textContent=state.km>=650?'All PT':state.km+' km'; render(); });
+$('#km').addEventListener('input', e=>{ state.km=+e.target.value; $('#kmOut').textContent=state.km>=650?'All':state.km+' km'; render(); });
 $('#town').addEventListener('change', e=>{ state.town=e.target.value; render(); });
+$('#near').addEventListener('change', e=>{ state.near=e.target.value; buildRail(); render(); });
 $('#sort').addEventListener('change', e=>{ state.sort=e.target.value; render(); });
-$('#reset').addEventListener('click', ()=>{ Object.assign(state,{q:'',when:'all',cats:new Set(),free:false,km:650,town:'',mapTown:''}); buildRail(); render(); });
+$('#railToggle').addEventListener('click', ()=>{ const open=$('#rail').classList.toggle('open'); $('#railToggle').setAttribute('aria-expanded',open); $('#railChevron').textContent = open?'▴':'▾'; });
+$('#reset').addEventListener('click', ()=>{ Object.assign(state,{q:'',when:'all',cats:new Set(),free:false,km:650,near:'',town:'',mapTown:''}); buildRail(); render(); });
 document.querySelectorAll('.views button').forEach(b=>b.addEventListener('click',()=>{ state.view=b.dataset.view; document.querySelectorAll('.views button').forEach(x=>x.setAttribute('aria-pressed',x===b)); render(); }));
 
 // ---------- list ----------
-const FALLBACK_IMG = { // playful category placeholders (used when an event has no real photo)
-  'Tour':'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=480&h=360&fit=crop&q=60',
-  'Local concert':'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=480&h=360&fit=crop&q=60',
-  'Major concert':'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=480&h=360&fit=crop&q=60',
-  'Festival':'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=480&h=360&fit=crop&q=60',
-  'Art exhibit':'https://images.unsplash.com/photo-1531058020387-3be344556be6?w=480&h=360&fit=crop&q=60',
-  'Theatre & performance':'https://images.unsplash.com/photo-1503095396549-807759245b35?w=480&h=360&fit=crop&q=60',
-  'Market':'https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=480&h=360&fit=crop&q=60',
-  'Cinema':'https://images.unsplash.com/photo-1489599162946-137f293cd280?w=480&h=360&fit=crop&q=60',
-  'Sport':'https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=480&h=360&fit=crop&q=60',
-  'Workshop':'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=480&h=360&fit=crop&q=60',
-  'Family':'https://images.unsplash.com/photo-1472162072942-cd5147eb3902?w=480&h=360&fit=crop&q=60',
-  'Other':'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=480&h=360&fit=crop&q=60'};
-const imgFor = e => e.img || FALLBACK_IMG[e.cat] || FALLBACK_IMG.Other;
+const ICONS = { // simple line-art icons, one per category
+  'Tour':'<circle cx="12" cy="12" r="8.5"/><path d="M14.5 9.5 13 13l-3.5 1.5L11 11z"/>',
+  'Local concert':'<circle cx="8.5" cy="17" r="2.3"/><path d="M10.8 17V5.5l7-1.5v10"/><circle cx="15.5" cy="14.5" r="2.3"/>',
+  'Major concert':'<path d="M4 19 9 6h6l5 13"/><path d="M7.5 14.5h9"/><path d="M12 4v2"/>',
+  'Festival':'<path d="M6 21V4"/><path d="M6 4h11l-3 3.5L17 11H6"/>',
+  'Food festival':'<path d="M7 3v8a2 2 0 0 0 2 2v8"/><path d="M7 3v6M9 3v6"/><path d="M16 3c-1.5 0-2.5 1.6-2.5 4s1 4 2.5 4v10"/>',
+  'Wine festival':'<path d="M8 3h8l-1 6a3 3 0 0 1-6 0z"/><path d="M12 12v6M9 21h6"/>',
+  'Medieval festival':'<path d="M12 3 5 6v6c0 5 3 8 7 9 4-1 7-4 7-9V6z"/><path d="M12 8v6M9 11h6"/>',
+  'Art exhibit':'<rect x="4" y="4" width="16" height="16" rx="1.5"/><circle cx="9" cy="9.5" r="1.6"/><path d="m5 17 4.5-5 3 3 2.5-3L20 17"/>',
+  'Theatre & performance':'<circle cx="9" cy="10" r="3.4"/><circle cx="15" cy="14" r="3.4"/><path d="M9 13.4v1a3 3 0 0 0 3 3M15 10.6v-1a3 3 0 0 0-3-3"/>',
+  'Market':'<path d="M5 9h14l-1.4 10.2a1.5 1.5 0 0 1-1.5 1.3H7.9a1.5 1.5 0 0 1-1.5-1.3z"/><path d="M8 9V7a4 4 0 0 1 8 0v2"/>',
+  'Market day':'<path d="M5 9h14l-1.4 10.2a1.5 1.5 0 0 1-1.5 1.3H7.9a1.5 1.5 0 0 1-1.5-1.3z"/><path d="M8 9V7a4 4 0 0 1 8 0v2"/>',
+  'Cinema':'<rect x="3.5" y="7" width="17" height="13" rx="1.2"/><path d="m3.5 7 2.3-4h3l-2 4zM10 7l2.3-4h3l-2 4zM16.5 7l2.3-4h1.7v4"/>',
+  'Sport':'<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v6l5 3.2M12 20.5v-3M6 8l3 2.5"/>',
+  'Workshop':'<path d="M14.5 6.5a3.5 3.5 0 0 1-4.6 4.6l-6 6 1.9 1.9 6-6a3.5 3.5 0 0 1 4.6-4.6L14 10z"/>',
+  'Family':'<circle cx="8.5" cy="8" r="2.3"/><circle cx="16" cy="9" r="2"/><path d="M4 20v-2a4 4 0 0 1 4-4h1a4 4 0 0 1 4 4v2M14 20v-1.5a3.2 3.2 0 0 1 3-3.2h.5a3.2 3.2 0 0 1 3 3.2V20"/>',
+  'Other':'<path d="M12 3.5 14 9l5.5.5-4.2 3.7 1.3 5.3L12 15.8 7.4 18.5l1.3-5.3L4.5 9.5 10 9z"/>'};
+const iconFor = e => ICONS[e.cat] || ICONS.Other;
 function card(e){ return `<article class="ev" style="--cc:var(${catVar(e.cat)})">
-  <div class="photo" style="background-image:url('${esc(imgFor(e))}')"><span class="catpill">${esc(e.cat)}</span><span class="pricepill pill ${priceClass(e.fp)}">${esc(e.fp)}${e.price&&e.price!=='0'&&!/^free/i.test(e.fp)?' · '+(/^\d/.test(e.price)?'€':'')+esc(e.price):''}</span></div>
+  <div class="photo"><svg viewBox="0 0 24 24" fill="none" stroke="var(--cc)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">${iconFor(e)}</svg><span class="catpill">${esc(e.cat)}</span><span class="pricepill pill ${priceClass(e.fp)}">${esc(e.fp)}${e.price&&e.price!=='0'&&!/^free/i.test(e.fp)?' · '+(/^\d/.test(e.price)?'€':'')+esc(e.price):''}</span></div>
   <div class="body">
   <h3>${esc(e.name)}</h3>
   <div class="sub"><span>${esc(e.town)}${e.venue&&e.venue!==e.town?' · '+esc(e.venue):''}</span><span>${esc(e.freq)}</span></div>
   ${e.desc?`<p>${esc(e.desc)}</p>`:''}
   <div class="side"><span class="mono" style="font-size:12px;color:var(--ink2);font-weight:700">${fmtRange(e)}</span>
-  ${e.src?`<a class="src" href="${esc(e.src)}" target="_blank" rel="noopener">source ↗</a>`:`<span class="km">${e.km} km</span>`}</div>
+  ${state.near?`<span class="km">${distOrKm(e)} km from ${esc(state.near)}</span>`:''}
+  ${e.src?`<a class="src" href="${esc(e.src)}" target="_blank" rel="noopener">source ↗</a>`:''}</div>
   </div></article>`; }
 function renderList(){ const rows=sortRows(filtered()); const t=today();
   $('#sumMeta').textContent = `${rows.length} of ${EVENTS.filter(e=>e.end>=t).length} upcoming · data ${live?'live from your Google Sheet':'snapshot from '+dataDate}`;
@@ -359,8 +389,8 @@ function openThisWeekend(m){ const s=(m.days+' '+m.freq).toLowerCase(); const [s
 function renderMarkets(){ const wk=$('#mkWeekend').checked; const q=state.q.trim().toLowerCase();
   const rows=MARKETS.filter(m=> m.km<=state.km && (!state.town||m.town===state.town) && (!q||(m.name+' '+m.goods+' '+m.town+' '+m.cat).toLowerCase().includes(q)) && (!wk||openThisWeekend(m)));
   $('#mkMeta').textContent=`${rows.length} markets · sorted by distance`;
-  $('#mk').innerHTML = rows.map(m=>{ const on=openThisWeekend(m); const img=m.img||FALLBACK_IMG.Market; return `<article class="mkc ${wk&&on?'on':''}">
-    <div class="photo" style="background-image:url('${esc(img)}');aspect-ratio:16/9;border-radius:12px;margin:-14px -14px 4px"><span class="catpill">${esc(m.cat)}</span></div>
+  $('#mk').innerHTML = rows.map(m=>{ const on=openThisWeekend(m); return `<article class="mkc ${wk&&on?'on':''}" style="--cc:var(--c-market)">
+    <div class="photo" style="aspect-ratio:16/9;border-radius:12px;margin:-14px -14px 4px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--cc)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">${ICONS.Market}</svg><span class="catpill">${esc(m.cat)}</span></div>
     <h3>${esc(m.name)}</h3><span class="when">${esc(m.days)} <span class="km">· ${esc(m.freq)}</span></span>
     <span class="goods">${esc(m.goods)}</span><span class="loc">${esc(m.town)} · ${esc(m.loc)} · ${m.km} km</span>${m.note?`<span class="note">${esc(m.note)}</span>`:''}${on?'<span class="badge">Likely open this weekend</span>':''}${m.src?`<a class="src" style="font-size:12px" href="${esc(m.src)}" target="_blank" rel="noopener">source ↗</a>`:''}</article>`; }).join('') || '<div class="empty">No markets match.</div>'; }
 $('#mkWeekend').addEventListener('change',renderMarkets);
