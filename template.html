@@ -216,7 +216,7 @@ body.icons-ready .material-symbols-outlined{visibility:visible}
     </section>
   </main>
 </div>
-<footer class="foot"><b>Bora</b> — Portuguese for “let’s go”. Events are gathered daily from municipal agendas, venue programmes and listings sites across mainland Portugal — from Setúbal and Lisbon out to the Algarve, Alentejo and the north. Prices and dates come from the sources listed on each entry — check before you go. Categories: Tours are guided walks and boat trips; Local concerts are gigs at neighbourhood venues; Major concerts are touring acts at the big arenas and halls.</footer>
+<footer class="foot"><b>Bora</b> — Portuguese for “let’s go”. Events are gathered daily from municipal agendas, venue programmes and listings sites across mainland Portugal — from Setúbal and Lisbon out to the Algarve, Alentejo and the north. Prices and dates come from the sources listed on each entry — check before you go. Categories: Local concerts are gigs at neighbourhood venues; Major concerts are touring acts at the big arenas and halls.</footer>
 
 <script id="snapshot" type="application/json">__SNAPSHOT__</script>
 <script>
@@ -230,7 +230,7 @@ const SNAP = JSON.parse(document.getElementById('snapshot').textContent);
 let EVENTS = SNAP.events, MARKETS = SNAP.markets, FREENIF = SNAP.freenif||[], dataDate = SNAP.date, live = false;
 
 const CATS = [
-  ['Tour','--c-tour'],['Local concert','--c-local'],['Major concert','--c-major'],['Festival','--c-fest'],
+  ['Local concert','--c-local'],['Major concert','--c-major'],['Festival','--c-fest'],
   ['Food festival','--c-food'],['Wine festival','--c-wine'],['Medieval festival','--c-medieval'],['Art exhibit','--c-art'],
   ['Theatre & performance','--c-theatre'],['Market','--c-market'],['Cinema','--c-cinema'],['Sport','--c-sport'],['Workshop','--c-workshop'],['Family','--c-family'],['Other','--c-other']];
 const catVar = c => (CATS.find(x=>x[0]===c)||CATS[CATS.length-1])[1];
@@ -310,7 +310,7 @@ document.querySelectorAll('.views button').forEach(b=>b.addEventListener('click'
 
 // ---------- list ----------
 const ICONS = { // Material Symbols (outlined) icon name, one per category
-  'Tour':'explore', 'Local concert':'mic', 'Major concert':'stadium', 'Festival':'celebration',
+  'Local concert':'mic', 'Major concert':'stadium', 'Festival':'celebration',
   'Food festival':'restaurant', 'Wine festival':'wine_bar', 'Medieval festival':'castle',
   'Art exhibit':'palette', 'Theatre & performance':'theater_comedy', 'Market':'storefront', 'Market day':'storefront',
   'Cinema':'movie', 'Sport':'sports_soccer', 'Workshop':'handyman', 'Family':'family_restroom', 'Other':'star'};
