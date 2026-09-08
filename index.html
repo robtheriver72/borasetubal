@@ -1,29 +1,29 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bora Setúbal</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bora Y'all!</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 :root{
-  --bg:#FBF6E9; --bg2:#FFFFFF; --bg3:#F1EAD3; --line:#E4DAB8; --ink:#2B2A1F; --ink2:#5B5A46; --ink3:#8A8870;
-  --accent:#748A2E; --accent-ink:#FFFFFF; --accent-soft:#E4EBC9; --ochre:#D9971F; --mustard:#F0B429;
-  --free:#3F8F4F; --free-soft:#DFF0DE; --paid:#8A5A3B; --paid-soft:#F3E6D8;
-  --shadow:0 2px 4px rgba(60,55,20,.06),0 10px 26px rgba(60,55,20,.10);
-  --c-tour:#4E9A5E; --c-major:#D45B3C; --c-local:#E0982E; --c-fest:#9A5FC2; --c-art:#D6528C; --c-theatre:#6E63D6; --c-market:#2E9A93; --c-cinema:#4874C9; --c-sport:#6FA22E; --c-workshop:#C98A1B; --c-family:#E67F98; --c-other:#7C8168;
+  --bg:#F2F7FB; --bg2:#FFFFFF; --bg3:#E3EFF7; --line:#C9DCE9; --ink:#0F2A3D; --ink2:#3C5A6E; --ink3:#7690A0;
+  --accent:#1D5C96; --accent-ink:#FFFFFF; --accent-soft:#DCEAF4; --ochre:#C77F2E; --mustard:#F0B429;
+  --free:#2E7D4F; --free-soft:#DCEFE3; --paid:#8A5A3B; --paid-soft:#F3E6D8;
+  --shadow:0 2px 4px rgba(15,42,61,.07),0 10px 26px rgba(15,42,61,.12);
+  --c-tour:#2E8A6A; --c-major:#C4472E; --c-local:#C77F2E; --c-fest:#7A54B8; --c-art:#C24E86; --c-theatre:#4F5FC4; --c-market:#1D8C93; --c-cinema:#2E5FA8; --c-sport:#4E8F3A; --c-workshop:#B27A15; --c-family:#D4667F; --c-other:#5D7180;
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
-  --bg:#1B1A12; --bg2:#242217; --bg3:#2E2C1D; --line:#413E29; --ink:#F3EEDA; --ink2:#C7C2A6; --ink3:#928D6E;
-  --accent:#A8C24E; --accent-ink:#1B1A12; --accent-soft:#33391F; --ochre:#E8AE3E; --mustard:#F0C24A;
-  --free:#7BCB84; --free-soft:#25361F; --paid:#D8A87C; --paid-soft:#38301F;
+  --bg:#0E1B26; --bg2:#152634; --bg3:#1C3243; --line:#2B4356; --ink:#E7F1F8; --ink2:#AEC5D4; --ink3:#7B93A3;
+  --accent:#5B9CDA; --accent-ink:#0E1B26; --accent-soft:#1E3B52; --ochre:#E3A758; --mustard:#F0C24A;
+  --free:#6CC28F; --free-soft:#1D3327; --paid:#D8A87C; --paid-soft:#38301F;
   --shadow:0 2px 4px rgba(0,0,0,.4),0 10px 26px rgba(0,0,0,.35);
-  --c-tour:#6FBF7F; --c-major:#E67B5C; --c-local:#EAAE4E; --c-fest:#BB92E8; --c-art:#E888B5; --c-theatre:#A79CF0; --c-market:#5CC7C0; --c-cinema:#84A3E8; --c-sport:#9BD25E; --c-workshop:#E8B84E; --c-family:#F0A0B4; --c-other:#A3A98C;
+  --c-tour:#5FB89C; --c-major:#E0705F; --c-local:#E5A24C; --c-fest:#B08AE0; --c-art:#E06A9E; --c-theatre:#8D9BF0; --c-market:#5CC0C3; --c-cinema:#7DA6E0; --c-sport:#8DC257; --c-workshop:#DBA43A; --c-family:#F094AA; --c-other:#93A6B5;
   color-scheme:dark;
 }}
 :root[data-theme="dark"]{
-  --bg:#1B1A12; --bg2:#242217; --bg3:#2E2C1D; --line:#413E29; --ink:#F3EEDA; --ink2:#C7C2A6; --ink3:#928D6E;
-  --accent:#A8C24E; --accent-ink:#1B1A12; --accent-soft:#33391F; --ochre:#E8AE3E; --mustard:#F0C24A;
-  --free:#7BCB84; --free-soft:#25361F; --paid:#D8A87C; --paid-soft:#38301F;
+  --bg:#0E1B26; --bg2:#152634; --bg3:#1C3243; --line:#2B4356; --ink:#E7F1F8; --ink2:#AEC5D4; --ink3:#7B93A3;
+  --accent:#5B9CDA; --accent-ink:#0E1B26; --accent-soft:#1E3B52; --ochre:#E3A758; --mustard:#F0C24A;
+  --free:#6CC28F; --free-soft:#1D3327; --paid:#D8A87C; --paid-soft:#38301F;
   --shadow:0 2px 4px rgba(0,0,0,.4),0 10px 26px rgba(0,0,0,.35);
-  --c-tour:#6FBF7F; --c-major:#E67B5C; --c-local:#EAAE4E; --c-fest:#BB92E8; --c-art:#E888B5; --c-theatre:#A79CF0; --c-market:#5CC7C0; --c-cinema:#84A3E8; --c-sport:#9BD25E; --c-workshop:#E8B84E; --c-family:#F0A0B4; --c-other:#A3A98C;
+  --c-tour:#5FB89C; --c-major:#E0705F; --c-local:#E5A24C; --c-fest:#B08AE0; --c-art:#E06A9E; --c-theatre:#8D9BF0; --c-market:#5CC0C3; --c-cinema:#7DA6E0; --c-sport:#8DC257; --c-workshop:#DBA43A; --c-family:#F094AA; --c-other:#93A6B5;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -148,7 +148,7 @@ a{color:var(--accent)}
 </style></head><body>
 
 <header class="top"><div class="top-in">
-  <div class="brand"><h1>Bora <span>Setúbal</span></h1><small>events all over Portugal</small></div>
+  <div class="brand"><h1>Bora <span>Y'all!</span></h1><small>events all over Portugal</small></div>
   <nav class="views" aria-label="View">
     <button data-view="list" aria-pressed="true">List</button>
     <button data-view="cal" aria-pressed="false">Calendar</button>
