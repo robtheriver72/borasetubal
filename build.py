@@ -13,7 +13,8 @@ ev = [dict(start=r['Start date'], end=r['End date'] or r['Start date'], name=r['
 ev = [e for e in ev if e['end'] >= date]  # never ship past events
 mk = [dict(name=r['Market'], cat=r['Category'], town=r['Town'], loc=r['Location'], km=num(r['~km from Setúbal']), freq=r['Frequency'],
            days=r['Days & hours'], goods=r['Types of goods'], entry=r['Entry'], note=r['Notes'], src=r['Source'], img=r.get('Image','')) for r in csv.DictReader(open(root/'markets.csv', encoding='utf-8'))]
-snap = json.dumps({'date': date, 'events': ev, 'markets': mk}, ensure_ascii=False).replace('</', '<\\/')
+fn = [dict(place=r['Place'], town=r['Town'], cond=r['Condition'], req=r['Requirement'], price=r['Regular price'], note=r['Notes'], src=r['Source']) for r in csv.DictReader(open(root/'freenif.csv', encoding='utf-8'))]
+snap = json.dumps({'date': date, 'events': ev, 'markets': mk, 'freenif': fn}, ensure_ascii=False).replace('</', '<\\/')
 body = open(root/'template.html', encoding='utf-8').read().replace('__SNAPSHOT__', snap)
 i = body.index('</style>') + len('</style>')
 doc = ('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'

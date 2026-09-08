@@ -164,6 +164,7 @@ body.icons-ready .material-symbols-outlined{visibility:visible}
     <button data-view="list" aria-pressed="true">List</button>
     <button data-view="cal" aria-pressed="false">Calendar</button>
     <button data-view="map" aria-pressed="false">Map</button>
+    <button data-view="freenif" aria-pressed="false">Free w/ NIF</button>
     <button data-view="markets" aria-pressed="false">Markets</button>
   </nav>
   <div class="status"><span class="dot" id="dot"></span><span id="statusText">Snapshot</span><button id="refresh" type="button" hidden>Refresh</button></div>
@@ -202,6 +203,11 @@ body.icons-ready .material-symbols-outlined{visibility:visible}
       <div class="mapnote"><span>Schematic — positions are approximate town centres across mainland Portugal.</span><span id="mapSel"></span></div></div>
       <div id="mapList" style="margin-top:16px"></div>
     </section>
+    <section id="v-freenif" class="hidden">
+      <div class="sum"><h2>Free entry with your NIF</h2><span class="meta" id="fnMeta"></span></div>
+      <p style="color:var(--ink2);font-size:13.5px;max-width:70ch;margin:-6px 0 14px">Portugal's museums and monuments give free admission to residents on set days — you're usually asked to show your Cartão de Cidadão or quote your NIF (tax number) at the door or when booking online. Always double-check the current date on the venue's own site before you go.</p>
+      <div class="mk" id="fn"></div>
+    </section>
     <section id="v-markets" class="hidden">
       <div class="sum"><h2>Recurring markets</h2><span class="meta" id="mkMeta"></span>
         <div class="sort"><label class="tgl" style="font-size:13px"><input type="checkbox" id="mkWeekend"> Open this weekend</label></div></div>
@@ -220,7 +226,7 @@ if (document.fonts && document.fonts.load) {
   document.fonts.ready.then(()=>document.body.classList.add('icons-ready'));
 } else { document.body.classList.add('icons-ready'); }
 const SNAP = JSON.parse(document.getElementById('snapshot').textContent);
-let EVENTS = SNAP.events, MARKETS = SNAP.markets, dataDate = SNAP.date, live = false;
+let EVENTS = SNAP.events, MARKETS = SNAP.markets, FREENIF = SNAP.freenif||[], dataDate = SNAP.date, live = false;
 
 const CATS = [
   ['Tour','--c-tour'],['Local concert','--c-local'],['Major concert','--c-major'],['Festival','--c-fest'],
@@ -391,10 +397,17 @@ function renderMarkets(){ const wk=$('#mkWeekend').checked; const q=state.q.trim
     <span class="goods">${esc(m.goods)}</span><span class="loc">${esc(m.town)} · ${esc(m.loc)} · ${m.km} km</span>${m.note?`<span class="note">${esc(m.note)}</span>`:''}${on?'<span class="badge">Likely open this weekend</span>':''}${m.src?`<a class="src" style="font-size:12px" href="${esc(m.src)}" target="_blank" rel="noopener">source ↗</a>`:''}</article>`; }).join('') || '<div class="empty">No markets match.</div>'; }
 $('#mkWeekend').addEventListener('change',renderMarkets);
 
+// ---------- free with NIF ----------
+function renderFreenif(){ $('#fnMeta').textContent = `${FREENIF.length} places`;
+  $('#fn').innerHTML = FREENIF.map(f=>`<article class="mkc" style="--cc:var(--c-other)">
+    <div class="photo" style="border-radius:10px;margin:-14px -14px 4px"><span class="material-symbols-outlined">confirmation_number</span><span class="catpill">${esc(f.req)}</span></div>
+    <h3>${esc(f.place)}</h3><span class="when">${esc(f.cond)}</span>
+    <span class="goods">Regular price ${esc(f.price)}</span><span class="loc">${esc(f.town)}</span>${f.note?`<span class="note">${esc(f.note)}</span>`:''}${f.src?`<a class="src" style="font-size:12px" href="${esc(f.src)}" target="_blank" rel="noopener">source ↗</a>`:''}</article>`).join('') || '<div class="empty">No entries yet.</div>'; }
+
 // ---------- render ----------
-function render(){ save(); ['list','cal','map','markets'].forEach(v=>$('#v-'+v).classList.toggle('hidden',state.view!==v));
-  const railFilters = state.view==='markets'; document.querySelectorAll('#cats,#when,#freeOnly').forEach(el=>{ el.closest('.f').style.display = railFilters?'none':''; });
-  ({list:renderList,cal:renderCal,map:renderMap,markets:renderMarkets})[state.view](); }
+function render(){ save(); ['list','cal','map','freenif','markets'].forEach(v=>$('#v-'+v).classList.toggle('hidden',state.view!==v));
+  const railFilters = state.view==='markets'||state.view==='freenif'; document.querySelectorAll('#cats,#when,#freeOnly').forEach(el=>{ el.closest('.f').style.display = railFilters?'none':''; });
+  ({list:renderList,cal:renderCal,map:renderMap,freenif:renderFreenif,markets:renderMarkets})[state.view](); }
 buildRail(); render();
 document.querySelectorAll('.views button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.view===state.view));
 
