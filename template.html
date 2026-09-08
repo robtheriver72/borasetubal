@@ -56,7 +56,7 @@ a{color:var(--accent)}
 .wrap{max-width:1400px;margin:0 auto;padding:18px 20px 60px;display:grid;grid-template-columns:270px 1fr;gap:22px}
 @media (max-width:900px){.wrap{grid-template-columns:1fr}}
 .rail{position:sticky;top:64px;align-self:start;display:flex;flex-direction:column;gap:18px;max-height:calc(100vh - 80px);overflow:auto;padding-right:4px;background:var(--accent);border-radius:18px;padding:16px 16px 18px;box-shadow:var(--shadow)}
-@media (max-width:900px){.rail{position:static;max-height:none;order:2}.main{order:1}.wrap{display:flex;flex-direction:column}}
+@media (max-width:900px){.rail{position:sticky;top:64px;z-index:15;max-height:none;order:-1}.main{order:1}.wrap{display:flex;flex-direction:column}}
 .railToggle{display:none}
 .railBody{display:flex;flex-direction:column;gap:18px}
 @media (max-width:900px){
