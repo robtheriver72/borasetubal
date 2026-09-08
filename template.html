@@ -1,6 +1,7 @@
 <title>Bora Y'all!</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,350,0,0&display=block">
 <style>
 :root{
   --bg:#F2F7FB; --bg2:#FFFFFF; --bg3:#E3EFF7; --line:#C9DCE9; --ink:#0F2A3D; --ink2:#3C5A6E; --ink3:#7690A0;
@@ -97,7 +98,9 @@ a{color:var(--accent)}
 .ev{display:flex;flex-direction:column;background:var(--bg2);border:1px solid var(--line);border-radius:16px;overflow:hidden;transition:transform .14s,box-shadow .14s}
 .ev:hover{transform:translateY(-3px) rotate(-.3deg);box-shadow:var(--shadow)}
 .ev .photo{position:relative;aspect-ratio:16/10;background:color-mix(in srgb,var(--cc) 14%,var(--bg3));display:flex;align-items:center;justify-content:center}
-.ev .photo svg{width:38%;height:38%;color:var(--cc);opacity:.9}
+.material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;font-size:24px;display:inline-block;white-space:nowrap;word-wrap:normal;direction:ltr;-webkit-font-feature-settings:'liga';font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'opsz' 24,'wght' 350,'FILL' 0,'GRAD' 0;line-height:1;visibility:hidden}
+body.icons-ready .material-symbols-outlined{visibility:visible}
+.ev .photo .material-symbols-outlined{font-size:44px;color:var(--cc)}
 .ev .photo .catpill{position:absolute;left:9px;top:9px;background:var(--cc);color:#fff;font-weight:800;font-size:11px;letter-spacing:.03em;padding:4px 10px;border-radius:999px;box-shadow:0 2px 6px rgba(0,0,0,.25)}
 .ev .photo .pricepill{position:absolute;right:9px;top:9px;font-weight:800;font-size:11px;padding:4px 10px;border-radius:999px}
 .ev .body{padding:12px 14px 14px;min-width:0;display:flex;flex-direction:column;gap:6px;flex:1}
@@ -211,6 +214,11 @@ a{color:var(--accent)}
 <script id="snapshot" type="application/json">__SNAPSHOT__</script>
 <script>
 (() => {
+if (document.fonts && document.fonts.load) {
+  Promise.race([document.fonts.load('24px "Material Symbols Outlined"'), new Promise(r=>setTimeout(r,3000))])
+    .then(()=>document.body.classList.add('icons-ready')).catch(()=>{});
+  document.fonts.ready.then(()=>document.body.classList.add('icons-ready'));
+} else { document.body.classList.add('icons-ready'); }
 const SNAP = JSON.parse(document.getElementById('snapshot').textContent);
 let EVENTS = SNAP.events, MARKETS = SNAP.markets, dataDate = SNAP.date, live = false;
 
@@ -294,26 +302,14 @@ $('#reset').addEventListener('click', ()=>{ Object.assign(state,{q:'',when:'all'
 document.querySelectorAll('.views button').forEach(b=>b.addEventListener('click',()=>{ state.view=b.dataset.view; document.querySelectorAll('.views button').forEach(x=>x.setAttribute('aria-pressed',x===b)); render(); }));
 
 // ---------- list ----------
-const ICONS = { // simple line-art icons, one per category
-  'Tour':'<circle cx="12" cy="12" r="8.5"/><path d="M14.5 9.5 13 13l-3.5 1.5L11 11z"/>',
-  'Local concert':'<circle cx="8.5" cy="17" r="2.3"/><path d="M10.8 17V5.5l7-1.5v10"/><circle cx="15.5" cy="14.5" r="2.3"/>',
-  'Major concert':'<path d="M4 19 9 6h6l5 13"/><path d="M7.5 14.5h9"/><path d="M12 4v2"/>',
-  'Festival':'<path d="M6 21V4"/><path d="M6 4h11l-3 3.5L17 11H6"/>',
-  'Food festival':'<path d="M7 3v8a2 2 0 0 0 2 2v8"/><path d="M7 3v6M9 3v6"/><path d="M16 3c-1.5 0-2.5 1.6-2.5 4s1 4 2.5 4v10"/>',
-  'Wine festival':'<path d="M8 3h8l-1 6a3 3 0 0 1-6 0z"/><path d="M12 12v6M9 21h6"/>',
-  'Medieval festival':'<path d="M12 3 5 6v6c0 5 3 8 7 9 4-1 7-4 7-9V6z"/><path d="M12 8v6M9 11h6"/>',
-  'Art exhibit':'<rect x="4" y="4" width="16" height="16" rx="1.5"/><circle cx="9" cy="9.5" r="1.6"/><path d="m5 17 4.5-5 3 3 2.5-3L20 17"/>',
-  'Theatre & performance':'<circle cx="9" cy="10" r="3.4"/><circle cx="15" cy="14" r="3.4"/><path d="M9 13.4v1a3 3 0 0 0 3 3M15 10.6v-1a3 3 0 0 0-3-3"/>',
-  'Market':'<path d="M5 9h14l-1.4 10.2a1.5 1.5 0 0 1-1.5 1.3H7.9a1.5 1.5 0 0 1-1.5-1.3z"/><path d="M8 9V7a4 4 0 0 1 8 0v2"/>',
-  'Market day':'<path d="M5 9h14l-1.4 10.2a1.5 1.5 0 0 1-1.5 1.3H7.9a1.5 1.5 0 0 1-1.5-1.3z"/><path d="M8 9V7a4 4 0 0 1 8 0v2"/>',
-  'Cinema':'<rect x="3.5" y="7" width="17" height="13" rx="1.2"/><path d="m3.5 7 2.3-4h3l-2 4zM10 7l2.3-4h3l-2 4zM16.5 7l2.3-4h1.7v4"/>',
-  'Sport':'<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v6l5 3.2M12 20.5v-3M6 8l3 2.5"/>',
-  'Workshop':'<path d="M14.5 6.5a3.5 3.5 0 0 1-4.6 4.6l-6 6 1.9 1.9 6-6a3.5 3.5 0 0 1 4.6-4.6L14 10z"/>',
-  'Family':'<circle cx="8.5" cy="8" r="2.3"/><circle cx="16" cy="9" r="2"/><path d="M4 20v-2a4 4 0 0 1 4-4h1a4 4 0 0 1 4 4v2M14 20v-1.5a3.2 3.2 0 0 1 3-3.2h.5a3.2 3.2 0 0 1 3 3.2V20"/>',
-  'Other':'<path d="M12 3.5 14 9l5.5.5-4.2 3.7 1.3 5.3L12 15.8 7.4 18.5l1.3-5.3L4.5 9.5 10 9z"/>'};
+const ICONS = { // Material Symbols (outlined) icon name, one per category
+  'Tour':'explore', 'Local concert':'mic', 'Major concert':'stadium', 'Festival':'celebration',
+  'Food festival':'restaurant', 'Wine festival':'wine_bar', 'Medieval festival':'castle',
+  'Art exhibit':'palette', 'Theatre & performance':'theater_comedy', 'Market':'storefront', 'Market day':'storefront',
+  'Cinema':'movie', 'Sport':'sports_soccer', 'Workshop':'handyman', 'Family':'family_restroom', 'Other':'star'};
 const iconFor = e => ICONS[e.cat] || ICONS.Other;
 function card(e){ return `<article class="ev" style="--cc:var(${catVar(e.cat)})">
-  <div class="photo"><svg viewBox="0 0 24 24" fill="none" stroke="var(--cc)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">${iconFor(e)}</svg><span class="catpill">${esc(e.cat)}</span><span class="pricepill pill ${priceClass(e.fp)}">${esc(e.fp)}${e.price&&e.price!=='0'&&!/^free/i.test(e.fp)?' · '+(/^\d/.test(e.price)?'€':'')+esc(e.price):''}</span></div>
+  <div class="photo"><span class="material-symbols-outlined">${iconFor(e)}</span><span class="catpill">${esc(e.cat)}</span><span class="pricepill pill ${priceClass(e.fp)}">${esc(e.fp)}${e.price&&e.price!=='0'&&!/^free/i.test(e.fp)?' · '+(/^\d/.test(e.price)?'€':'')+esc(e.price):''}</span></div>
   <div class="body">
   <h3>${esc(e.name)}</h3>
   <div class="sub"><span>${esc(e.town)}${e.venue&&e.venue!==e.town?' · '+esc(e.venue):''}</span><span>${esc(e.freq)}</span></div>
@@ -390,7 +386,7 @@ function renderMarkets(){ const wk=$('#mkWeekend').checked; const q=state.q.trim
   const rows=MARKETS.filter(m=> m.km<=state.km && (!state.town||m.town===state.town) && (!q||(m.name+' '+m.goods+' '+m.town+' '+m.cat).toLowerCase().includes(q)) && (!wk||openThisWeekend(m)));
   $('#mkMeta').textContent=`${rows.length} markets · sorted by distance`;
   $('#mk').innerHTML = rows.map(m=>{ const on=openThisWeekend(m); return `<article class="mkc ${wk&&on?'on':''}" style="--cc:var(--c-market)">
-    <div class="photo" style="aspect-ratio:16/9;border-radius:12px;margin:-14px -14px 4px"><svg viewBox="0 0 24 24" fill="none" stroke="var(--cc)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">${ICONS.Market}</svg><span class="catpill">${esc(m.cat)}</span></div>
+    <div class="photo" style="aspect-ratio:16/9;border-radius:12px;margin:-14px -14px 4px"><span class="material-symbols-outlined">storefront</span><span class="catpill">${esc(m.cat)}</span></div>
     <h3>${esc(m.name)}</h3><span class="when">${esc(m.days)} <span class="km">· ${esc(m.freq)}</span></span>
     <span class="goods">${esc(m.goods)}</span><span class="loc">${esc(m.town)} · ${esc(m.loc)} · ${m.km} km</span>${m.note?`<span class="note">${esc(m.note)}</span>`:''}${on?'<span class="badge">Likely open this weekend</span>':''}${m.src?`<a class="src" style="font-size:12px" href="${esc(m.src)}" target="_blank" rel="noopener">source ↗</a>`:''}</article>`; }).join('') || '<div class="empty">No markets match.</div>'; }
 $('#mkWeekend').addEventListener('change',renderMarkets);
