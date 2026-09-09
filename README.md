@@ -124,6 +124,26 @@ the literal word runs to ~180px. The probe must NOT carry the `.material-symbols
 class, because `no-icons` sets that class to `display:none` and a classed probe would then
 measure 0px, read as "fine", and flip the state back on the next call.
 
+**The logo is a CSS mask, not an image.** The azulejo mark is one flat colour on
+transparency, so it ships as a single 41 KB WebP used as a `mask-image`, with
+`background-color: var(--logo)` painting it. That is why it can be deep blue on paper and
+light periwinkle on a dark ground from one asset — a plain `<img>` would have needed two,
+and a `#010D87` logo on a dark background is unreadable. There is an `@supports` fallback to
+a text wordmark for the rare browser without mask support, and an `h1.sr-only` carries the
+real heading since the visible wordmark is pixels. Inlined as a data URI deliberately: the
+repo is updated by dragging files into GitHub's uploader, and a separate file is one thing
+that can be forgotten.
+
+**The list leads with dated days, not long runs.** Anything that started before today is
+pushed to a collapsed "Still on" section at the bottom, ordered by what ends soonest. The
+page previously opened with 25 ongoing exhibitions, which is the wrong first impression for
+a site called *é agora*.
+
+**The picks strip is editorial, computed from data you already have.** `pickScore` rewards
+free entry, short runs, proximity and distinctive categories, and penalises arena concerts;
+then a diversity pass refuses two picks sharing a category or a town. It falls back from the
+weekend to the next seven days, and hides itself below three candidates.
+
 **Dates are formatted locally, not in UTC.** Use the `isoLocal` helper rather than
 `toISOString()`; the latter shifts "today" by a day for the first hour after midnight in
 Lisbon.
