@@ -9,8 +9,9 @@ Live site: https://robtheriver72.github.io/borasetubal/
 
 ## How it works
 
-- `events.csv`, `markets.csv` and `freenif.csv` are the data. The first two mirror the
-  Google Sheets "Freevent Events" and "Freevent Markets".
+- `events.csv`, `markets.csv` and `freenif.csv` are the data. This repo is the source of
+  truth; the Google Sheets are a mirror, not the master.
+- `concelhos.csv` is the crawl's backbone — see "How the country gets covered" below.
 - `template.html` is the page, with a `__SNAPSHOT__` placeholder.
 - `build.py` bakes the CSVs into the template and writes `index.html`. Events that have
   already finished are dropped at build time, so a freshly built page never ships a past event.
@@ -26,23 +27,53 @@ python3 build.py            # snapshot dated today, Europe/Lisbon
 python3 build.py 2026-10-01 # or pin the snapshot date
 ```
 
-## The gap in the pipeline
+## How the country gets covered
 
-**New events do not reach this repo on their own.** A daily Claude scheduled task crawls
-listings and rewrites the Google Sheets in Drive, but nothing carries those sheets back into
-`events.csv` — that step is manual. The daily Action rebuilds from whatever CSVs are
-committed here; it cannot add events the sheets found.
+For a long time coverage was driven by a hand-curated list of about 25 sites, and it showed:
+Setúbal, a town of 120,000, had more events than Porto. That was never a bug in the code. It
+was that Setúbal was the one place whose **municipal agenda** was being read, while Braga's
+26 events were all from a single venue's brochure (Fórum Braga, 100%) and Faro's from one
+theatre (Teatro das Figuras, 95%). The crawl found whatever the list pointed at and stopped.
 
-The page contains code that reads the sheets live through the Drive connector, but it is
-guarded by `window.claude`, which only exists when the page is open inside Claude. On GitHub
-Pages that branch never runs and the baked snapshot is always what visitors see, so on the
-live site that code is inert.
+`concelhos.csv` replaces the list. It holds all 202 Portuguese concelhos that have active
+listings, with the URL slug for their agenda page, how many events that page shows, how many
+the site currently has, and when it was last swept. On 9 Sept 2026 those pages listed 5,522
+events between them; the site had 231. Setúbal was the only concelho at parity — its agenda
+listed 31 and the site had 36.
 
-Closing the gap properly means one of: the scheduled task committing `events.csv` here
-directly (which makes Drive unnecessary), or an Action pulling the sheets on a schedule
-(which needs Google credentials in repo secrets, and has to cope with the task recreating
-the sheets under new file IDs every day, because the Drive connector cannot edit cells in
-place).
+The daily task sweeps 8–12 concelhos per run off that ledger, biggest gap first, always
+including Lisboa or Porto, at least two small concelhos, and at least one within 60 km of
+Setúbal. **There is no per-venue cap and no per-town quota.** One was tried and removed: a
+cap limits what can be added, which makes the site smaller rather than better balanced. The
+answer to a town with one venue is to sweep its agenda, not to refuse its events.
+
+### What the source pages do wrong
+
+Worth knowing before adding a source, because each of these has already produced a bad row:
+
+- **Years are missing.** The agenda prints `qua 09 set`. Resolve the year from the weekday —
+  9 Sept 2026 is a Wednesday — never by assuming it's this year.
+- **Placeholder dates.** Montijo prints every undated ongoing item under one repeated date.
+  Twelve rows sharing a date means those rows are undated, not that twelve things happen then.
+- **Stale pages.** `nocartaz.pt/concelhos/faro/` was still serving August in September. If the
+  first listed date is already past, the page is stale — `viralagenda.com/pt/faro` covers the
+  same district and was live.
+- **Archive content.** Óbidos returned a page of 2025 dates (FÓLIO 2025). Dropped entirely.
+- **Titles that read like venues.** "PROMISED VALLEY CONFERENCE CENTER" is a play.
+
+The `Notes` column in `concelhos.csv` is where these get recorded, so the next run doesn't
+spend a fetch rediscovering them.
+
+### Publishing
+
+The scheduled task commits to this repo directly. If it cannot push it must say
+**"NOT PUBLISHED — needs manual upload"** at the top of its report rather than reporting
+success — a run whose data never reached the repo did nothing, and that failure was silent
+for weeks.
+
+The page also contains a branch that reads the Google Sheets live through the Drive
+connector, guarded by `window.claude`. That object only exists when the page is open inside
+Claude, so on GitHub Pages the branch never runs and visitors always see the baked snapshot.
 
 ## Views
 
@@ -109,7 +140,8 @@ last — never as `0 km`.
 **Towns need coordinates in `TOWNS` to take part in distance filtering.** Without them an
 event falls back to its `~km from Setúbal` value, and a market to the same, so a town added
 to the sheet but not to `TOWNS` will still appear but will sort and filter off that column
-rather than off a real distance.
+rather than off a real distance. Every concelho the sweep is likely to reach next is already
+in there; add new ones as they're swept.
 
 **Calendar export is one toolbar button, not per-card.** Per-event "Add to calendar"
 controls were tried and removed — two extra controls on every card for a rarely-used action
