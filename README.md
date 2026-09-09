@@ -61,6 +61,32 @@ because the slider stops at 650 km and Madeira is further out than that). The sa
 applies to Markets. An earlier separate "Town" select was redundant with this and is gone,
 though old shared links using `#t=` are still honoured as a `Where` value.
 
+## "Mais Info" — why cards search instead of linking the source
+
+Each event card links to a web search built from its own title, venue and town, not to
+its `Source` URL. Most Source values are aggregator landing pages
+(`timeout.pt/coisas-para-fazer…`, `viralagenda.com/pt/setubal`) that drop the reader on a
+generic listing rather than the event. `Source` stays in the CSV — the daily task's
+source-link rule and Audit Log depend on it — it just isn't what the card links to.
+
+Two things make the search work, and both are data-dependent:
+
+The **whole title** goes into the query, brackets included, because it already carries the
+Portuguese original where there is one and Google ignores the parentheses. Extracting "just
+the Portuguese part" was tried and dropped: it discarded `7.ª Marcha do Orgulho de Santarém`
+for starting with a digit while keeping English like `Street Festivities`.
+
+The **venue** goes in too, and it matters more than it looks. Proper nouns survive
+translation, so `Classic Cinema Cycle: 'Cops and Robbers'` alone returns Wikipedia pages
+about unrelated films, while adding `Luísa Todi Municipal Forum` surfaces the Portuguese
+listing and the council's own article. Vague venues (`Various venues`, anything with `TBC`,
+multi-venue strings, or the town name repeated) are filtered out as noise — 199 of 213 rows
+currently contribute a venue.
+
+The upstream lever is the daily task's language rule: a row whose title exists only as an
+English translation searches poorly. That rule now requires the Portuguese original in
+brackets on every translated title, and Portuguese proper nouns kept in `Venue`.
+
 ## Things worth knowing before you edit
 
 **Categories are a closed set.** `CATS` in `template.html` is the whole list, and every

@@ -426,6 +426,25 @@ const ICONS = { // Material Symbols (outlined) icon name, one per category
   'Cinema':'movie', 'Sport':'sports_soccer', 'Workshop':'handyman', 'Family':'family_restroom',
   'Pride':'diversity_3', 'Community':'groups', 'Heritage & talks':'account_balance', 'Other':'star'};
 const iconFor = e => ICONS[e.cat] || ICONS.Other;
+// Most Source values are aggregator landing pages that drop you on a generic
+// listing rather than the event, so the card searches instead. The whole title goes
+// in: it already carries the Portuguese original in brackets where there is one, and
+// Google ignores the brackets — trying to extract "just the Portuguese part" got it
+// wrong on real rows (it dropped "7.ª Marcha do Orgulho de Santarém" for starting
+// with a digit, and kept English like "Street Festivities"). Source stays in the CSV
+// for the daily task's audit trail; it just isn't the thing the card links to.
+// The venue earns its place in the query: proper nouns survive translation, so an
+// English-only title like "Classic Cinema Cycle: 'Cops and Robbers'" finds nothing on
+// its own, but adding "Luísa Todi Municipal Forum" pulls up the Portuguese listing and
+// the council's own article. Placeholders and multi-venue strings are dropped — they
+// add noise rather than anchor anything.
+const VAGUE_VENUE = /^(various venues|city centre|not specified|multiple venues)$|TBC|\+/i;
+const searchURL = e => {
+  const venue = e.venue && e.venue !== e.town && e.venue.length <= 45 && !VAGUE_VENUE.test(e.venue) ? e.venue : '';
+  return 'https://www.google.com/search?q=' +
+    encodeURIComponent([e.name, venue, e.town, e.start.slice(0,4)].filter(Boolean).join(' '));
+};
+
 function card(e){ const id=eid(e), sv=SAVED.has(id), d=distOrKm(e); return `<article class="ev" style="--cc:var(${catVar(e.cat)})">
   <div class="photo"><span class="material-symbols-outlined">${iconFor(e)}</span><span class="catpill">${esc(e.cat)}</span><span class="pricepill pill ${priceClass(e.fp)}">${esc(e.fp)}${e.price&&e.price!=='0'&&!/^free/i.test(e.fp)?' · '+(/^\d/.test(e.price)?'€':'')+esc(e.price):''}</span>
   <button class="fav" type="button" data-id="${esc(id)}" aria-pressed="${sv}" aria-label="${sv?'Remove from saved':'Save this event'}" title="${sv?'Saved':'Save'}"><span class="material-symbols-outlined">star</span></button></div>
@@ -435,7 +454,7 @@ function card(e){ const id=eid(e), sv=SAVED.has(id), d=distOrKm(e); return `<art
   ${e.desc?`<p>${esc(e.desc)}</p>`:''}
   <div class="side"><span class="mono" style="font-size:12px;color:var(--ink2);font-weight:700">${fmtRange(e)}</span>
   ${state.near?`<span class="km">${d==null?'distance n/a':d+' km from '+esc(state.near)}</span>`:''}
-  ${e.src?`<a class="src" href="${esc(e.src)}" target="_blank" rel="noopener">source ↗</a>`:''}</div>
+  <a class="src find" href="${esc(searchURL(e))}" target="_blank" rel="noopener" lang="pt" title="Search the web for this event">Mais Info ↗</a></div>
   </div></article>`; }
 
 // One delegated listener covers cards in the list, the calendar day panel and the map panel.
