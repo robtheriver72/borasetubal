@@ -5,8 +5,11 @@ import csv, json, sys, datetime, zoneinfo, pathlib
 root = pathlib.Path(__file__).parent
 date = sys.argv[1] if len(sys.argv) > 1 else datetime.datetime.now(zoneinfo.ZoneInfo("Europe/Lisbon")).date().isoformat()
 def num(s):
-    try: return int(str(s).strip() or 0)
-    except ValueError: return 0
+    """Distance in km, or None when the sheet has no usable number (blank,
+    'Island', 'TBC'…). None means 'unknown', which the page renders as '—'
+    rather than silently claiming the event is 0 km away."""
+    try: return int(str(s).strip())
+    except ValueError: return None
 ev = [dict(start=r['Start date'], end=r['End date'] or r['Start date'], name=r['Event'], type=r['Type'], cat=r['Category'] or 'Other',
            town=r['Town'], venue=r['Venue'], km=num(r['~km from Setúbal']), fp=r['Free / Paid'] or 'Unknown', price=r['Price (€)'],
            desc=r['Description'], freq=r['Frequency'], src=r['Source'], img=r.get('Image','')) for r in csv.DictReader(open(root/'events.csv', encoding='utf-8'))]
