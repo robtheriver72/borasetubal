@@ -85,11 +85,18 @@ event falls back to its `~km from Setúbal` value, and a market to the same, so 
 to the sheet but not to `TOWNS` will still appear but will sort and filter off that column
 rather than off a real distance.
 
-**Calendar handoff is .ics first.** Each card's "Add" builds a single-event .ics and
-downloads it, which opens directly in Apple Calendar on iOS/macOS and imports into Outlook
-and the rest; the smaller "Google" link beside it is the one-click path for Google Calendar
-only. The toolbar exports the whole filtered set the same way. Note that downloads are
-blocked inside Claude's artifact viewer — the .ics buttons only work on the real site.
+**Calendar export is one toolbar button, not per-card.** Per-event "Add to calendar"
+controls were tried and removed — two extra controls on every card for a rarely-used action
+made the cards a mess. The toolbar exports the whole filtered set as .ics, which is enough.
+Note that downloads are blocked inside Claude's artifact viewer, so that button only works
+on the real site.
+
+**Icons are a Google font of ligatures, and the page checks it actually loaded.** If it
+hasn't — blocked host, flaky connection — every icon would otherwise render as its own name
+("family_restroom", "contrast"). `iconFontWorks()` measures a ligature: one glyph is ~24px,
+the literal word runs to ~180px. The probe must NOT carry the `.material-symbols-outlined`
+class, because `no-icons` sets that class to `display:none` and a classed probe would then
+measure 0px, read as "fine", and flip the state back on the next call.
 
 **Dates are formatted locally, not in UTC.** Use the `isoLocal` helper rather than
 `toISOString()`; the latter shifts "today" by a day for the first hour after midnight in

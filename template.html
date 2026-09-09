@@ -47,15 +47,14 @@ a{color:var(--accent)}
 .views button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);box-shadow:var(--shadow)}
 .status{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink3)}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--ink3)}
-.dot.live{background:var(--free)} .dot.busy{background:var(--ochre);animation:pulse 1.2s infinite} .dot.err{background:var(--c-major)}
-@keyframes pulse{50%{opacity:.35}}
-@media (prefers-reduced-motion:reduce){.dot.busy{animation:none}}
+.dot.live{background:var(--free)}
 .status button{border:1px solid var(--line);background:var(--bg2);border-radius:8px;padding:4px 9px;font-size:12px;font-weight:600}
 .status #theme{padding:4px 7px;display:inline-flex;align-items:center}
 .status #theme .material-symbols-outlined{font-size:17px}
 @media (max-width:620px){
   .top-in{gap:10px;padding:10px 14px}
-  .brand h1{font-size:21px} .brand small{display:none}
+  .brand{gap:0;flex-direction:column;align-items:flex-start}
+  .brand h1{font-size:21px} .brand small{font-size:10px}
   .views{overflow-x:auto;max-width:100%;scrollbar-width:none}
   .views::-webkit-scrollbar{display:none}
   .views button{padding:7px 12px;font-size:13px}
@@ -78,6 +77,11 @@ a{color:var(--accent)}
 .f label,.f .lbl{font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;color:var(--accent-ink);opacity:.85}
 .f input[type=search],.f select{border:0;border-bottom:3px solid var(--mustard);background:color-mix(in srgb,var(--accent-ink) 92%,transparent);color:var(--ink);border-radius:10px 10px 4px 4px;padding:9px 11px;width:100%;font-weight:600}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
+.secToggle{display:flex;align-items:center;gap:6px;width:100%;border:0;background:transparent;padding:0;cursor:pointer;text-align:left}
+.secToggle .chev{margin-left:auto;font-size:12px;opacity:.8;transition:transform .15s}
+@media (prefers-reduced-motion:reduce){.secToggle .chev{transition:none}}
+.secToggle[aria-expanded="false"] .chev{transform:rotate(-90deg)}
+.selcount{background:var(--mustard);color:#2B2A1F;border-radius:999px;padding:0 6px;font-size:10px;font-weight:800;letter-spacing:0}
 .chip{border:0;background:color-mix(in srgb,var(--accent-ink) 20%,transparent);border-radius:999px;padding:5px 10px 5px 8px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:6px;color:var(--accent-ink)}
 .chip i{width:9px;height:9px;border-radius:50%;background:var(--cc);display:inline-block}
 .chip[aria-pressed="true"]{background:var(--mustard);color:#2B2A1F}
@@ -111,6 +115,9 @@ a{color:var(--accent)}
 .ev .photo,.mkc .photo{position:relative;display:flex;align-items:center;gap:10px;padding:11px 14px;background:color-mix(in srgb,var(--cc) 12%,var(--bg3));border-bottom:1px solid color-mix(in srgb,var(--cc) 22%,transparent)}
 .material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;font-size:24px;display:inline-block;white-space:nowrap;word-wrap:normal;direction:ltr;-webkit-font-feature-settings:'liga';font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'opsz' 24,'wght' 350,'FILL' 0,'GRAD' 0;line-height:1;visibility:hidden}
 body.icons-ready .material-symbols-outlined{visibility:visible}
+body.no-icons .material-symbols-outlined{display:none}
+body.no-icons .fav::before{content:'\2605';font-size:16px;line-height:1}
+body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
 .ev .photo .material-symbols-outlined{font-size:20px;color:var(--cc);flex:none}
 .ev .photo .catpill{background:var(--cc);color:#fff;font-weight:800;font-size:11px;letter-spacing:.03em;padding:4px 10px;border-radius:999px;white-space:nowrap}
 .ev .photo .pricepill{margin-left:auto;font-weight:800;font-size:11px;padding:4px 10px;border-radius:999px;white-space:nowrap}
@@ -137,10 +144,6 @@ body.icons-ready .material-symbols-outlined{visibility:visible}
 .btn:hover{border-color:var(--accent);color:var(--accent)}
 .btn .material-symbols-outlined{font-size:16px}
 .tools{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
-.ev .calbtn{font-size:12px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:3px;color:var(--accent);border:0;background:transparent;padding:0}
-.ev .calbtn .material-symbols-outlined{font-size:15px}
-.ev .calbtn.gcal{font-weight:600;color:var(--ink3)}
-.ev .calbtn.gcal:hover{color:var(--accent)}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:700;font-size:13px;box-shadow:var(--shadow);z-index:50;max-width:90vw;text-align:center}
 @media (prefers-reduced-motion:no-preference){.toast{animation:rise .18s ease-out}@keyframes rise{from{opacity:0;transform:translate(-50%,8px)}}}
 .savedcount{background:var(--mustard);color:#2B2A1F;border-radius:999px;padding:0 6px;font-size:11px;font-weight:800;margin-left:5px}
@@ -165,13 +168,13 @@ body.icons-ready .material-symbols-outlined{visibility:visible}
 </style>
 
 <header class="top"><div class="top-in">
-  <div class="brand"><h1>Bora <span>Y'all!</span></h1><small>events all over Portugal</small></div>
+  <div class="brand"><h1>Bora <span>Y'all!</span></h1><small lang="pt">É para aproveitar!</small></div>
   <nav class="views" aria-label="View">
     <button data-view="list" aria-pressed="true">List</button>
     <button data-view="freenif" aria-pressed="false">Free w/ NIF</button>
     <button data-view="markets" aria-pressed="false">Markets</button>
   </nav>
-  <div class="status"><span class="dot" id="dot"></span><span id="statusText">Snapshot</span><button id="refresh" type="button" hidden>Refresh</button>
+  <div class="status"><span class="dot" id="dot"></span><span id="statusText"></span>
     <button id="theme" type="button" class="btn" aria-label="Switch between light and dark" title="Theme"><span class="material-symbols-outlined" id="themeIcon">routine</span></button></div>
 </div></header>
 
@@ -182,7 +185,7 @@ body.icons-ready .material-symbols-outlined{visibility:visible}
     <div class="f"><label for="q">Search</label><input id="q" type="search" placeholder="Fado, jazz, walk, Palmela…"></div>
     <div class="f"><span class="lbl">When</span><div class="seg" id="when">
       <button data-w="all" aria-pressed="true">All</button><button data-w="weekend" aria-pressed="false">This weekend</button><button data-w="7" aria-pressed="false">Next 7 days</button><button data-w="30" aria-pressed="false">Next 30 days</button></div></div>
-    <div class="f"><span class="lbl">Category</span><div class="chips" id="cats"></div></div>
+    <div class="f"><button class="lbl secToggle" id="catsToggle" type="button" aria-expanded="true" aria-controls="cats">Category<span class="selcount" id="catsCount"></span><span class="chev" aria-hidden="true">▾</span></button><div class="chips" id="cats"></div></div>
     <div class="f"><label class="tgl"><input type="checkbox" id="freeOnly"> Free only</label></div>
     <div class="f"><label class="tgl"><input type="checkbox" id="savedOnly"> Saved only <span class="savedcount" id="savedCount" hidden>0</span></label></div>
     <div class="f"><label for="near">Where</label><select id="near"><option value="">Anywhere in Portugal</option></select></div>
@@ -213,18 +216,44 @@ body.icons-ready .material-symbols-outlined{visibility:visible}
     </section>
   </main>
 </div>
-<footer class="foot"><b>Bora</b> — Portuguese for “let’s go”. Events are gathered daily from municipal agendas, venue programmes and listings sites across mainland Portugal — from Setúbal and Lisbon out to the Algarve, Alentejo and the north. Prices and dates come from the sources listed on each entry — check before you go. Categories: Local concerts are gigs at neighbourhood venues; Major concerts are touring acts at the big arenas and halls.</footer>
+<footer class="foot"><b>Bora</b> — Portuguese for “let’s go”; <b lang="pt">é para aproveitar</b> — “it’s there to be enjoyed”, so make the most of it. Events are gathered daily from municipal agendas, venue programmes and listings sites across mainland Portugal — from Setúbal and Lisbon out to the Algarve, Alentejo and the north. Prices and dates come from the sources listed on each entry — check before you go. Categories: Local concerts are gigs at neighbourhood venues; Major concerts are touring acts at the big arenas and halls.</footer>
 
 <script id="snapshot" type="application/json">__SNAPSHOT__</script>
 <script>
 (() => {
+// Icons are a Google font of ligatures: if it fails to load — blocked host, flaky
+// connection — every icon renders as its own name ("family_restroom", "contrast").
+// So only reveal them once the font really is there, and fall back to plain
+// characters for the two controls that would otherwise be empty.
+const ICON_FONT='24px "Material Symbols Outlined"';
+// document.fonts.check() is no use here: it answers true when the family is simply
+// unknown and the browser will fall back. Measure instead — with the font present a
+// ligature name collapses to one ~24px glyph; without it, it lays out as the literal
+// word and runs to ~180px.
+function iconFontWorks(){
+  // Deliberately NOT given the .material-symbols-outlined class: once no-icons is set
+  // that class is display:none, so a classed probe would measure 0px, read as "fine",
+  // and flip the state back on the next call. Set the font-family directly instead.
+  const probe=document.createElement('span');
+  probe.textContent='calendar_add_on';
+  probe.style.cssText='position:absolute;left:-9999px;top:0;visibility:hidden;white-space:nowrap;'
+    +'font-family:"Material Symbols Outlined";font-size:24px';
+  document.body.appendChild(probe);
+  const w=probe.getBoundingClientRect().width;
+  probe.remove();
+  return !(w > 60);   // fail open: only hide icons when it is clearly a word, not a glyph
+}
+function settleIcons(){
+  const ok=iconFontWorks();
+  document.body.classList.toggle('icons-ready', ok);
+  document.body.classList.toggle('no-icons', !ok);
+}
 if (document.fonts && document.fonts.load) {
-  Promise.race([document.fonts.load('24px "Material Symbols Outlined"'), new Promise(r=>setTimeout(r,3000))])
-    .then(()=>document.body.classList.add('icons-ready')).catch(()=>{});
-  document.fonts.ready.then(()=>document.body.classList.add('icons-ready'));
+  Promise.race([document.fonts.load(ICON_FONT), new Promise(r=>setTimeout(r,3000))]).then(settleIcons, settleIcons);
+  document.fonts.ready.then(settleIcons).catch(()=>{});   // in case it arrives late
 } else { document.body.classList.add('icons-ready'); }
 const SNAP = JSON.parse(document.getElementById('snapshot').textContent);
-let EVENTS = SNAP.events, MARKETS = SNAP.markets, FREENIF = SNAP.freenif||[], dataDate = SNAP.date, live = false;
+let EVENTS = SNAP.events, MARKETS = SNAP.markets, FREENIF = SNAP.freenif||[];
 
 const CATS = [
   ['Local concert','--c-local'],['Major concert','--c-major'],['Festival','--c-fest'],
@@ -267,7 +296,7 @@ const esc = s => String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>'
 const priceClass = fp => /^free/i.test(fp)?'free':/^paid/i.test(fp)?'paid':/mixed|donation/i.test(fp)?'mixed':'unk';
 
 // ---------- state ----------
-const state = { view:'list', q:'', when:'all', cats:new Set(), free:false, saved:false, km:650, near:'', sort:'date' };
+const state = { view:'list', q:'', when:'all', cats:new Set(), catsOpen:true, free:false, saved:false, km:650, near:'', sort:'date' };
 const R=6371;
 const haversine=(a,b)=>{ if(!a||!b) return null; const [lat1,lon1]=a,[lat2,lon2]=b; const toRad=d=>d*Math.PI/180;
   const dLat=toRad(lat2-lat1), dLon=toRad(lon2-lon1); const h=Math.sin(dLat/2)**2+Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
@@ -349,7 +378,14 @@ function paintChips(){
   const all={}; EVENTS.forEach(e=>{ if(e.end>=today()) all[e.cat]=(all[e.cat]||0)+1; });
   $('#cats').innerHTML = CATS.filter(([c])=>all[c]).map(([c,v])=>{ const n=ctx[c]||0;
     return `<button class="chip" type="button" data-cat="${esc(c)}" aria-pressed="${state.cats.has(c)}"${n?'':' data-zero="1"'} style="--cc:var(${v})"><i></i>${esc(c)}<span class="n">${n}</span></button>`; }).join('');
+  // Collapsed, the chips hide but the count stays, so a filter can never be left on
+  // out of sight with no way to see that it is.
+  $('#cats').hidden = !state.catsOpen;
+  $('#catsToggle').setAttribute('aria-expanded', state.catsOpen);
+  const sel=state.cats.size; const badge=$('#catsCount');
+  badge.textContent = sel ? sel : ''; badge.hidden = !sel;
 }
+$('#catsToggle').addEventListener('click', ()=>{ state.catsOpen=!state.catsOpen; paintChips(); save(); });
 function buildRail(){
   paintChips();
   // Towns that actually have something on come first, with counts; the rest of the
@@ -365,6 +401,9 @@ function buildRail(){
   $('#kmLbl').textContent = state.near ? `Distance from ${state.near}` : 'Distance';
   $('#q').value=state.q; $('#freeOnly').checked=state.free; $('#savedOnly').checked=state.saved; updateSavedCount();
   $('#km').value=state.km; $('#kmOut').textContent=kmLabel(); $('#sort').value=state.sort;
+  // "Distance" is ambiguous with no place picked — it falls back to the sheet's
+  // km-from-Setúbal column, so say so rather than letting the label imply otherwise.
+  $('#sort').querySelector('option[value="km"]').textContent = state.near ? `Distance from ${state.near}` : 'Distance from Setúbal';
   document.querySelectorAll('#when button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.w===state.when));
 }
 $('#cats').addEventListener('click', e=>{ const b=e.target.closest('.chip'); if(!b) return; const c=b.dataset.cat; state.cats.has(c)?state.cats.delete(c):state.cats.add(c); b.setAttribute('aria-pressed',state.cats.has(c)); render(); });
@@ -387,14 +426,6 @@ const ICONS = { // Material Symbols (outlined) icon name, one per category
   'Cinema':'movie', 'Sport':'sports_soccer', 'Workshop':'handyman', 'Family':'family_restroom',
   'Pride':'diversity_3', 'Community':'groups', 'Heritage & talks':'account_balance', 'Other':'star'};
 const iconFor = e => ICONS[e.cat] || ICONS.Other;
-// All-day calendar entries: DTEND / the Google 'dates' end is exclusive, so it is
-// the day *after* the event's last day.
-const gcalURL = e => { const c=s=>s.replace(/-/g,'');
-  const p=new URLSearchParams({action:'TEMPLATE', text:e.name, dates:`${c(e.start)}/${c(addDays(e.end,1))}`,
-    details:[e.desc, e.fp?`Entry: ${e.fp}${e.price&&e.price!=='0'?' · '+e.price:''}`:'', e.src].filter(Boolean).join('\n'),
-    location:[e.venue,e.town].filter(Boolean).join(', ')});
-  return 'https://calendar.google.com/calendar/render?'+p.toString(); };
-
 function card(e){ const id=eid(e), sv=SAVED.has(id), d=distOrKm(e); return `<article class="ev" style="--cc:var(${catVar(e.cat)})">
   <div class="photo"><span class="material-symbols-outlined">${iconFor(e)}</span><span class="catpill">${esc(e.cat)}</span><span class="pricepill pill ${priceClass(e.fp)}">${esc(e.fp)}${e.price&&e.price!=='0'&&!/^free/i.test(e.fp)?' · '+(/^\d/.test(e.price)?'€':'')+esc(e.price):''}</span>
   <button class="fav" type="button" data-id="${esc(id)}" aria-pressed="${sv}" aria-label="${sv?'Remove from saved':'Save this event'}" title="${sv?'Saved':'Save'}"><span class="material-symbols-outlined">star</span></button></div>
@@ -404,8 +435,6 @@ function card(e){ const id=eid(e), sv=SAVED.has(id), d=distOrKm(e); return `<art
   ${e.desc?`<p>${esc(e.desc)}</p>`:''}
   <div class="side"><span class="mono" style="font-size:12px;color:var(--ink2);font-weight:700">${fmtRange(e)}</span>
   ${state.near?`<span class="km">${d==null?'distance n/a':d+' km from '+esc(state.near)}</span>`:''}
-  <button class="calbtn" type="button" data-id="${esc(id)}" title="Download this event for Apple Calendar, Outlook or any other calendar app"><span class="material-symbols-outlined">event</span>Add</button>
-  <a class="calbtn gcal" href="${esc(gcalURL(e))}" target="_blank" rel="noopener" title="Add straight to Google Calendar">Google</a>
   ${e.src?`<a class="src" href="${esc(e.src)}" target="_blank" rel="noopener">source ↗</a>`:''}</div>
   </div></article>`; }
 
@@ -420,7 +449,8 @@ document.addEventListener('click', ev=>{ const b=ev.target.closest('.fav'); if(!
   toast(on?'Saved':'Removed from saved');
   if(state.saved) render(); });
 function renderList(){ const rows=sortRows(filtered()); const t=today();
-  $('#sumMeta').textContent = `${rows.length} of ${EVENTS.filter(e=>e.end>=t).length} upcoming · data ${live?'live from your Google Sheet':'snapshot from '+dataDate}`;
+  const total=EVENTS.filter(e=>e.end>=t).length;   // freshness lives in the header now
+  $('#sumMeta').textContent = rows.length===total ? `${total} events` : `${rows.length} of ${total} events`;
   const w={all:'Everything coming up',weekend:'This weekend',7:'The next 7 days',30:'The next 30 days'}[state.when];
   $('#sumTitle').textContent = (state.saved?'Saved — ':'')+(state.cats.size===1?[...state.cats][0]+'s — ':'')+w
     +(state.near ? (state.km<=0 ? ' in '+state.near : ` within ${state.km>=650?'reach of':state.km+' km of'} ${state.near}`) : '');
@@ -460,17 +490,10 @@ function downloadICS(rows, filename){
   const blob=new Blob([buildICS(rows)],{type:'text/calendar;charset=utf-8'}); const url=URL.createObjectURL(blob);
   const a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove();
   setTimeout(()=>URL.revokeObjectURL(url),1000); }
-const slug = s => (String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9]+/g,'-').replace(/^-+|-+$/g,'').toLowerCase()||'event').slice(0,60);
-
 $('#ics').addEventListener('click', ()=>{ const rows=sortRows(filtered());
   if(!rows.length){ toast('Nothing to export with these filters'); return; }
   downloadICS(rows,'bora-events.ics'); toast(`${rows.length} event${rows.length===1?'':'s'} exported`); });
 
-// Per-event .ics — opens straight into Apple Calendar on iOS/macOS, and imports
-// into Outlook or anything else. Google gets its own one-click link on the card.
-document.addEventListener('click', ev=>{ const b=ev.target.closest('.calbtn'); if(!b || b.tagName==='A') return;
-  const e=EVENTS.find(x=>eid(x)===b.dataset.id); if(!e) return;
-  downloadICS([e], slug(e.name)+'.ics'); toast('Calendar file downloaded'); });
 
 // ---------- theme ----------
 const THEMES=['system','light','dark'];
@@ -517,33 +540,14 @@ function render(){ save(); VIEWS.forEach(v=>$('#v-'+v).classList.toggle('hidden'
 buildRail(); render();
 document.querySelectorAll('.views button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.view===state.view));
 
-// ---------- live data from the Google Sheet ----------
-const SERVER='Google Drive';
-function parseTable(md){ const lines=String(md).split('\n').map(l=>l.trim()).filter(l=>l.startsWith('|'));
-  const cells=l=>l.slice(1,-1).split(' | ').map(c=>c.trim().replace(/\\([~!_&*#|])/g,'$1'));
-  const rows=lines.map(cells).filter(r=>!r.every(c=>!c||/^:?-+:?$/.test(c))); if(!rows.length) return []; const hdr=rows[0]; return rows.slice(1).map(r=>Object.fromEntries(hdr.map((h,i)=>[h,r[i]??'']))); }
-const toKm = v => { const n=parseInt(v,10); return Number.isFinite(n) ? n : null; }; // 'Island', 'TBC', blank -> unknown
-function toEvents(objs){ return objs.filter(o=>/^\d{4}-\d{2}-\d{2}$/.test(o['Start date']||'')).map(o=>({start:o['Start date'],end:o['End date']||o['Start date'],name:o['Event'],type:o['Type'],cat:normCat(o['Category']||'Other'),town:o['Town'],venue:o['Venue'],km:toKm(o['~km from Setúbal']),fp:o['Free / Paid']||'Unknown',price:o['Price (€)']||'',desc:o['Description']||'',freq:o['Frequency']||'',src:o['Source']||'',img:o['Image']||''})); }
-function toMarkets(objs){ return objs.filter(o=>o['Market']).map(o=>({name:o['Market'],cat:o['Category'],town:o['Town'],loc:o['Location'],km:toKm(o['~km from Setúbal']),freq:o['Frequency'],days:o['Days & hours'],goods:o['Types of goods'],entry:o['Entry'],note:o['Notes']||'',src:o['Source']||'',img:o['Image']||''})); }
-const setStatus=(cls,txt)=>{ $('#dot').className='dot '+cls; $('#statusText').textContent=txt; };
-async function fetchSheet(mcp,title,refresh){ const q=`title = '${title}' and mimeType = 'application/vnd.google-apps.spreadsheet'`;
-  const s=await mcp.callTool(SERVER,'search_files',{query:q,excludeContentSnippets:true},{cache:{staleTime:refresh?0:120000,refresh:!!refresh}});
-  const p=typeof s.payload==='string'?JSON.parse(s.payload):s.payload; const files=(p&&p.files)||[]; if(!files.length) throw {code:'tool_error',message:`No sheet named “${title}” found`};
-  files.sort((a,b)=>String(b.createdTime).localeCompare(String(a.createdTime))); const id=files[0].id;
-  const r=await mcp.callTool(SERVER,'read_file_content',{fileId:id},{cache:{staleTime:refresh?0:120000,refresh:!!refresh}});
-  const rp=typeof r.payload==='string'?JSON.parse(r.payload):r.payload; return {rows:parseTable(rp.fileContent||''), at:(r.cache&&r.cache.storedAt)||Date.now()}; }
-async function loadLive(refresh){ const mcp=await claude.use('mcp'); if(!mcp) return; $('#refresh').hidden=false; setStatus('busy','Loading from Google Sheet…');
-  try{ const [ev,mk]=await Promise.all([fetchSheet(mcp,'Freevent Events',refresh),fetchSheet(mcp,'Freevent Markets',refresh)]);
-    const evs=toEvents(ev.rows), mks=toMarkets(mk.rows); if(!evs.length) throw {code:'tool_error',message:'Sheet had no readable rows'};
-    EVENTS=evs; if(mks.length) MARKETS=mks; live=true; dataDate=new Date(ev.at).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
-    setStatus('live',`Live · ${EVENTS.length} events · ${dataDate}`); buildRail(); render(); }
-  catch(err){ const c=err&&err.code; const msg = c==='needs_reauth'?'Reconnect Google Drive in claude.ai Settings → Connectors to see live data'
-    : c==='server_not_connected'||c==='selection_required'?'Add Google Drive in claude.ai Settings → Connectors for live data'
-    : c==='not_granted'||c==='blocked_by_policy'||c==='approval_required'?'Live data not permitted here — showing snapshot'
-    : (err&&err.message)||'Could not read the sheet';
-    setStatus('err',`Snapshot from ${SNAP.date} · ${msg}`);
-    if(c==='server_unavailable'&&err.retryable&&!refresh){ setTimeout(()=>loadLive(true),(err.retryAfterMs||2500)+Math.random()*1500); } } }
-$('#refresh').addEventListener('click',()=>loadLive(true));
-if(window.claude&&window.claude.use) loadLive(false); else setStatus('', `Snapshot from ${SNAP.date}`);
+// ---------- data freshness ----------
+// The page ships a snapshot baked in by build.py. It used to also try reading the
+// Google Sheets live through the Drive connector, but that only ever ran when the
+// page was open inside Claude — on GitHub Pages window.claude does not exist, so
+// the branch was unreachable. The repo is the source of truth now and a GitHub
+// Action rebuilds this file, so the snapshot date is the whole story.
+$('#dot').className='dot live';
+$('#statusText').textContent = `${EVENTS.filter(e=>e.end>=today()).length} events · updated ${new Date(SNAP.date+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'})}`;
+
 })();
 </script>
