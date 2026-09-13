@@ -137,19 +137,36 @@ a{color:var(--accent)}
 .day b{font-family:"Baloo 2",sans-serif;font-size:18px}
 .day span{color:var(--ink3);font-size:12.5px;font-weight:700}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(252px,1fr));gap:14px;margin:10px 0}
-.ev{display:flex;flex-direction:column;background:var(--bg2);border:1px solid var(--line);border-radius:16px;overflow:hidden;transition:transform .14s,box-shadow .14s}
+/* The card used to carry a full-width coloured band holding an icon, a category pill,
+   a price pill and the star — roughly 40px of chrome that encoded the category twice
+   (colour AND label) and still clipped "Local concert" to "Local conc…". The colour
+   now lives in a 3px edge, the category is plain coloured text that can be as long as
+   it likes, and the row it used to occupy is gone. On a phone that is most of a card
+   back per three cards.
+   content-visibility lets the browser skip layout and paint for cards that are far
+   off-screen; contain-intrinsic-size keeps the scrollbar honest while they are skipped. */
+.ev{position:relative;display:flex;flex-direction:column;background:var(--bg2);border:1px solid var(--line);
+  border-left:3px solid var(--cc);border-radius:14px;transition:transform .14s,box-shadow .14s;
+  content-visibility:auto;contain-intrinsic-size:auto 190px}
 .ev:hover{transform:translateY(-3px) rotate(-.3deg);box-shadow:var(--shadow)}
-.ev .photo,.mkc .photo{position:relative;display:flex;align-items:center;gap:9px;padding:8px 12px;background:color-mix(in srgb,var(--cc) 12%,var(--bg3));border-bottom:1px solid color-mix(in srgb,var(--cc) 22%,transparent)}
+.ev .top{display:flex;align-items:center;gap:8px;margin-bottom:1px}
+.ev .top .cat{color:var(--cc);font-weight:800;font-size:11.5px;letter-spacing:.02em;text-transform:uppercase;min-width:0}
+.ev .top .pricepill{margin-left:auto;font-weight:800;font-size:11px;padding:3px 9px;border-radius:999px;white-space:nowrap;flex:none}
+.ev .top .fav{margin-left:0}
+.ev .top .pricepill + .fav{margin-left:2px}
+.ev .top .fav:only-of-type{margin-left:auto}
+/* The whole card is the click target: the Mais Info link stretches invisibly over it,
+   so there is still exactly one link per card for a screen reader or keyboard user. */
+.ev .src.stretch::after{content:"";position:absolute;inset:0;z-index:1;border-radius:14px}
+.ev .fav{position:relative;z-index:2}
+.ev:focus-within{box-shadow:var(--shadow)}
+.mkc .photo{position:relative;display:flex;align-items:center;gap:9px;padding:8px 12px;background:color-mix(in srgb,var(--cc) 12%,var(--bg3));border-bottom:1px solid color-mix(in srgb,var(--cc) 22%,transparent)}
 .material-symbols-outlined{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;font-size:24px;display:inline-block;white-space:nowrap;word-wrap:normal;direction:ltr;-webkit-font-feature-settings:'liga';font-feature-settings:'liga';-webkit-font-smoothing:antialiased;font-variation-settings:'opsz' 24,'wght' 350,'FILL' 0,'GRAD' 0;line-height:1;visibility:hidden}
 body.icons-ready .material-symbols-outlined{visibility:visible}
 body.no-icons .material-symbols-outlined{display:none}
 body.no-icons .fav::before{content:'\2605';font-size:16px;line-height:1}
 body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
-.ev .photo .material-symbols-outlined{font-size:20px;color:var(--cc);flex:none}
-.ev .photo .catpill{background:var(--cc);color:#fff;font-weight:800;font-size:11px;letter-spacing:.03em;padding:4px 10px;border-radius:999px;white-space:nowrap}
-.ev .photo .pricepill{margin-left:auto;font-weight:800;font-size:11px;padding:4px 10px;border-radius:999px;white-space:nowrap;flex:none}
-.ev .photo .catpill{min-width:0;overflow:hidden;text-overflow:ellipsis}   /* colour + icon back it up */
-.ev .body{padding:10px 13px 12px;min-width:0;display:flex;flex-direction:column;gap:5px;flex:1}
+.ev .body{padding:11px 13px 12px;min-width:0;display:flex;flex-direction:column;gap:5px;flex:1}
 .ev h3{margin:0;font-size:15.5px;font-weight:700;line-height:1.25;font-family:"Baloo 2",sans-serif}
 .ev .sub{color:var(--ink2);font-size:12.5px;display:flex;flex-wrap:wrap;gap:3px 10px}
 .ev .sub .cat{color:var(--cc);font-weight:700}
@@ -158,7 +175,13 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
 .pill{display:inline-block;border-radius:999px;padding:3px 9px;font-size:12px;font-weight:800}
 .pill.free{background:var(--free-soft);color:var(--free)} .pill.paid{background:var(--paid-soft);color:var(--paid)} .pill.mixed{background:var(--accent-soft);color:var(--accent)} .pill.unk{background:var(--bg3);color:var(--ink3)}
 .km{font-size:12px;color:var(--ink3)}
-.ev .src{font-size:12px}
+.ev .src{font-size:12px;margin-left:auto}   /* stays right even when the date is absent */
+.ev .top .cat{line-height:1.25}
+.scopenote{margin:2px 0 14px;color:var(--ink3);font-size:12.5px;line-height:1.5;max-width:78ch}
+.freenote{margin:6px 0 0;color:var(--ochre);font-size:12.5px;font-weight:600}
+.moreBtn{display:block;margin:18px auto 0}
+#nearMe{width:100%;justify-content:center}
+#feedSentinel{height:1px}
 .empty{padding:40px 20px;text-align:center;color:var(--ink3);border:2px dashed var(--line);border-radius:16px}
 .empty .btn{margin-top:12px}
 
@@ -196,6 +219,36 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
 .hidden{display:none!important}
 [hidden]{display:none!important}
 .range output{font-size:12px}
+
+/* ---------- Tip us off ---------- */
+/* A static site can't receive a POST, so the form composes a mailto: instead —
+   no backend, no third-party form service, nothing to go stale. */
+.tip{max-width:1400px;margin:0 auto 28px;padding:0 20px}
+.tip-in{background:var(--bg2);border:1px solid var(--line);border-top:3px solid var(--mustard);
+  border-radius:16px;padding:20px 22px;box-shadow:var(--shadow)}
+.tip h2{margin:0 0 4px;font-size:19px;letter-spacing:-.01em}
+.tip .blurb{margin:0 0 18px;color:var(--ink2);font-size:13.5px;max-width:78ch}
+.tip form{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 14px;align-items:end}
+.tip .fld{display:flex;flex-direction:column;gap:5px;min-width:0}
+.tip .fld.wide{grid-column:1/-1}
+.tip label{font-size:12.5px;font-weight:800;color:var(--ink2)}
+.tip input,.tip textarea{border:1px solid var(--line);border-bottom:2px solid var(--mustard);
+  background:var(--bg);color:var(--ink);border-radius:9px;padding:9px 11px;width:100%;
+  font:inherit;font-weight:600;box-sizing:border-box}
+.tip textarea{resize:vertical;min-height:70px;font-weight:500}
+.tip input::placeholder,.tip textarea::placeholder{color:var(--ink3);font-weight:500}
+.tip .go{display:flex;gap:12px;align-items:center;flex-wrap:wrap;grid-column:1/-1;margin-top:2px}
+.tip .sendbtn{display:inline-block;border:0;background:var(--accent);color:var(--accent-ink);
+  border-radius:999px;padding:11px 22px;font:inherit;font-weight:800;cursor:pointer;
+  box-shadow:var(--shadow);text-decoration:none;white-space:nowrap}
+.tip .sendbtn:hover{filter:brightness(1.08)}
+.tip .sendbtn[aria-disabled="true"]{opacity:.5;cursor:not-allowed}
+.tip .hint{font-size:12px;color:var(--ink3)}
+.tip .hint a{font-weight:700}
+@media (max-width:760px){
+  .tip{padding:0 14px}
+  .tip form{grid-template-columns:1fr}
+}
 </style>
 
 <header class="top"><div class="top-in">
@@ -219,10 +272,11 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
     <div class="f"><label for="q">Search</label><input id="q" type="search" placeholder="Fado, jazz, walk, Palmela…"></div>
     <div class="f"><span class="lbl">When</span><div class="seg" id="when">
       <button data-w="all" aria-pressed="true">All</button><button data-w="weekend" aria-pressed="false">This weekend</button><button data-w="7" aria-pressed="false">Next 7 days</button><button data-w="30" aria-pressed="false">Next 30 days</button></div></div>
-    <div class="f"><label for="near">Where</label><select id="near"><option value="">Anywhere in Portugal</option></select></div>
+    <div class="f"><label for="near">Where</label><select id="near"><option value="">Anywhere in Portugal</option></select>
+      <button class="btn" id="nearMe" type="button" style="margin-top:7px"><span class="material-symbols-outlined">my_location</span>Use my location</button></div>
     <div class="f" id="kmField" hidden><label for="km" id="kmLbl">Distance</label><div class="range"><input id="km" type="range" min="0" max="650" step="25" value="650"><output for="km" id="kmOut" class="mono">Anywhere</output></div></div>
     <div class="f" id="onlyField"><span class="lbl">Show only</span><div class="toggles">
-      <label class="tgl"><input type="checkbox" id="freeOnly"> Free</label>
+      <label class="tgl"><input type="checkbox" id="freeOnly"> Free <span class="n" id="freeCount"></span></label>
       <label class="tgl"><input type="checkbox" id="savedOnly"> Saved <span class="savedcount" id="savedCount" hidden>0</span></label></div></div>
     <div class="f"><button class="lbl secToggle" id="catsToggle" type="button" aria-expanded="false" aria-controls="cats">Category<span class="selcount" id="catsCount"></span><span class="chev" aria-hidden="true">▾</span></button><div class="chips" id="cats"></div></div>
     <button class="reset" id="reset" type="button">Reset filters</button>
@@ -233,6 +287,7 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
     <section id="v-list">
       <div class="sum"><h2 id="sumTitle">Everything coming up</h2><span class="meta" id="sumMeta"></span>
         <div class="sort"><label for="sort">Sort</label><select id="sort"><option value="date">Date</option><option value="km">Distance</option><option value="name">Name</option><option value="cat">Category</option></select></div></div>
+      <p class="freenote" id="freeNote" hidden></p>
       <div class="tools">
         <button class="btn" id="share" type="button"><span class="material-symbols-outlined">link</span>Copy link to this view</button>
         <button class="btn" id="ics" type="button"><span class="material-symbols-outlined">calendar_add_on</span>Download these as a calendar</button>
@@ -241,16 +296,58 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
     </section>
     <section id="v-freenif" class="hidden">
       <div class="sum"><h2>Free entry with your NIF</h2><span class="meta" id="fnMeta"></span></div>
-      <p style="color:var(--ink2);font-size:13.5px;max-width:70ch;margin:-6px 0 14px">Portugal's museums and monuments give free admission to residents on set days — you're usually asked to show your Cartão de Cidadão or quote your NIF (tax number) at the door or when booking online. Always double-check the current date on the venue's own site before you go.</p>
+      <p style="color:var(--ink2);font-size:13.5px;max-width:70ch;margin:-6px 0 8px">Portugal's museums and monuments give free admission to residents on set days — you're usually asked to show your Cartão de Cidadão or quote your NIF (tax number) at the door or when booking online. Always double-check the current date on the venue's own site before you go.</p>
+      <p class="scopenote" id="fnScope"></p>
       <div class="mk" id="fn"></div>
     </section>
     <section id="v-markets" class="hidden">
       <div class="sum"><h2>Recurring markets</h2><span class="meta" id="mkMeta"></span>
         <div class="sort"><label class="tgl" style="font-size:13px"><input type="checkbox" id="mkWeekend"> Open this weekend</label></div></div>
+      <p class="scopenote" id="mkScope"></p>
       <div class="mk" id="mk"></div>
     </section>
   </main>
 </div>
+<section class="tip" aria-labelledby="tipH">
+  <div class="tip-in">
+    <h2 id="tipH">Missed an awesome event? <span lang="pt">Bora</span>, tell us.</h2>
+    <p class="blurb">We sweep municipal agendas and venue programmes right across Portugal — but it's a big
+      country, and the best stuff is often the stuff nobody puts online. Spotted a festa, a gig, a fair or a
+      one-off worth the drive? Send it over.</p>
+    <form id="tipForm" novalidate>
+      <div class="fld wide">
+        <label for="tEvent">What's on</label>
+        <input id="tEvent" name="event" type="text" placeholder="Feira Medieval de Palmela" autocomplete="off">
+      </div>
+      <div class="fld">
+        <label for="tDate">When</label>
+        <input id="tDate" name="date" type="text" placeholder="25–27 Sept, or a date" autocomplete="off">
+      </div>
+      <div class="fld">
+        <label for="tTown">Town</label>
+        <input id="tTown" name="town" type="text" placeholder="Palmela" autocomplete="off">
+      </div>
+      <div class="fld">
+        <label for="tVenue">Where exactly</label>
+        <input id="tVenue" name="venue" type="text" placeholder="Castelo de Palmela" autocomplete="off">
+      </div>
+      <div class="fld wide">
+        <label for="tLink">Link <span style="font-weight:600;color:var(--ink3)">— the event's own page, if you have one</span></label>
+        <input id="tLink" name="link" type="url" placeholder="https://…" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="fld wide">
+        <label for="tNotes">Anything else</label>
+        <textarea id="tNotes" name="notes" placeholder="Free? Ticketed? Worth it? Tell us what makes it good."></textarea>
+      </div>
+      <div class="go">
+        <a id="tipSend" class="sendbtn" href="mailto:robertlarriviere@me.com">Send it in ↗</a>
+        <span class="hint" id="tipHint">Opens your email app with everything filled in — nothing is sent until you hit send.
+          Prefer to write it yourself? <a href="mailto:robertlarriviere@me.com?subject=Bora%20y%27all%21%20%E2%80%94%20event%20tip">Email us directly</a>.</span>
+      </div>
+    </form>
+  </div>
+</section>
+
 <footer class="foot"><b>Bora</b> — Portuguese for “let’s go”; <b lang="pt">é agora</b> — “now’s the time”. Events are gathered daily from municipal agendas, venue programmes and listings sites across mainland Portugal — from Setúbal and Lisbon out to the Algarve, Alentejo and the north. Prices and dates come from the sources listed on each entry — check before you go. Categories: Local concerts are gigs at neighbourhood venues; Major concerts are touring acts at the big arenas and halls.</footer>
 
 <script id="snapshot" type="application/json">__SNAPSHOT__</script>
@@ -306,7 +403,7 @@ const CAT_ALIAS = {'Market day':'Market','Markets':'Market','Fair':'Festival','M
 const normCat = c => { const v=CAT_ALIAS[c]||c; return CAT_NAMES.has(v) ? v : 'Other'; };
 const catVar = c => (CATS.find(x=>x[0]===c)||CATS[CATS.length-1])[1];
 const TOWNS = { // lat, lon (approx town centres) — mainland Portugal
-  'Setúbal':[38.524,-8.892],'Palmela':[38.569,-8.901],'Azeitão':[38.520,-9.010],'Setúbal / Azeitão':[38.52,-8.95],'Quinta do Anjo (Palmela)':[38.567,-8.940],'Pinhal Novo (Palmela)':[38.631,-8.913],
+  'Setúbal':[38.524,-8.892],'Grândola':[38.175,-8.567],'Palmela':[38.569,-8.901],'Azeitão':[38.520,-9.010],'Setúbal / Azeitão':[38.52,-8.95],'Quinta do Anjo (Palmela)':[38.567,-8.940],'Pinhal Novo (Palmela)':[38.631,-8.913],
   'Sesimbra':[38.444,-9.101],'Moita':[38.650,-8.990],'Barreiro':[38.663,-9.072],'Seixal':[38.640,-9.101],'Corroios (Seixal)':[38.640,-9.150],'Almada':[38.679,-9.158],'Costa da Caparica (Almada)':[38.641,-9.235],
   'Lisbon':[38.722,-9.139],'Oeiras':[38.692,-9.311],'Amadora':[38.753,-9.231],'Cascais':[38.697,-9.421],'Estoril':[38.706,-9.398],'Carcavelos (Cascais)':[38.690,-9.335],'Tires (Cascais)':[38.722,-9.350],'Alcabideche (Cascais)':[38.733,-9.409],
   'Sintra':[38.800,-9.388],'São Pedro de Sintra':[38.790,-9.379],'Alcácer do Sal':[38.373,-8.513],'Santiago do Cacém':[38.018,-8.696],'Sines':[37.955,-8.868],
@@ -315,7 +412,7 @@ const TOWNS = { // lat, lon (approx town centres) — mainland Portugal
   'Santarém':[39.236,-8.686],'Portalegre':[39.293,-7.430],'Castelo Branco':[39.821,-7.491],'Elvas':[38.881,-7.163],'Évora':[38.571,-7.909],'Beja':[38.015,-7.865],
   'Faro':[37.019,-7.930],'Portimão':[37.136,-8.538],'Lagos':[37.102,-8.673],'Albufeira':[37.089,-8.250],'Tavira':[37.127,-7.649],'Silves':[37.191,-8.438],
   'Loulé':[37.138,-8.023],'Peso da Régua':[41.164,-7.786],'Ílhavo':[40.601,-8.667],'Funchal (Madeira)':[32.650,-16.908],'Ponta Delgada (Açores)':[37.741,-25.677],
-  'Funchal':[32.650,-16.908],'São Brás de Alportel':[37.153,-7.887],'Alcoutim':[37.470,-7.472],'Lamego':[41.096,-7.809],
+  'Funchal':[32.650,-16.908],'Ponta Delgada':[37.741,-25.677],'Batalha':[39.659,-8.825],'São Brás de Alportel':[37.153,-7.887],'Alcoutim':[37.470,-7.472],'Lamego':[41.096,-7.809],
   'Figueira da Foz':[40.150,-8.862],'Cantanhede':[40.349,-8.594],'Lousã':[40.116,-8.245],'Góis':[40.156,-8.111],
   'Tocha':[40.322,-8.771],'Vila Nova de Poiares':[40.213,-8.259],'Fonte de Ançã':[40.283,-8.634],
   'Favaios':[41.245,-7.510],'Celeirós do Douro':[41.222,-7.630],'Vila Verde':[41.647,-8.436],'Mêda':[40.965,-7.263],'Lamas':[40.093,-8.333],
@@ -353,7 +450,12 @@ const priceClass = fp => /^free/i.test(fp)?'free':/^paid/i.test(fp)?'paid':/mixe
 
 // ---------- state ----------
 // catsOpen starts false: 17 category chips dominated the rail on first load.
-const state = { view:'list', q:'', when:'all', cats:new Set(), catsOpen:false, onOpen:false, free:false, saved:false, km:650, near:'', sort:'date' };
+// The list used to open on "Everything coming up" — 517 rows, newest first: a database,
+// presented. The question people actually arrive with is "what is on this weekend?", and
+// the data agrees (300 of the 517 live rows fall in the next fortnight). So open on the
+// weekend — unless the weekend is thin, in which case widen rather than show an empty
+// page. A returning reader's own choice is restored from localStorage and wins over this.
+const state = { view:'list', q:'', when:'weekend', cats:new Set(), catsOpen:false, onOpen:false, free:false, saved:false, km:650, near:'', sort:'date' };
 const R=6371;
 const haversine=(a,b)=>{ if(!a||!b) return null; const [lat1,lon1]=a,[lat2,lon2]=b; const toRad=d=>d*Math.PI/180;
   const dLat=toRad(lat2-lat1), dLon=toRad(lon2-lon1); const h=Math.sin(dLat/2)**2+Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
@@ -366,7 +468,9 @@ const kmLabel = () => state.km<=0 ? 'This town only' : state.km>=650 ? 'Anywhere
 // The slider tops out at 650, but the islands are ~1000 km out — at the top of the
 // range it has to mean genuinely no limit, or "Anywhere" silently hides Madeira.
 const kmCap = () => state.km>=650 ? Infinity : state.km;
-try { const s = JSON.parse(localStorage.getItem('bora.filters')||'null'); if (s) { Object.assign(state, s, {cats:new Set(s.cats||[])}); } } catch(e){}
+let hadSavedFilters = false;
+try { const s = JSON.parse(localStorage.getItem('bora.filters')||'null');
+  if (s) { hadSavedFilters = true; Object.assign(state, s, {cats:new Set(s.cats||[])}); } } catch(e){}
 const save = () => { try { localStorage.setItem('bora.filters', JSON.stringify({...state, cats:[...state.cats], day:null})); } catch(e){} };
 
 // ---------- saved events (this browser only) ----------
@@ -458,9 +562,14 @@ function buildRail(){
   $('#kmLbl').textContent = state.near ? `Distance from ${state.near}` : 'Distance';
   $('#q').value=state.q; $('#freeOnly').checked=state.free; $('#savedOnly').checked=state.saved; updateSavedCount();
   $('#km').value=state.km; $('#kmOut').textContent=kmLabel(); $('#sort').value=state.sort;
-  // "Distance" is ambiguous with no place picked — it falls back to the sheet's
-  // km-from-Setúbal column, so say so rather than letting the label imply otherwise.
-  $('#sort').querySelector('option[value="km"]').textContent = state.near ? `Distance from ${state.near}` : 'Distance from Setúbal';
+  // The site covers the whole country now, so a distance sort with no place picked is
+  // meaningless — it used to quietly fall back to the CSV's km-from-Setúbal column, a
+  // leftover from when this was a Setúbal site. Offer it only once there is a place.
+  const kmOpt = $('#sort').querySelector('option[value="km"]');
+  kmOpt.textContent = state.near ? `Distance from ${state.near}` : 'Distance — pick a place first';
+  kmOpt.disabled = !state.near;
+  if(!state.near && state.sort==='km'){ state.sort='date'; $('#sort').value='date'; }
+  $('#freeCount').textContent = EVENTS.filter(e=>e.end>=today() && /^free/i.test(e.fp||'')).length;
   document.querySelectorAll('#when button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.w===state.when));
 }
 $('#cats').addEventListener('click', e=>{ const b=e.target.closest('.chip'); if(!b) return; const c=b.dataset.cat; state.cats.has(c)?state.cats.delete(c):state.cats.add(c); b.setAttribute('aria-pressed',state.cats.has(c)); render(); });
@@ -470,6 +579,21 @@ $('#freeOnly').addEventListener('change', e=>{ state.free=e.target.checked; rend
 $('#savedOnly').addEventListener('change', e=>{ state.saved=e.target.checked; render(); });
 $('#km').addEventListener('input', e=>{ state.km=+e.target.value; $('#kmOut').textContent=kmLabel(); render(); });
 $('#near').addEventListener('change', e=>{ state.near=e.target.value; buildRail(); render(); });
+// Pick the closest town we know coordinates for, so the distance slider and the km line
+// mean something without the reader having to know which town they are nearest to.
+$('#nearMe').addEventListener('click', ()=>{
+  if(!navigator.geolocation) return toast('This browser has no location support');
+  const btn=$('#nearMe'); btn.disabled=true; toast('Finding you…');
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const here=[pos.coords.latitude,pos.coords.longitude];
+    let best=null,bd=Infinity;
+    for(const t in TOWNS){ const d=haversine(here,TOWNS[t]); if(d!=null&&d<bd){bd=d;best=t;} }
+    btn.disabled=false;
+    if(!best) return toast('Could not place you');
+    state.near=best; if(state.km>=650) state.km=100;
+    buildRail(); render(); toast(`Nearest we know: ${best} (~${Math.round(bd)} km)`);
+  }, ()=>{ btn.disabled=false; toast('Location not shared — pick a town instead'); }, {timeout:8000});
+});
 $('#sort').addEventListener('change', e=>{ state.sort=e.target.value; render(); });
 $('#railToggle').addEventListener('click', ()=>{ const open=$('#rail').classList.toggle('open'); $('#railToggle').setAttribute('aria-expanded',open); $('#railChevron').textContent = open?'▴':'▾'; });
 $('#reset').addEventListener('click', ()=>{ Object.assign(state,{q:'',when:'all',cats:new Set(),free:false,saved:false,km:650,near:'',town:''}); buildRail(); render(); });
@@ -497,6 +621,29 @@ const iconFor = e => ICONS[e.cat] || ICONS.Other;
 // the council's own article. Placeholders and multi-venue strings are dropped — they
 // add noise rather than anchor anything.
 const VAGUE_VENUE = /^(various venues|city centre|not specified|multiple venues)$|TBC|\+/i;
+
+// Most sources ARE listing pages — 315 of the live rows point at a nocartaz concelho
+// agenda, which drops you on a town, not an event. Those still deserve a web search.
+// But some sources are the event's own page (Casa da Música, Forum Braga, Ticketline,
+// a council's news article), and sending a search after one of those is strictly worse
+// than sending the link we already hold. So: link the source when it identifies a
+// single item, search otherwise.
+const LISTING_DIR  = /\/(concelhos|distrito|cidade|category|categoria|tag)\/[^/]+$/i;
+const LISTING_LAST = /^(agenda|agenda-online|programacao|programa|calendar|calendario|events?|eventos|este-mes|guia-de-eventos|noticias|index|home)$/i;
+const ROUNDUP      = /(coisas-para-fazer|eventos-concertos|calendario-de|-este-mes|agenda-altice)/i;
+function eventPage(e){
+  const u = (e.src||'').trim();
+  if(!/^https?:\/\//i.test(u)) return '';
+  let p; try { p = new URL(u); } catch(err){ return ''; }
+  const path = p.pathname.replace(/\/+$/,'');
+  if(!path) return '';                                  // bare domain = a front page
+  if(LISTING_DIR.test(path)) return '';
+  const last = path.split('/').pop();
+  if(LISTING_LAST.test(last) || ROUNDUP.test(last)) return '';
+  // A specific item carries an id, or a slug with real words in it.
+  const named = last.split(/[-_]/).filter(Boolean).length >= 3;
+  return (/\d{3,}/.test(last) || named || /\/(event|evento|detail|noticia|post)\//i.test(path)) ? u : '';
+}
 const searchURL = e => {
   const venue = e.venue && e.venue !== e.town && e.venue.length <= 45 && !VAGUE_VENUE.test(e.venue) ? e.venue : '';
   return 'https://www.google.com/search?q=' +
@@ -523,16 +670,21 @@ function pricePill(e){
   return `<span class="pricepill pill ${priceClass(e.fp)}">${esc(e.fp + amount)}</span>`;
 }
 
-function card(e){ const id=eid(e), sv=SAVED.has(id), d=distOrKm(e); return `<article class="ev${sv?' saved':''}" style="--cc:var(${catVar(e.cat)})">
-  <div class="photo"><span class="material-symbols-outlined">${iconFor(e)}</span><span class="catpill" title="${esc(e.cat)}">${esc(shortCat(e.cat))}</span>${pricePill(e)}
-  <button class="fav" type="button" data-id="${esc(id)}" aria-pressed="${sv}" aria-label="${sv?'Remove from saved':'Save this event'}" title="${sv?'Saved':'Save'}"><span class="material-symbols-outlined">star</span></button></div>
+// underDay: the card sits under a "Sun, 13 Sept" heading, so repeating the date on it
+// is pure noise — except for a run, where the range is the thing worth knowing.
+function card(e, underDay){ const id=eid(e), sv=SAVED.has(id), d=distOrKm(e);
+  const direct = eventPage(e);
+  const showDate = !underDay || e.start!==e.end;
+  return `<article class="ev${sv?' saved':''}" style="--cc:var(${catVar(e.cat)})">
   <div class="body">
+  <div class="top"><span class="cat">${esc(e.cat)}</span>${pricePill(e)}
+  <button class="fav" type="button" data-id="${esc(id)}" aria-pressed="${sv}" aria-label="${sv?'Remove from saved':'Save this event'}" title="${sv?'Saved':'Save'}"><span class="material-symbols-outlined">star</span></button></div>
   <h3>${esc(e.name)}</h3>
   <div class="sub"><span>${esc(e.town)}${e.venue&&e.venue!==e.town?' · '+esc(e.venue):''}</span>${usefulFreq(e.freq)?`<span>${esc(e.freq)}</span>`:''}</div>
   ${e.desc?`<p>${esc(e.desc)}</p>`:''}
-  <div class="side"><span class="mono" style="font-size:11.5px;color:var(--ink2);font-weight:700">${fmtRange(e)}</span>
+  <div class="side">${showDate?`<span class="mono" style="font-size:11.5px;color:var(--ink2);font-weight:700">${fmtRange(e)}</span>`:''}
   ${state.near?`<span class="km">${d==null?'distance n/a':d+' km from '+esc(state.near)}</span>`:''}
-  <a class="src find" href="${esc(searchURL(e))}" target="_blank" rel="noopener" lang="pt" title="Search the web for this event">Mais Info ↗</a></div>
+  <a class="src find stretch" href="${esc(direct||searchURL(e))}" target="_blank" rel="noopener" lang="pt" title="${direct?'Opens the event\u2019s own page':'Search the web for this event'}">Mais Info ↗</a></div>
   </div></article>`; }
 
 // One delegated listener covers cards in the list, the calendar day panel and the map panel.
@@ -566,9 +718,14 @@ function pickScore(e, wkStart){
 function picksHTML(){
   if(state.saved || state.sort!=='date') return '';    // they have already curated
   const [sat,sun] = weekendRange();
-  let pool = filtered().filter(e => e.start <= sun && e.end >= sat), label = 'this weekend';
+  // A workshop running 1–29 Sept technically "overlaps the weekend", but it is not a
+  // weekend pick — it is a thing you can catch any time. Only short runs, or runs that
+  // actually begin in the window, qualify.
+  const runDays = e => Math.round((new Date(e.end) - new Date(e.start))/864e5);
+  const weekendShaped = e => runDays(e) <= 7 || e.start >= sat;
+  let pool = filtered().filter(e => e.start <= sun && e.end >= sat && weekendShaped(e)), label = 'this weekend';
   if(pool.length < 3){ const b = addDays(today(),7);
-    pool = filtered().filter(e => e.start <= b && e.end >= today()); label = 'the week ahead'; }
+    pool = filtered().filter(e => e.start <= b && e.end >= today() && runDays(e) <= 14); label = 'the week ahead'; }
   if(pool.length < 3) return '';
   const ranked = pool.map(e=>({e, s:pickScore(e, sat)})).sort((a,b)=> b.s-a.s || a.e.start.localeCompare(b.e.start));
   const chosen=[], cats=new Set(), towns=new Set();
@@ -576,9 +733,61 @@ function picksHTML(){
     if(cats.has(e.cat) || towns.has(e.town)) continue;  // three of the same thing is not a pick
     chosen.push(e); cats.add(e.cat); towns.add(e.town); }
   for(const {e} of ranked){ if(chosen.length===3) break; if(!chosen.includes(e)) chosen.push(e); }
-  const when = label==='this weekend' ? `${fmt(sat)} – ${fmt(sun)}` : 'next seven days';
+  // Late in the weekend the range collapses to a single day; "Sun 13 – Sun 13" is silly.
+  const when = label!=='this weekend' ? 'next seven days' : sat===sun ? fmt(sat) : `${fmt(sat)} – ${fmt(sun)}`;
   return `<section class="picks"><div class="day"><b>If you only do one thing ${label}</b><span>${when}</span></div>
-    <div class="grid">${chosen.map(card).join('')}</div></section>`;
+    <div class="grid">${chosen.map(e=>card(e,false)).join('')}</div></section>`;
+}
+
+// Every matching card used to go into the DOM at once: 520 cards was 7,961 nodes, a
+// 91,000px page and 2.2s to first paint on a throttled phone — and the crawl adds ~300
+// events a run, so that only got worse. Now a chunk is rendered, and the next chunk is
+// appended as a sentinel near the bottom scrolls into view. Day grouping has to survive
+// across chunk boundaries, so the cursor and the last-day marker live out here.
+const CHUNK = 90;
+let feed = { rows:[], i:0, day:null, grid:null };
+
+function dayHeader(key,t){ return `<div class="day"><b>${fmt(key)}</b><span>${key===t?'today':key===addDays(t,1)?'tomorrow':''}</span></div>`; }
+
+// Each chunk is parsed on its own, so an unclosed <div class="grid"> cannot be left
+// dangling for the next one to continue — the parser closes it and the following cards
+// land loose in #feed. Hold a reference to the open grid and append into it instead.
+function feedChunk(){
+  const t = today(), box = $('#feed'); if(!box) return;
+  let n = 0, buf = '';
+  const flush = () => { if(buf && feed.grid){ feed.grid.insertAdjacentHTML('beforeend', buf); } buf=''; };
+  while(feed.i < feed.rows.length && n < CHUNK){
+    const e = feed.rows[feed.i];
+    if(e.start !== feed.day){
+      flush();
+      feed.day = e.start;
+      box.insertAdjacentHTML('beforeend', dayHeader(e.start,t) + '<div class="grid"></div>');
+      feed.grid = box.lastElementChild;
+    }
+    buf += card(e,true); feed.i++; n++;
+  }
+  flush();
+  const done = feed.i >= feed.rows.length;
+  $('#feedMore').hidden = done;
+  $('#feedCount').textContent = done ? '' : `${feed.rows.length - feed.i} more`;
+  if(done && feedObserver) feedObserver.disconnect();
+}
+
+function flatChunk(){
+  let out='',n=0;
+  while(feed.i<feed.rows.length && n<CHUNK){ out+=card(feed.rows[feed.i],false); feed.i++; n++; }
+  feed.grid.insertAdjacentHTML('beforeend',out);
+  const done=feed.i>=feed.rows.length;
+  $('#feedMore').hidden=done;
+  $('#feedCount').textContent = done?'':`${feed.rows.length-feed.i} more`;
+  if(done && feedObserver) feedObserver.disconnect();
+}
+let feedObserver = null;
+function armFeed(){
+  if(feedObserver) feedObserver.disconnect();
+  const sentinel = $('#feedSentinel'); if(!sentinel || !('IntersectionObserver' in window)) return;
+  feedObserver = new IntersectionObserver(es=>{ if(es.some(x=>x.isIntersecting)) nextChunk(); }, {rootMargin:'900px'});
+  feedObserver.observe(sentinel);
 }
 
 function renderList(){ const rows=sortRows(filtered()); const t=today();
@@ -587,32 +796,47 @@ function renderList(){ const rows=sortRows(filtered()); const t=today();
   const w={all:'Everything coming up',weekend:'This weekend',7:'The next 7 days',30:'The next 30 days'}[state.when];
   $('#sumTitle').textContent = (state.saved?'Saved — ':'')+(state.cats.size===1?[...state.cats][0]+'s — ':'')+w
     +(state.near ? (state.km<=0 ? ' in '+state.near : ` within ${state.km>=650?'reach of':state.km+' km of'} ${state.near}`) : '');
+  // 62% of live events have no price recorded, so "Free" quietly hides far more than it
+  // shows. Say so rather than letting the filter imply the site has nothing free.
+  const unpriced = EVENTS.filter(e=>e.end>=t && !/^(free|paid)/i.test(e.fp||'')).length;
+  const note=$('#freeNote');
+  note.hidden = !(state.free && unpriced);
+  note.textContent = state.free && unpriced
+    ? `Showing only events confirmed free. ${unpriced} more have no price recorded — they may be free too.` : '';
   if(!rows.length){ $('#list').innerHTML = state.saved && !SAVED.size
       ? '<div class="empty">Nothing saved yet. Tap the ★ on any card and it will be waiting here — on this browser, without an account.</div>'
       : '<div class="empty">Nothing matches these filters.<br><button class="btn resetProxy" type="button">Clear all filters</button></div>';
     return; }
-  if(state.sort!=='date'){ $('#list').innerHTML=`<div class="grid">${rows.map(card).join('')}</div>`; return; }
+  if(state.sort!=='date'){
+    feed = { rows, i:0, day:'\u0000', grid:null };
+    $('#list').innerHTML = `<div id="feed" class="grid"></div>`
+      + `<div id="feedSentinel"></div><button class="btn moreBtn" id="feedMore" type="button">Show more <span id="feedCount"></span></button>`;
+    // flat mode: one grid, no day headings
+    feed.grid = $('#feed'); feed.day = '\u0000';   // one grid, no day headings
+    flatChunk(); armFeed(); return; }
 
   // A site called "é agora" should not open with a LEGO show that runs until January.
   // Anything that started before today is a run you can catch any time: it goes to the
   // bottom under "Still on", ordered by what disappears first.
   const ongoing = rows.filter(e=>e.start < t), dated = rows.filter(e=>e.start >= t);
-  let out = picksHTML();
-  let last=null;
-  dated.forEach(e=>{ const key=e.start;
-    if(key!==last){ if(last!==null) out+='</div>'; last=key;
-      out += `<div class="day"><b>${fmt(key)}</b><span>${key===t?'today':key===addDays(t,1)?'tomorrow':''}</span></div><div class="grid">`; }
-    out+=card(e); });
-  if(last!==null) out+='</div>';
-
+  let tail = '';
   if(ongoing.length){ const open=state.onOpen;
     ongoing.sort((a,b)=>a.end.localeCompare(b.end) || distSort(a)-distSort(b));
-    out += `<div class="day"><button class="secToggle stillOn" id="stillToggle" type="button" aria-expanded="${open}" aria-controls="stillOn">
+    tail = `<div class="day"><button class="secToggle stillOn" id="stillToggle" type="button" aria-expanded="${open}" aria-controls="stillOn">
         <b>Still on</b><span>${ongoing.length} run${ongoing.length===1?'':'s'} &amp; exhibitions already under way</span><span class="chev" aria-hidden="true">▾</span></button></div>
-      <div class="grid" id="stillOn"${open?'':' hidden'}>${ongoing.map(card).join('')}</div>`; }
-  $('#list').innerHTML=out; }
+      <div class="grid" id="stillOn"${open?'':' hidden'}>${open?ongoing.map(e=>card(e,false)).join(''):''}</div>`; }
+
+  feed = { rows:dated, i:0, day:null, grid:null };
+  $('#list').innerHTML = picksHTML() + `<div id="feed"></div>`
+    + `<div id="feedSentinel"></div><button class="btn moreBtn" id="feedMore" type="button">Show more <span id="feedCount"></span></button>`
+    + `<div id="listTail">${tail}</div>`;
+  feedChunk(); armFeed(); }
+const nextChunk = () => (state.sort==='date' ? feedChunk : flatChunk)();
+document.addEventListener('click', ev=>{ if(ev.target.closest('#feedMore')) nextChunk(); });
 document.addEventListener('click', ev=>{ if(!ev.target.closest('#stillToggle')) return;
-  state.onOpen=!state.onOpen; save(); renderList(); });
+  state.onOpen=!state.onOpen; save(); renderList();
+  // keep the toggle under the thumb rather than jumping to the top of the list
+  const b=$('#stillToggle'); if(b) b.scrollIntoView({block:'center'}); });
 
 document.addEventListener('click', ev=>{ if(ev.target.closest('.resetProxy')) $('#reset').click(); });
 
@@ -665,7 +889,9 @@ function renderMarkets(){ const wk=$('#mkWeekend').checked; const q=state.q.trim
   const rows=MARKETS.filter(m=>{ const d=mDist(m);
     return (d==null || d<=kmCap()) && (!q||(m.name+' '+m.goods+' '+m.town+' '+m.cat).toLowerCase().includes(q)) && (!wk||openThisWeekend(m)); })
     .sort((a,b)=>(mDist(a)??1e9)-(mDist(b)??1e9));
-  $('#mkMeta').textContent=`${rows.length} of ${MARKETS.length} markets`+(state.near?` · nearest to ${state.near} first`:' · nearest first');
+  $('#mkMeta').textContent=`${rows.length} of ${MARKETS.length} markets`
+    +(state.near?` · nearest to ${state.near} first`:'');
+  $('#mkScope').textContent = scopeNote(MARKETS.map(m=>m.town), 'markets');
   $('#mk').innerHTML = rows.map(m=>{ const on=openThisWeekend(m); const d=mDist(m); return `<article class="mkc ${wk&&on?'on':''}" style="--cc:var(--c-market)">
     <div class="photo"><span class="material-symbols-outlined">storefront</span><span class="catpill">${esc(m.cat)}</span></div>
     <div class="body"><h3>${esc(m.name)}</h3><span class="when">${esc(m.days)} <span class="km">· ${esc(m.freq)}</span></span>
@@ -673,11 +899,28 @@ function renderMarkets(){ const wk=$('#mkWeekend').checked; const q=state.q.trim
 $('#mkWeekend').addEventListener('change',renderMarkets);
 
 // ---------- free with NIF ----------
+// Two of the three tabs only cover part of the country. Saying which part beats letting
+// a reader in Porto conclude there are no markets near them. Computed from the rows, so
+// the sentence corrects itself as coverage grows instead of going stale.
+function scopeNote(towns, noun){
+  const uniq=[...new Set(towns.filter(Boolean))];
+  if(!uniq.length) return '';
+  const has=f=>uniq.some(t=>TOWNS[t]&&f(TOWNS[t]));
+  const missing=[];
+  if(!has(la=>la[0]>41))   missing.push('the north');
+  if(!has(la=>la[0]<37.6)) missing.push('the Algarve');
+  if(!has(la=>la[1]<-16))  missing.push('the islands');
+  const where = uniq.length<=2 ? uniq.join(' and ')+' only' : `${uniq.length} towns`;
+  return `Coverage so far: ${where}` + (missing.length
+    ? `. Nothing yet from ${missing.join(', ').replace(/, ([^,]*)$/,' or $1')} — these ${noun} are still being gathered.`
+    : ', from the Algarve up to the north, plus the islands.');
+}
 function renderFreenif(){ $('#fnMeta').textContent = `${FREENIF.length} places`;
+  $('#fnScope').textContent = scopeNote(FREENIF.map(f=>f.town), 'places');
   $('#fn').innerHTML = FREENIF.map(f=>`<article class="mkc" style="--cc:var(--c-other)">
     <div class="photo"><span class="material-symbols-outlined">confirmation_number</span><span class="catpill">${esc(f.req)}</span></div>
     <div class="body"><h3>${esc(f.place)}</h3><span class="when">${esc(f.cond)}</span>
-    <span class="goods">Regular price ${esc(f.price)}</span><span class="loc">${esc(f.town)}</span>${f.note?`<span class="note">${esc(f.note)}</span>`:''}${f.src?`<a class="src" style="font-size:12px" href="${esc(f.src)}" target="_blank" rel="noopener">source ↗</a>`:''}</div></article>`).join('') || '<div class="empty">No entries yet.</div>'; }
+    ${f.price?`<span class="goods">Regular price ${esc(f.price)}</span>`:''}<span class="loc">${esc(f.town)}</span>${f.note?`<span class="note">${esc(f.note)}</span>`:''}${f.src?`<a class="src" style="font-size:12px" href="${esc(f.src)}" target="_blank" rel="noopener">source ↗</a>`:''}</div></article>`).join('') || '<div class="empty">No entries yet.</div>'; }
 
 // ---------- render ----------
 function render(){ save(); VIEWS.forEach(v=>$('#v-'+v).classList.toggle('hidden',state.view!==v));
@@ -685,6 +928,13 @@ function render(){ save(); VIEWS.forEach(v=>$('#v-'+v).classList.toggle('hidden'
   document.querySelectorAll('#cats,#when,#onlyField').forEach(el=>{ el.closest('.f').style.display = railFilters?'none':''; });
   if(!railFilters) paintChips();
   ({list:renderList,freenif:renderFreenif,markets:renderMarkets})[state.view](); }
+// Opening on the weekend is only a good idea when the weekend has something in it. On a
+// quiet week — or late on a Sunday, when "this weekend" is nearly spent — widen to seven
+// days and then to everything, rather than greet a first-time reader with a blank page.
+if(!hadSavedFilters && !location.hash){
+  const count = w => { const held=state.when; state.when=w; const n=filtered().length; state.when=held; return n; };
+  if(count('weekend') < 8) state.when = count('7') < 8 ? 'all' : '7';
+}
 buildRail(); render();
 document.querySelectorAll('.views button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.view===state.view));
 
@@ -697,5 +947,52 @@ document.querySelectorAll('.views button').forEach(b=>b.setAttribute('aria-press
 $('#dot').className='dot live';
 $('#statusText').textContent = `${EVENTS.filter(e=>e.end>=today()).length} events · updated ${new Date(SNAP.date+'T00:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'})}`;
 
+})();
+</script>
+
+<script>
+// Tip-off form -> mailto:. The send control is a real anchor whose href is rebuilt as
+// you type, so the browser handles the mailto natively — more reliable than assigning
+// location.href, which some mobile browsers block from inside a JS handler.
+// Kept out of the main IIFE so a failure here can never take the listings down with it.
+(() => {
+  const TO = 'robertlarriviere@me.com';
+  const form = document.getElementById('tipForm');
+  const send = document.getElementById('tipSend');
+  if (!form || !send) return;
+  const hint = document.getElementById('tipHint');
+  const val = id => (document.getElementById(id).value || '').trim();
+
+  function compose() {
+    const ev = val('tEvent'), date = val('tDate'), town = val('tTown'),
+          venue = val('tVenue'), link = val('tLink'), notes = val('tNotes');
+    // Something has to identify the event, or the mail is useless to read.
+    const ready = !!(ev || link);
+
+    const subject = 'Bora y\u2019all! \u2014 event tip' + (ev ? ': ' + ev : '');
+    const lines = [['What', ev], ['When', date], ['Town', town], ['Where', venue], ['Link', link]]
+      .filter(([, v]) => v).map(([k, v]) => k + ': ' + v);
+    if (notes) lines.push('', notes);
+    lines.push('', '\u2014 sent from ' + location.href.split('#')[0]);
+
+    send.href = 'mailto:' + TO + '?subject=' + encodeURIComponent(subject)
+              + '&body=' + encodeURIComponent(lines.join('\n'));
+    send.setAttribute('aria-disabled', ready ? 'false' : 'true');
+    return ready;
+  }
+
+  form.addEventListener('input', compose);
+  compose();
+
+  send.addEventListener('click', e => {
+    if (!compose()) {
+      e.preventDefault();
+      hint.textContent = 'Give us at least a name or a link and we\u2019re away.';
+      hint.style.color = 'var(--ochre)';
+      document.getElementById('tEvent').focus();
+    }
+  });
+  // Enter inside a field should send, not reload the page.
+  form.addEventListener('submit', e => { e.preventDefault(); send.click(); });
 })();
 </script>

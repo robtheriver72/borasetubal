@@ -1,39 +1,39 @@
 slug,Concelho,Agenda events,On site,Last swept,Notes
-lisboa,Lisboa,1374,58,,
-porto,Porto,898,27,,
+lisboa,Lisboa,1374,96,2026-09-13,"Huge, but the top of the page is padded: dozens of CCB school-service rows (Pre-escolar, Primeiro/Segundo/Terceiro Ciclo, Universitario, Visitas Guiadas, Primeira Infancia) repeat every single day and are not events - skip them. Also cross-lists Cascais/Sintra/Caldas items. Real venue names are reliable; rows whose venue reads 'Lisboa' are not."
+porto,Porto,898,81,2026-09-13,"Rich and mostly reliable venues. Ignore rows whose venue is an aggregator rather than a room: iPorto, Songkick (Porto), Agenda Cultural do Porto, Freakshow Labs, Viral Agenda, Shotgun (Porto), Outro (via MEO), Medeia Filmes. Page opens on past dates (09 set) - start reading from today."
 coimbra,Coimbra,142,17,2026-09-09,
 obidos,Óbidos,135,0,2026-09-09,"Page returned 2025 dates (FOLIO 2025) - archive content, nothing added"
-paredes,Paredes,119,0,,
+paredes,Paredes,119,21,2026-09-13,"VENUE COLUMN IS CONTAMINATED: 'Indie Music Fest' is printed as the venue on ~80% of rows, and most of those are events in other towns entirely (Lisboa, Gaia, Guimaraes, Palmela, Seixal, Albufeira). Only trust rows whose venue is Casa da Cultura de Paredes, Centro Cultural de Paredes (CCP) or Praca Jose Guilherme - about 25 of the 119. Same book launch appears twice with two spellings of the author."
 braga,Braga,118,40,2026-09-09,Was 26 events all at Forum Braga before this sweep
 aveiro,Aveiro,115,10,2026-09-09,Teatro Aveirense dominates the agenda itself; look for the Festas do Municipio and Feira do Livro strands
-montijo,Montijo,109,3,2026-09-09,Undated items are all printed under one placeholder date - take only rows with a real date
+montijo,Montijo,109,5,2026-09-13,"Re-checked via viralagenda rather than nocartaz: Casa da Musica Jorge Peixinho and Cinema Teatro Joaquim d'Almeida both print correctly there, which fixes the placeholder-date problem noted on the nocartaz page."
 guimaraes,Guimarães,90,12,2026-09-09,
-povoa-de-varzim,Póvoa de Varzim,88,0,,
+povoa-de-varzim,Póvoa de Varzim,88,1,2026-09-13,"STALE: page opens on 18 August and most rows are already past. Venue column is the 'Festas de S. Pedro' banner or 'Agenda Cultural Povoa de Varzim', not a room, and many rows are council press releases rather than events. Only one usable future row this run (Casino da Povoa). Try viralagenda.com/pt/porto next."
 vila-nova-de-gaia,Vila Nova de Gaia,88,8,2026-09-09,
 faro,Faro,68,21,2026-09-09,"nocartaz page was serving August - stale. Use viralagenda.com/pt/faro, which covers the whole Algarve district"
-matosinhos,Matosinhos,67,0,,
-mafra,Mafra,63,0,,
-santa-maria-da-feira,Santa Maria da Feira,56,0,,
-santarem,Santarém,56,1,,
-viseu,Viseu,56,1,,
-ovar,Ovar,55,0,,
+matosinhos,Matosinhos,67,3,2026-09-13,"Partly stale - opens on 30 August. Venue column is mostly the 'Festa da Senhora da Hora' banner or 'Agenda Cultural'. Usable venues: Casa da Arquitectura, ESAD, Museu Quinta de Santiago. 67 listed but only ~5 are real dated future events."
+mafra,Mafra,63,13,2026-09-13,"Every item is printed twice - once at 23:00 with venue 'Mafra', once the next day at 21:00 with venue 'Festa de Nossa Senhora da Encarnacao - Mafra'. Both are artifacts. Take only rows with a real venue: Museu Nacional da Musica, Auditorio Municipal Beatriz Costa, Complexo Cultural Quinta da Raposa. Museum rows carry real prices."
+santa-maria-da-feira,Santa Maria da Feira,56,19,2026-09-13,VENUE TRAP: every show appears twice - once at 21:30 under Cineteatro Antonio Lamoso (correct) and once at 21:00 under 'Castelo de Santa Maria da Feira' on a LATER date (wrong on both counts). Take the Cineteatro rows and Europarque - Centro de Congressos; discard every castle row.
+santarem,Santarém,56,10,2026-09-13,"'Santarem Cultura' and 'Feira Nacional de Agricultura' are aggregator labels, not venues - about 25 rows unusable. CNEMA rows are good. ARCHIVE TRAP: the 44th Festival Nacional de Gastronomia (16 out) is the 2025 edition; the live one is the 45th, 22 Oct-1 Nov 2026 at Casa do Campino. Concurso Ovo D'Ouro is listed twice, once under Jan 2027."
+viseu,Viseu,56,21,2026-09-13,"PLACEHOLDER-DATE TRAP: 35 consecutive rows print 'Feira de Sao Mateus' once per day from 27 Jul to 6 Sep - the fair is over and those are not separate events. Everything usable is Teatro Viriato, whose season runs to Dec and is clean."
+ovar,Ovar,55,23,2026-09-13,"PLACEHOLDER-DATE TRAP: 'Festas do Mar do Furadouro' is stamped on rolling undated items, all dated to the 1st of a month at 21:00, running out to June 2027 - skip them all. The real venues are excellent and plentiful: Centro de Arte de Ovar (CAO), Escola de Artes e Oficios de Ovar, Museu Julio Dinis, Biblioteca Municipal de Ovar."
 funchal,Funchal,54,1,,
 alijo,Alijó,48,0,,
 evora,Évora,47,7,2026-09-09,"Most of the listing was the Artes a Rua festival, which had nearly finished"
-braganca,Bragança,46,0,,
-vila-franca-de-xira,Vila Franca de Xira,42,0,,
+braganca,Bragança,46,30,2026-09-13,"Cleanest page swept so far - Teatro Municipal de Braganca is printed correctly on almost every row, plus JP Rock Cafe. Only catch: ClassicFest and Bo Jazz Fest items are each listed two or three ways (bare title, festival-prefixed title, and '@ venue'), so dedupe on a normalised title or you get triples."
+vila-franca-de-xira,Vila Franca de Xira,42,1,2026-09-13,"Almost unusable: 'Celeiro da Patriarcal' is stamped as the venue on ~35 of 40 rows regardless of what or where the event is, and many rows are council press releases ('Camara Municipal associa-se a...'). Only Centro Cultural do Bom Sucesso (Alverca) came through clean. Try the CM Vila Franca de Xira agenda directly next time."
 angra-do-heroismo,Angra do Heroísmo,41,0,,
 ponta-delgada,Ponta Delgada,38,0,,
-almada,Almada,37,2,,
-cascais,Cascais,37,3,,
+almada,Almada,37,19,2026-09-13,"Also picked up via viralagenda this run - Cine Incrivel, Auditorio Fernando Lopes Graca and Museu de Almada all print correctly there, unlike the nocartaz page's 'Jazz nas Vilas' banner."
+cascais,Cascais,37,15,2026-09-13,"Opens on 25 August, so the top third is past. 'Cascais 360 - Agenda Cultural' and 'CM Cascais - Agenda Municipal' are aggregator labels, not venues, and the same event is often listed twice - once in English under a museum, once in Portuguese under the aggregator. Real venues: Casino Estoril - Salao Preto e Prata, Museu Condes de Castro Guimaraes, Museu do Mar Rei D. Carlos."
 gondomar,Gondomar,35,0,,
 oeiras,Oeiras,35,1,,
 cantanhede,Cantanhede,32,1,,
-setubal,Setúbal,31,36,,
+setubal,Setúbal,31,56,2026-09-13,"Forum Municipal Luisa Todi carries the whole season and is reliable; Cinema Charlot too. About a third of rows print no venue, and several are cross-listed from Palmela (Feira Medieval) and Alcacer (Feira do Monte). Pair with viralagenda.com/pt/setubal, which prints a real venue AND the right concelho on every row - by far the best source for the home region."
 maia,Maia,28,0,,
 marinha-grande,Marinha Grande,28,0,,
 moita,Moita,28,1,,
-palmela,Palmela,28,4,,
+palmela,Palmela,28,8,2026-09-13,"Most rows print no venue at all. Feira Medieval date on this page (dom 27 set) is only the closing day - CM Palmela confirms 25-27 Sep 2026, Castelo e Centro Historico, EUR5/day or EUR10 for 3 days, free under 12. Existing site row corrected this run."
 santiago-do-cacem,Santiago do Cacém,28,0,,
 lajes-do-pico,Lajes do Pico,27,0,,
 calheta,Calheta,26,0,,
@@ -54,10 +54,10 @@ vila-real,Vila Real,17,0,,
 alenquer,Alenquer,16,0,,
 felgueiras,Felgueiras,16,0,,
 oliveira-de-azemeis,Oliveira de Azeméis,16,0,,
-torres-vedras,Torres Vedras,16,0,,
+torres-vedras,Torres Vedras,16,10,2026-09-13,"Venue column is literally 'Torres Vedras' on every row, so nothing is usable straight off the page - but the whole September-December programme is the Mercado Municipal's 16th-anniversary season, confirmed via ON FM, so the venue resolves to Mercado Municipal de Torres Vedras and it is all free."
 carregal-do-sal,Carregal do Sal,15,0,,
 lagos,Lagos,15,4,2026-09-09,Reached via the viralagenda Algarve page
-sesimbra,Sesimbra,15,5,,
+sesimbra,Sesimbra,15,6,2026-09-13,Thin. Venue is usually blank or the 'Carnaval de Sesimbra' banner. Only the Cineteatro Municipal Joao Mota row is usable. Worth pairing with cm-sesimbra.pt directly.
 vale-de-cambra,Vale de Cambra,15,0,,
 amarante,Amarante,14,0,,
 arcos-de-valdevez,Arcos de Valdevez,14,0,,
@@ -139,7 +139,7 @@ viana-do-alentejo,Viana do Alentejo,4,0,,
 vila-nova-de-cerveira,Vila Nova de Cerveira,4,0,,
 alcochete,Alcochete,3,0,,
 alvito,Alvito,3,0,,
-barreiro,Barreiro,3,1,,
+barreiro,Barreiro,3,3,2026-09-13,"Same as Seixal - nocartaz has 3, viralagenda's district page has real Barreiro venues (Auditorio Municipal Augusto Cabrita, Cooperativa Mula)."
 ferreira-do-alentejo,Ferreira do Alentejo,3,0,,
 figueira-de-castelo-rodrigo,Figueira de Castelo Rodrigo,3,0,,
 gois,Góis,3,1,,
@@ -149,7 +149,7 @@ mondim-de-basto,Mondim de Basto,3,0,,
 murca,Murça,3,0,,
 murtosa,Murtosa,3,0,,
 sao-bras-de-alportel,São Brás de Alportel,3,4,2026-09-09,Reached via the viralagenda Algarve page
-seixal,Seixal,3,1,,
+seixal,Seixal,3,4,2026-09-13,"Only 3 on the nocartaz page, but viralagenda's Setubal district page carries Seixal properly (Quinta do Rouxinol, Cinema Sao Vicente, Quinta da Marialva). Use viralagenda here."
 sintra,Sintra,3,2,,
 vila-flor,Vila Flor,3,0,,
 vila-nova-de-poiares,Vila Nova de Poiares,3,1,,
