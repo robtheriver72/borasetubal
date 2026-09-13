@@ -299,7 +299,7 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
       <button data-w="all" aria-pressed="true">All</button><button data-w="weekend" aria-pressed="false">This weekend</button><button data-w="7" aria-pressed="false">Next 7 days</button><button data-w="30" aria-pressed="false">Next 30 days</button></div></div>
     <div class="f"><label for="near">Where</label><select id="near"><option value="">Anywhere in Portugal</option></select>
       <button class="btn" id="nearMe" type="button" style="margin-top:7px"><span class="material-symbols-outlined">my_location</span>Use my location</button></div>
-    <div class="f" id="kmField" hidden><label for="km" id="kmLbl">Distance</label><div class="range"><input id="km" type="range" min="0" max="650" step="25" value="650"><output for="km" id="kmOut" class="mono">Anywhere</output></div></div>
+    <div class="f" id="kmField" hidden><label for="km" id="kmLbl">Distance</label><div class="range"><input id="km" type="range" min="0" max="22" step="1" value="22"><output for="km" id="kmOut" class="mono">Anywhere + islands</output></div></div>
     <div class="f" id="onlyField"><span class="lbl">Show only</span><div class="toggles">
       <label class="tgl"><input type="checkbox" id="freeOnly"> Free <span class="n" id="freeCount"></span></label>
       <label class="tgl"><input type="checkbox" id="savedOnly"> Saved <span class="savedcount" id="savedCount" hidden>0</span></label></div></div>
@@ -488,7 +488,15 @@ const priceClass = fp => /^free/i.test(fp)?'free':/^paid/i.test(fp)?'paid':/mixe
 // the data agrees (300 of the 517 live rows fall in the next fortnight). So open on the
 // weekend — unless the weekend is thin, in which case widen rather than show an empty
 // page. A returning reader's own choice is restored from localStorage and wins over this.
-const state = { view:'list', q:'', when:'weekend', cats:new Set(), catsOpen:false, onOpen:false, free:false, saved:false, km:650, near:'', sort:'date' };
+// Distance slider. Mainland Portugal is only ~560 km end to end, so the scale stops
+// there rather than at a round 650 nobody can reach. The steps are deliberately uneven:
+// 5 km apart where people actually filter (a night out on the peninsula) and 50 apart
+// out at the far end, where the difference between 400 and 450 km changes nothing.
+const KM_ANY = 9999;   // sentinel for "no limit" — a finite number so it survives JSON
+const KM_STOPS = [0,5,10,15,20,25,30,40,50,60,75,100,125,150,200,250,300,350,400,450,500,560,KM_ANY];
+const snapKm = n => Number.isFinite(n) ? (n>560 ? KM_ANY : KM_STOPS.reduce((a,b)=>Math.abs(b-n)<Math.abs(a-n)?b:a)) : KM_ANY;
+const kmIdx = () => Math.max(0, KM_STOPS.indexOf(snapKm(state.km)));
+const state = { view:'list', q:'', when:'weekend', cats:new Set(), catsOpen:false, onOpen:false, free:false, saved:false, km:KM_ANY, near:'', sort:'date' };
 const R=6371;
 const haversine=(a,b)=>{ if(!a||!b) return null; const [lat1,lon1]=a,[lat2,lon2]=b; const toRad=d=>d*Math.PI/180;
   const dLat=toRad(lat2-lat1), dLon=toRad(lon2-lon1); const h=Math.sin(dLat/2)**2+Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
@@ -497,13 +505,18 @@ const haversine=(a,b)=>{ if(!a||!b) return null; const [lat1,lon1]=a,[lat2,lon2]
 // falling back to the sheet's "km from Setúbal" only if we have no coordinates.
 const distTo = town => state.near ? haversine(TOWNS[state.near],TOWNS[town]) : null;
 const distFor = e => { if(!state.near) return null; const d=distTo(e.town); return d==null?e.km:d; };
-const kmLabel = () => state.km<=0 ? 'This town only' : state.km>=650 ? 'Anywhere' : state.km+' km';
-// The slider tops out at 650, but the islands are ~1000 km out — at the top of the
-// range it has to mean genuinely no limit, or "Anywhere" silently hides Madeira.
-const kmCap = () => state.km>=650 ? Infinity : state.km;
+// The last notch is the only one that reaches Madeira and the Azores, so it says so —
+// otherwise someone sitting on "560 km" has no way of knowing the islands are missing.
+const kmLabel = () => state.km<=0 ? 'This town only' : state.km>=KM_ANY ? 'Anywhere + islands' : state.km+' km';
+// The top of the scale is 560 km — the length of the mainland — but the islands are
+// ~1000 km out, so the last notch past it has to mean genuinely no limit, or
+// "Anywhere" silently hides Madeira.
+const kmCap = () => state.km>=KM_ANY ? Infinity : state.km;
 let hadSavedFilters = false;
 try { const s = JSON.parse(localStorage.getItem('bora.filters')||'null');
-  if (s) { hadSavedFilters = true; Object.assign(state, s, {cats:new Set(s.cats||[])}); } } catch(e){}
+  // s.km may be missing, or null from an older build that stringified a non-finite value;
+  // either way that means "no limit", not "this town only".
+  if (s) { hadSavedFilters = true; Object.assign(state, s, {cats:new Set(s.cats||[]), km:(s.km==null?KM_ANY:snapKm(+s.km))}); } } catch(e){}
 const save = () => { try { localStorage.setItem('bora.filters', JSON.stringify({...state, cats:[...state.cats], day:null})); } catch(e){} };
 
 // ---------- saved events (this browser only) ----------
@@ -522,7 +535,7 @@ function shareURL(){ const p=new URLSearchParams();
   if(state.when!=='all') p.set('w',state.when);
   if(state.cats.size) p.set('c',[...state.cats].join('|'));
   if(state.free) p.set('f','1');
-  if(state.near){ p.set('n',state.near); if(state.km<650) p.set('km',state.km); }
+  if(state.near){ p.set('n',state.near); if(state.km<KM_ANY) p.set('km',state.km); }
   if(state.sort!=='date') p.set('o',state.sort);
   const q=p.toString(); return location.origin+location.pathname+(q?'#'+q:''); }
 function applyHash(){ const h=location.hash.replace(/^#/,''); if(!h) return;
@@ -531,7 +544,7 @@ function applyHash(){ const h=location.hash.replace(/^#/,''); if(!h) return;
   get('q',v=>state.q=v); get('w',v=>state.when=v);
   get('c',v=>state.cats=new Set(v?v.split('|').map(normCat):[]));
   get('f',v=>state.free=v==='1'); get('n',v=>state.near=v);
-  get('km',v=>{ const n=+v; if(Number.isFinite(n)) state.km=n; });
+  get('km',v=>{ const n=+v; if(Number.isFinite(n)) state.km=snapKm(n); });   // old links carried 25 km steps up to 650
   get('t',v=>{ if(!p.has('n')) state.near=v; });   // old links used 't' for an exact town
   get('o',v=>state.sort=v); }
 applyHash();
@@ -594,7 +607,7 @@ function buildRail(){
   $('#kmField').hidden = !state.near;
   $('#kmLbl').textContent = state.near ? `Distance from ${state.near}` : 'Distance';
   $('#q').value=state.q; $('#freeOnly').checked=state.free; $('#savedOnly').checked=state.saved; updateSavedCount();
-  $('#km').value=state.km; $('#kmOut').textContent=kmLabel(); $('#sort').value=state.sort;
+  $('#km').value=kmIdx(); $('#kmOut').textContent=kmLabel(); $('#sort').value=state.sort;
   // The site covers the whole country now, so a distance sort with no place picked is
   // meaningless — it used to quietly fall back to the CSV's km-from-Setúbal column, a
   // leftover from when this was a Setúbal site. Offer it only once there is a place.
@@ -610,7 +623,7 @@ $('#when').addEventListener('click', e=>{ const b=e.target.closest('button'); if
 $('#q').addEventListener('input', e=>{ state.q=e.target.value; render(); });
 $('#freeOnly').addEventListener('change', e=>{ state.free=e.target.checked; render(); });
 $('#savedOnly').addEventListener('change', e=>{ state.saved=e.target.checked; render(); });
-$('#km').addEventListener('input', e=>{ state.km=+e.target.value; $('#kmOut').textContent=kmLabel(); render(); });
+$('#km').addEventListener('input', e=>{ state.km=KM_STOPS[+e.target.value] ?? KM_ANY; $('#kmOut').textContent=kmLabel(); render(); });
 $('#near').addEventListener('change', e=>{ state.near=e.target.value; buildRail(); render(); });
 // Pick the closest town we know coordinates for, so the distance slider and the km line
 // mean something without the reader having to know which town they are nearest to.
@@ -623,13 +636,13 @@ $('#nearMe').addEventListener('click', ()=>{
     for(const t in TOWNS){ const d=haversine(here,TOWNS[t]); if(d!=null&&d<bd){bd=d;best=t;} }
     btn.disabled=false;
     if(!best) return toast('Could not place you');
-    state.near=best; if(state.km>=650) state.km=100;
+    state.near=best; if(state.km>=KM_ANY) state.km=100;
     buildRail(); render(); toast(`Nearest we know: ${best} (~${Math.round(bd)} km)`);
   }, ()=>{ btn.disabled=false; toast('Location not shared — pick a town instead'); }, {timeout:8000});
 });
 $('#sort').addEventListener('change', e=>{ state.sort=e.target.value; render(); });
 $('#railToggle').addEventListener('click', ()=>{ const open=$('#rail').classList.toggle('open'); $('#railToggle').setAttribute('aria-expanded',open); $('#railChevron').textContent = open?'▴':'▾'; });
-$('#reset').addEventListener('click', ()=>{ Object.assign(state,{q:'',when:'all',cats:new Set(),free:false,saved:false,km:650,near:'',town:''}); buildRail(); render(); });
+$('#reset').addEventListener('click', ()=>{ Object.assign(state,{q:'',when:'all',cats:new Set(),free:false,saved:false,km:KM_ANY,near:'',town:''}); buildRail(); render(); });
 document.querySelectorAll('.views button').forEach(b=>b.addEventListener('click',()=>{ state.view=b.dataset.view; document.querySelectorAll('.views button').forEach(x=>x.setAttribute('aria-pressed',x===b)); render(); }));
 
 // ---------- list ----------
@@ -827,8 +840,12 @@ function renderList(){ const rows=sortRows(filtered()); const t=today();
   const total=EVENTS.filter(e=>e.end>=t).length;   // freshness lives in the header now
   $('#sumMeta').textContent = rows.length===total ? `${total} events` : `${rows.length} of ${total} events`;
   const w={all:'Que os bons tempos comecem!',weekend:'This weekend',7:'The next 7 days',30:'The next 30 days'}[state.when];
-  $('#sumTitle').textContent = (state.saved?'Saved — ':'')+(state.cats.size===1?[...state.cats][0]+'s — ':'')+w
-    +(state.near ? (state.km<=0 ? ' in '+state.near : ` within ${state.km>=650?'reach of':state.km+' km of'} ${state.near}`) : '');
+  // The headline is a sentence with its own exclamation mark, so a place clause can't just
+  // be tacked on ("Que os bons tempos comecem! within 40 km of Setúbal"). Drop the mark and
+  // join with a dash when there is something to append.
+  const place = state.near ? (state.km<=0 ? 'in '+state.near : `within ${state.km>=KM_ANY?'reach of':state.km+' km of'} ${state.near}`) : '';
+  $('#sumTitle').textContent = (state.saved?'Saved — ':'')+(state.cats.size===1?[...state.cats][0]+'s — ':'')
+    +(place ? w.replace(/!\s*$/,'')+' — '+place : w);
   // 62% of live events have no price recorded, so "Free" quietly hides far more than it
   // shows. Say so rather than letting the filter imply the site has nothing free.
   const unpriced = EVENTS.filter(e=>e.end>=t && !/^(free|paid)/i.test(e.fp||'')).length;
