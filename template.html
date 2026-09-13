@@ -283,7 +283,7 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
     <button data-view="markets" aria-pressed="false">Markets</button>
   </nav>
   <div class="status"><span class="dot" id="dot"></span><span id="statusText"></span>
-    <button id="theme" type="button" class="btn" aria-label="Switch between light and dark" title="Theme"><span class="material-symbols-outlined" id="themeIcon">routine</span></button></div>
+    <button id="theme" type="button" class="btn" aria-label="Switch between light and dark" title="Theme"><span class="material-symbols-outlined" id="themeIcon">contrast</span></button></div>
 </div></header>
 
 <div class="wrap">
@@ -306,7 +306,7 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
 
   <main class="main">
     <section id="v-list">
-      <div class="sum"><h2 id="sumTitle">Everything coming up</h2><span class="meta" id="sumMeta"></span>
+      <div class="sum"><h2 id="sumTitle">Que os bons tempos comecem!</h2><span class="meta" id="sumMeta"></span>
         <div class="sort"><label for="sort">Sort</label><select id="sort"><option value="date">Date</option><option value="km">Distance</option><option value="name">Name</option><option value="cat">Category</option></select></div></div>
       <p class="freenote" id="freeNote" hidden></p>
       <div class="tools">
@@ -822,7 +822,7 @@ function armFeed(){
 function renderList(){ const rows=sortRows(filtered()); const t=today();
   const total=EVENTS.filter(e=>e.end>=t).length;   // freshness lives in the header now
   $('#sumMeta').textContent = rows.length===total ? `${total} events` : `${rows.length} of ${total} events`;
-  const w={all:'Everything coming up',weekend:'This weekend',7:'The next 7 days',30:'The next 30 days'}[state.when];
+  const w={all:'Que os bons tempos comecem!',weekend:'This weekend',7:'The next 7 days',30:'The next 30 days'}[state.when];
   $('#sumTitle').textContent = (state.saved?'Saved — ':'')+(state.cats.size===1?[...state.cats][0]+'s — ':'')+w
     +(state.near ? (state.km<=0 ? ' in '+state.near : ` within ${state.km>=650?'reach of':state.km+' km of'} ${state.near}`) : '');
   // 62% of live events have no price recorded, so "Free" quietly hides far more than it
