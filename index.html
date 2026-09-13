@@ -10,7 +10,7 @@
   --glaze:#FDFCF7; --tileink:#0B4C8A;
   --display:"Fraunces","Iowan Old Style",Georgia,serif;
   --bg:#F7F4ED; --bg2:#FFFFFF; --bg3:#EFE9DC; --line:#E2DACB; --ink:#123B62; --ink2:#45647F; --ink3:#5A6F81;
-  --accent:#0B4C8A; --accent-ink:#FFFFFF; --logo:#1E5C96; --accent-soft:#DEE9F5; --ochre:#8A5A0E; --mustard:#FCAF15;
+  --accent:#0B4C8A; --accent-ink:#FFFFFF; --logo:var(--tileink); --accent-soft:#DEE9F5; --ochre:#8A5A0E; --mustard:#FCAF15;
   --free:#2E7D4F; --free-soft:#E1EFE5; --paid:#8A5A3B; --paid-soft:#F5E8D9;
   --shadow:0 1px 2px rgba(20,40,63,.06),0 8px 22px rgba(20,40,63,.10);
  --c-music:#0B4C8A;--c-stage:#5A4A9C;--c-art:#0F6E72;--c-table:#A6432A;--c-street:#8A5A0E;--c-doing:#3F7A34;--c-pride:#A8248C;--c-other:#55677A;
@@ -19,6 +19,8 @@
 @media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){
   --bg:#0A1D2E; --bg2:#11304A; --bg3:#1A3E5A; --line:#27536F; --ink:#EEF3F8; --ink2:#B9CCDB; --ink3:#8AA3B7;
   --accent:#8CC3F2; --accent-ink:#0A1D2E; --logo:#BCD8F0; --accent-soft:#1D4763; --ochre:#E8B269; --mustard:#F7C05A;
+  /* wordmark and fleur share one blue; the azulejo tile darkens so the fleur still reads */
+  --glaze:#12293F; --tileink:var(--logo);
   --free:#6CC28F; --free-soft:#1D3327; --paid:#D8A87C; --paid-soft:#38301F;
   --shadow:0 2px 4px rgba(0,0,0,.4),0 10px 26px rgba(0,0,0,.35);
  --c-music:#8CC3F2;--c-stage:#B3A6F0;--c-art:#5FC6C9;--c-table:#EE9077;--c-street:#E8B269;--c-doing:#95CE73;--c-pride:#E88AD4;--c-other:#9FB2C2;
@@ -27,6 +29,8 @@
 :root[data-theme="dark"]{
   --bg:#0A1D2E; --bg2:#11304A; --bg3:#1A3E5A; --line:#27536F; --ink:#EEF3F8; --ink2:#B9CCDB; --ink3:#8AA3B7;
   --accent:#8CC3F2; --accent-ink:#0A1D2E; --logo:#BCD8F0; --accent-soft:#1D4763; --ochre:#E8B269; --mustard:#F7C05A;
+  /* wordmark and fleur share one blue; the azulejo tile darkens so the fleur still reads */
+  --glaze:#12293F; --tileink:var(--logo);
   --free:#6CC28F; --free-soft:#1D3327; --paid:#D8A87C; --paid-soft:#38301F;
   --shadow:0 2px 4px rgba(0,0,0,.4),0 10px 26px rgba(0,0,0,.35);
  --c-music:#8CC3F2;--c-stage:#B3A6F0;--c-art:#5FC6C9;--c-table:#EE9077;--c-street:#E8B269;--c-doing:#95CE73;--c-pride:#E88AD4;--c-other:#9FB2C2;
