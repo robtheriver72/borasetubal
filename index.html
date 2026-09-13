@@ -104,9 +104,13 @@ a{color:var(--accent)}
 .railToggle{display:none}
 .railBody{display:flex;flex-direction:column;gap:18px}
 @media (max-width:900px){
-  .railToggle{display:flex;align-items:center;justify-content:space-between;width:100%;border:0;background:transparent;color:var(--ink);font-weight:800;font-size:15px;padding:0 0 2px;cursor:pointer}
+  .railToggle{display:flex;align-items:center;justify-content:space-between;width:100%;border:0;background:transparent;color:var(--ink);font-weight:800;font-size:15px;padding:8px 0 2px;margin-top:2px;border-top:1px solid var(--line);cursor:pointer}
   .railBody{display:none;margin-top:14px}
   .rail.open .railBody{display:flex}
+  /* Export actions are not discovery — on a phone they belong under the events,
+     not between the reader and the first card. */
+  #v-list{display:flex;flex-direction:column}
+  #v-list .sum{order:1} #v-list .freenote{order:2} #v-list #list{order:3} #v-list .tools{order:4;margin-top:18px}
 }
 .f{display:flex;flex-direction:column;gap:6px}
 .f label,.f .lbl{font-size:12.5px;letter-spacing:0;font-weight:800;color:var(--ink2)}
@@ -292,11 +296,13 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
 
 <div class="wrap">
   <aside class="rail" id="rail">
-    <button class="railToggle" id="railToggle" type="button" aria-expanded="false">🔎 Search &amp; filters <span id="railChevron">▾</span></button>
-    <div class="railBody" id="railBody">
-    <div class="f"><label for="q">Search</label><input id="q" type="search" placeholder="Fado, jazz, walk, Palmela…"></div>
-    <div class="f"><span class="lbl">When</span><div class="seg" id="when">
+    <!-- Search and When sit OUTSIDE railBody so a phone shows them without a tap;
+         only the long tail of filters collapses behind the toggle. -->
+    <div class="f railHead"><label for="q">Search</label><input id="q" type="search" placeholder="Fado, jazz, walk, Palmela…"></div>
+    <div class="f railHead"><span class="lbl">When</span><div class="seg" id="when">
       <button data-w="all" aria-pressed="true">All</button><button data-w="weekend" aria-pressed="false">This weekend</button><button data-w="7" aria-pressed="false">Next 7 days</button><button data-w="30" aria-pressed="false">Next 30 days</button></div></div>
+    <button class="railToggle" id="railToggle" type="button" aria-expanded="false">More filters <span id="railChevron">▾</span></button>
+    <div class="railBody" id="railBody">
     <div class="f"><label for="near">Where</label><select id="near"><option value="">Anywhere in Portugal</option></select>
       <button class="btn" id="nearMe" type="button" style="margin-top:7px"><span class="material-symbols-outlined">my_location</span>Use my location</button></div>
     <div class="f" id="kmField" hidden><label for="km" id="kmLbl">Distance</label><div class="range"><input id="km" type="range" min="0" max="22" step="1" value="22"><output for="km" id="kmOut" class="mono">Anywhere + islands</output></div></div>
