@@ -125,6 +125,13 @@ a{color:var(--accent)}
   .railToggle[aria-expanded="true"] #railChevron{transform:rotate(180deg)}
   .railBody{display:none;margin-top:14px;background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
   .rail.open .railBody{display:flex}
+  /* Category tiles and the day ribbon are the two questions a reader arrives with,
+     but on a phone they're still filtering controls — folded into the same "Search
+     & filters" reveal as everything else instead of floating outside it. .rail and
+     .main are siblings in that DOM order regardless of the flex `order` below, so
+     this sibling selector tracks .rail's own open/closed state correctly. */
+  #catDayWrap{display:none;margin-bottom:14px}
+  .rail.open ~ .main #catDayWrap{display:block}
   /* Export actions are not discovery — on a phone they belong under the events,
      not between the reader and the first card. */
   #v-list{display:flex;flex-direction:column}
@@ -376,9 +383,14 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
   <main class="main">
     <section id="v-list">
       <!-- Category first, then day — the two questions a reader actually arrives with —
-           live above the results, always visible, not buried behind "More filters". -->
+           sit above the results on desktop, always visible. On a phone they used to
+           float outside the "Search & filters" panel too, splitting filtering across
+           two separate places on screen; #catDayWrap folds them into the same panel
+           there instead (CSS below), so every control lives in one spot on mobile. -->
+      <div id="catDayWrap">
       <div class="chips" id="cats"></div>
       <div class="dayRibbon" id="dayRibbon"></div>
+      </div>
       <div class="sum"><h2 id="sumTitle">Que se passa?</h2><span class="meta" id="sumMeta"></span>
         <div class="sort"><label for="sort">Sort</label><select id="sort"><option value="date">Date</option><option value="km">Distance</option><option value="name">Name</option><option value="cat">Category</option></select></div></div>
       <p class="freenote" id="freeNote" hidden></p>
