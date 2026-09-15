@@ -139,21 +139,30 @@ a{color:var(--accent)}
 .secToggle .chev{margin-left:auto;font-size:19px;line-height:1;opacity:.95;transition:transform .15s}
 @media (prefers-reduced-motion:reduce){.secToggle .chev{transition:none}}
 .secToggle[aria-expanded="false"] .chev{transform:rotate(-90deg)}
-.selcount{background:var(--mustard);color:#2B2A1F;border-radius:999px;padding:0 6px;font-size:10px;font-weight:800;letter-spacing:0}
-.chip{border:0;background:var(--bg3);border-radius:999px;padding:5px 10px 5px 8px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:6px;color:var(--ink2)}
+/* Category is the first question a reader arrives with, so its chips live at the
+   top of the results now, not three menus deep — bigger and always visible rather
+   than collapsed behind a "Category" toggle. */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+.chip{border:0;background:var(--bg3);border-radius:999px;padding:8px 14px 8px 11px;font-size:13.5px;font-weight:700;display:inline-flex;align-items:center;gap:7px;color:var(--ink2)}
 .chip i{width:9px;height:9px;border-radius:50%;background:var(--cc);display:inline-block}
 .chip[aria-pressed="true"]{background:var(--mustard);color:#2B2A1F}
 .chip[data-zero]{opacity:.45}
 .chip .n{font-family:"IBM Plex Mono",monospace;font-size:11px;opacity:.75}
-.seg{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
-.seg button{border:0;background:var(--bg3);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;color:var(--ink2)}
-.seg button[aria-pressed="true"]{background:var(--mustard);color:#2B2A1F}
+/* Day comes right after category: a horizontal strip you scroll rather than a
+   date picker you have to open. Today/Tmrw/weekday label under a plain day
+   number, "All" and "Weekend" as plain-text chips ahead of it. */
+.dayRibbon{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:2px 2px 8px;margin:0 0 6px;scrollbar-width:thin}
+.dayRibbon button{border:0;background:var(--bg3);border-radius:11px;font-weight:700;color:var(--ink2);flex:none;cursor:pointer}
+.dayRibbon button[aria-pressed="true"]{background:var(--mustard);color:#2B2A1F}
+.dayRibbon>button:not(.dayChip){padding:0 14px;font-size:13px;align-self:center}
+.dayRibbon .dayChip{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:42px;padding:6px 4px}
+.dayRibbon .dayChip b{font-family:var(--display);font-size:16px;font-weight:700;line-height:1.05}
+.dayRibbon .dayChip span{font-size:10px;text-transform:uppercase;letter-spacing:.03em;opacity:.85}
 /* Safari has a long-standing bug where a native date input's own text (the
    mm/dd/yyyy placeholder included) doesn't reliably follow `color` once the
    control has any custom background — it can render blank. -webkit-text-fill-color
    is the actual property Safari paints that text with; Chromium/Firefox ignore it. */
-.seg input[type=date]{border:0;background:var(--bg3);border-radius:999px;padding:5px 10px;min-width:132px;font-size:13px;font-weight:700;color:var(--ink2);-webkit-text-fill-color:var(--ink2);font-family:inherit}
-.seg input[type=date].active{background:var(--mustard);color:#2B2A1F;-webkit-text-fill-color:#2B2A1F}
+#whenDate{border:1px solid var(--line);border-bottom:2px solid var(--mustard);background:var(--bg);border-radius:9px;padding:9px 11px;font-size:13px;font-weight:600;color:var(--ink);-webkit-text-fill-color:var(--ink);font-family:inherit}
 .range{display:flex;align-items:center;gap:10px}
 .range input{flex:1;accent-color:var(--mustard)}
 .range output{min-width:52px;text-align:right;color:var(--ink2);font-weight:700}
@@ -188,19 +197,22 @@ a{color:var(--accent)}
 .day .secToggle.stillOn span:not(.chev){color:var(--ink3);font-size:12.5px;font-weight:700}
 .day b{font-variation-settings:"opsz" 36,"SOFT" 30;font-family:var(--display);font-weight:700;font-size:19px;letter-spacing:-.01em}
 .day span{color:var(--ink3);font-size:12.5px;font-weight:700}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(252px,1fr));gap:14px;margin:10px 0}
-/* The card used to carry a full-width coloured band holding an icon, a category pill,
-   a price pill and the star — roughly 40px of chrome that encoded the category twice
-   (colour AND label) and still clipped "Local concert" to "Local conc…". The colour
-   now lives in a 3px edge, the category is plain coloured text that can be as long as
-   it likes, and the row it used to occupy is gone. On a phone that is most of a card
-   back per three cards.
-   content-visibility lets the browser skip layout and paint for cards that are far
-   off-screen; contain-intrinsic-size keeps the scrollbar honest while they are skipped. */
-.ev{position:relative;display:flex;flex-direction:column;background:var(--bg2);border:1px solid var(--line);
-  border-left:3px solid var(--cc);border-radius:14px;transition:transform .14s,box-shadow .14s;
-  content-visibility:auto;contain-intrinsic-size:auto 190px}
-.ev:hover{transform:translateY(-3px) rotate(-.3deg);box-shadow:var(--shadow)}
+/* A list, not a card grid: rows stacked in one column, each divided from the next
+   by a rule rather than living in its own shadowed, rounded box — the read that
+   made this page look like every other events "app" out there. content-visibility
+   lets the browser skip layout/paint for rows far off-screen; contain-intrinsic-size
+   keeps the scrollbar honest while they are skipped. */
+.grid{display:flex;flex-direction:column;margin:6px 0}
+.ev{position:relative;display:flex;align-items:flex-start;gap:12px;padding:13px 2px;
+  border-bottom:1px solid var(--line);
+  content-visibility:auto;contain-intrinsic-size:auto 96px}
+.ev:hover{background:var(--bg3)}
+.ev:last-child{border-bottom:0}
+.evDate{flex:0 0 auto;width:38px;padding-left:9px;border-left:3px solid var(--cc);
+  display:flex;flex-direction:column;align-items:flex-start;line-height:1.05}
+.evDate b{font-family:var(--display);font-size:19px;font-weight:700;color:var(--ink)}
+.evDate span{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--cc)}
+.evMain{min-width:0;flex:1;display:flex;flex-direction:column;gap:4px}
 .ev .top{display:flex;align-items:center;gap:8px;margin-bottom:1px}
 .ev .top .cat{color:var(--cc);font-weight:800;font-size:11.5px;letter-spacing:.02em;text-transform:uppercase;min-width:0}
 .ev .top .pricepill{margin-left:auto;font-weight:800;font-size:11px;padding:3px 9px;border-radius:999px;white-space:nowrap;flex:none}
@@ -209,7 +221,7 @@ a{color:var(--accent)}
 .ev .top .fav:only-of-type{margin-left:auto}
 /* The whole card is the click target: the Mais Info link stretches invisibly over it,
    so there is still exactly one link per card for a screen reader or keyboard user. */
-.ev .src.stretch::after{content:"";position:absolute;inset:0;z-index:1;border-radius:14px}
+.ev .src.stretch::after{content:"";position:absolute;inset:0;z-index:1}
 .ev .fav{position:relative;z-index:2}
 .ev:focus-within{box-shadow:var(--shadow)}
 .mkc .photo{position:relative;display:flex;align-items:center;gap:9px;padding:8px 12px;background:color-mix(in srgb,var(--cc) 12%,var(--bg3));border-bottom:1px solid color-mix(in srgb,var(--cc) 22%,transparent)}
@@ -218,13 +230,13 @@ body.icons-ready .material-symbols-outlined{visibility:visible}
 body.no-icons .material-symbols-outlined{display:none}
 body.no-icons .fav::before{content:'\2605';font-size:16px;line-height:1}
 body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
-.ev .body{padding:11px 13px 12px;min-width:0;display:flex;flex-direction:column;gap:5px;flex:1}
 .ev h3{font-variation-settings:"opsz" 20,"SOFT" 40;margin:0;font-size:16px;font-weight:600;line-height:1.22;font-family:var(--display);letter-spacing:-.005em}
 .ev h3 .gloss{display:block;font-family:"Manrope",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:12.5px;font-weight:700;font-style:italic;letter-spacing:0;color:var(--ink2);margin-top:1px}
 .ev .sub{color:var(--ink2);font-size:12.5px;display:flex;flex-wrap:wrap;gap:3px 10px}
 .ev .sub .cat{color:var(--cc);font-weight:700}
+.ev .sub .mono{font-family:"IBM Plex Mono",monospace;font-size:11.5px}
 .ev p{margin:0;color:var(--ink2);font-size:13px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.ev .side{margin-top:auto;padding-top:8px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;border-top:1px dashed var(--line)}
+.ev .side{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .pill{display:inline-block;border-radius:999px;padding:3px 9px;font-size:12px;font-weight:800}
 .pill.free{background:var(--free-soft);color:var(--free)} .pill.paid{background:var(--paid-soft);color:var(--paid)} .pill.mixed{background:var(--accent-soft);color:var(--accent)} .pill.unk{background:var(--bg3);color:var(--ink3)}
 .km{font-size:12px;color:var(--ink3)}
@@ -332,22 +344,23 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
     </button>
     <div class="railBody" id="railBody">
     <div class="f"><label for="q">Search</label><input id="q" type="search" placeholder="Fado, jazz, walk, Palmela…"></div>
-    <div class="f"><span class="lbl">When</span><div class="seg" id="when">
-      <button data-w="all" aria-pressed="true">All</button><button data-w="weekend" aria-pressed="false">This weekend</button><button data-w="7" aria-pressed="false">Next 7 days</button><button data-w="30" aria-pressed="false">Next 30 days</button>
-      <input type="date" id="whenDate" aria-label="Pick a specific date"></div></div>
+    <div class="f"><label for="whenDate">Jump to a date</label><input type="date" id="whenDate"></div>
     <div class="f"><label for="near">Where</label><select id="near"><option value="">Anywhere in Portugal</option></select>
       <button class="btn" id="nearMe" type="button" style="margin-top:7px"><span class="material-symbols-outlined">my_location</span>Use my location</button></div>
     <div class="f" id="kmField" hidden><label for="km" id="kmLbl">Distance</label><div class="range"><input id="km" type="range" min="0" max="22" step="1" value="22"><output for="km" id="kmOut" class="mono">Anywhere + islands</output></div></div>
     <div class="f" id="onlyField"><span class="lbl">Show only</span><div class="toggles">
       <label class="tgl"><input type="checkbox" id="freeOnly"> Free <span class="n" id="freeCount"></span></label>
       <label class="tgl"><input type="checkbox" id="savedOnly"> Saved <span class="savedcount" id="savedCount" hidden>0</span></label></div></div>
-    <div class="f"><button class="lbl secToggle" id="catsToggle" type="button" aria-expanded="false" aria-controls="cats">Category<span class="selcount" id="catsCount"></span><span class="chev" aria-hidden="true">▾</span></button><div class="chips" id="cats"></div></div>
     <button class="reset" id="reset" type="button">Reset filters</button>
     </div>
   </aside>
 
   <main class="main">
     <section id="v-list">
+      <!-- Category first, then day — the two questions a reader actually arrives with —
+           live above the results, always visible, not buried behind "More filters". -->
+      <div class="chips" id="cats"></div>
+      <div class="dayRibbon" id="dayRibbon"></div>
       <div class="sum"><h2 id="sumTitle">Que se passa?</h2><span class="meta" id="sumMeta"></span>
         <div class="sort"><label for="sort">Sort</label><select id="sort"><option value="date">Date</option><option value="km">Distance</option><option value="name">Name</option><option value="cat">Category</option></select></div></div>
       <p class="freenote" id="freeNote" hidden></p>
@@ -531,7 +544,6 @@ const splitGloss = name => { const m = GLOSS_RE.exec(name); return m ? [m[1], m[
 const priceClass = fp => /^free/i.test(fp)?'free':/^paid/i.test(fp)?'paid':/mixed|donation/i.test(fp)?'mixed':'unk';
 
 // ---------- state ----------
-// catsOpen starts false: 17 category chips dominated the rail on first load.
 // The list used to open on "Everything coming up" — 517 rows, newest first: a database,
 // presented. The question people actually arrive with is "what is on this weekend?", and
 // the data agrees (300 of the 517 live rows fall in the next fortnight). So open on the
@@ -545,7 +557,7 @@ const KM_ANY = 9999;   // sentinel for "no limit" — a finite number so it surv
 const KM_STOPS = [0,5,10,15,20,25,30,40,50,60,75,100,125,150,200,250,300,350,400,450,500,560,KM_ANY];
 const snapKm = n => Number.isFinite(n) ? (n>560 ? KM_ANY : KM_STOPS.reduce((a,b)=>Math.abs(b-n)<Math.abs(a-n)?b:a)) : KM_ANY;
 const kmIdx = () => Math.max(0, KM_STOPS.indexOf(snapKm(state.km)));
-const state = { view:'list', q:'', when:'weekend', cats:new Set(), catsOpen:false, onOpen:false, free:false, saved:false, km:KM_ANY, near:'', sort:'date' };
+const state = { view:'list', q:'', when:'weekend', cats:new Set(), onOpen:false, free:false, saved:false, km:KM_ANY, near:'', sort:'date' };
 const R=6371;
 const haversine=(a,b)=>{ if(!a||!b) return null; const [lat1,lon1]=a,[lat2,lon2]=b; const toRad=d=>d*Math.PI/180;
   const dLat=toRad(lat2-lat1), dLon=toRad(lon2-lon1); const h=Math.sin(dLat/2)**2+Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
@@ -643,14 +655,7 @@ function paintChips(){
   const all={}; EVENTS.forEach(e=>{ if(e.end>=today()) all[e.cat]=(all[e.cat]||0)+1; });
   $('#cats').innerHTML = CATS.filter(([c])=>all[c]).map(([c,v])=>{ const n=ctx[c]||0;
     return `<button class="chip" type="button" data-cat="${esc(c)}" aria-pressed="${state.cats.has(c)}"${n?'':' data-zero="1"'} style="--cc:var(${v})"><i></i>${esc(c)}<span class="n">${n}</span></button>`; }).join('');
-  // Collapsed, the chips hide but the count stays, so a filter can never be left on
-  // out of sight with no way to see that it is.
-  $('#cats').hidden = !state.catsOpen;
-  $('#catsToggle').setAttribute('aria-expanded', state.catsOpen);
-  const sel=state.cats.size; const badge=$('#catsCount');
-  badge.textContent = sel ? sel : ''; badge.hidden = !sel;
 }
-$('#catsToggle').addEventListener('click', ()=>{ state.catsOpen=!state.catsOpen; paintChips(); save(); });
 function buildRail(){
   paintChips();
   // Towns that actually have something on come first, with counts; the rest of the
@@ -674,14 +679,29 @@ function buildRail(){
   kmOpt.disabled = !state.near;
   if(!state.near && state.sort==='km'){ state.sort='date'; $('#sort').value='date'; }
   $('#freeCount').textContent = EVENTS.filter(e=>e.end>=today() && /^free/i.test(e.fp||'')).length;
-  const onDate = isDateWhen(state.when);
-  document.querySelectorAll('#when button').forEach(b=>b.setAttribute('aria-pressed', !onDate && b.dataset.w===state.when));
-  $('#whenDate').value = onDate ? state.when : '';
-  $('#whenDate').classList.toggle('active', onDate);
+  buildDayRibbon();
+  $('#whenDate').value = isDateWhen(state.when) ? state.when : '';
   $('#whenDate').min = today();
 }
+// The ribbon covers the near future by design; a date further out than that still
+// needs a way in, so "Jump to a date" (in the secondary filters) sets the exact same
+// state.when an ISO date and reuses the ribbon/inWindow's date handling untouched.
+const RIBBON_DAYS = 21;
+function buildDayRibbon(){
+  const t = today();
+  const parts = [
+    `<button data-w="all" aria-pressed="${state.when==='all'}">All</button>`,
+    `<button data-w="weekend" aria-pressed="${state.when==='weekend'}">Weekend</button>`,
+  ];
+  for(let i=0; i<RIBBON_DAYS; i++){
+    const d = addDays(t,i);
+    const label = i===0 ? 'Today' : i===1 ? 'Tmrw' : new Date(d+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short'});
+    parts.push(`<button class="dayChip" data-w="${d}" aria-pressed="${state.when===d}"><b>${new Date(d+'T00:00:00').getDate()}</b><span>${label}</span></button>`);
+  }
+  $('#dayRibbon').innerHTML = parts.join('');
+}
 $('#cats').addEventListener('click', e=>{ const b=e.target.closest('.chip'); if(!b) return; const c=b.dataset.cat; state.cats.has(c)?state.cats.delete(c):state.cats.add(c); b.setAttribute('aria-pressed',state.cats.has(c)); render(); });
-$('#when').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return; state.when=b.dataset.w; buildRail(); render(); });
+$('#dayRibbon').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return; state.when=b.dataset.w; buildRail(); render(); });
 $('#whenDate').addEventListener('change', e=>{ if(!e.target.value) return; state.when=e.target.value; buildRail(); render(); });
 $('#q').addEventListener('input', e=>{ state.q=e.target.value; render(); });
 $('#freeOnly').addEventListener('change', e=>{ state.free=e.target.checked; render(); });
@@ -790,19 +810,21 @@ function pricePill(e){
 
 // underDay: the card sits under a "Sun, 13 Sept" heading, so repeating the date on it
 // is pure noise — except for a run, where the range is the thing worth knowing.
-function card(e, underDay){ const id=eid(e), sv=SAVED.has(id), d=distOrKm(e);
+function card(e){ const id=eid(e), sv=SAVED.has(id), d=distOrKm(e), t=today();
   const direct = eventPage(e);
-  const showDate = !underDay || e.start!==e.end;
   const [titleMain, titleGloss] = splitGloss(e.name);
+  const anchor = e.start < t ? t : e.start;
+  const ad = new Date(anchor+'T00:00:00');
+  const dow = anchor===t ? 'Today' : anchor===addDays(t,1) ? 'Tmrw' : ad.toLocaleDateString('en-GB',{weekday:'short'});
   return `<article class="ev${sv?' saved':''}" style="--cc:var(${catVar(e.cat)})">
-  <div class="body">
+  <div class="evDate"><b>${ad.getDate()}</b><span>${dow}</span></div>
+  <div class="evMain">
   <div class="top"><span class="cat">${esc(e.cat)}</span>${pricePill(e)}
   <button class="fav" type="button" data-id="${esc(id)}" aria-pressed="${sv}" aria-label="${sv?'Remove from saved':'Save this event'}" title="${sv?'Saved':'Save'}"><span class="material-symbols-outlined">star</span></button></div>
   <h3>${esc(titleMain)}${titleGloss?`<span class="gloss">(${esc(titleGloss)})</span>`:''}</h3>
-  <div class="sub"><span>${esc(e.town)}${e.venue&&e.venue!==e.town?' · '+esc(e.venue):''}</span>${usefulFreq(e.freq)?`<span>${esc(e.freq)}</span>`:''}</div>
+  <div class="sub"><span>${esc(e.town)}${e.venue&&e.venue!==e.town?' · '+esc(e.venue):''}</span>${usefulFreq(e.freq)?`<span>${esc(e.freq)}</span>`:''}${e.start!==e.end?`<span class="mono">${fmtRange(e)}</span>`:''}</div>
   ${e.desc?`<p>${esc(e.desc)}</p>`:''}
-  <div class="side">${showDate?`<span class="mono" style="font-size:11.5px;color:var(--ink2);font-weight:700">${fmtRange(e)}</span>`:''}
-  ${state.near?`<span class="km">${d==null?'distance n/a':d+' km from '+esc(state.near)}</span>`:''}
+  <div class="side">${state.near?`<span class="km">${d==null?'distance n/a':d+' km from '+esc(state.near)}</span>`:''}
   <a class="src find stretch" href="${esc(direct||searchURL(e))}" target="_blank" rel="noopener" lang="pt" title="${direct?'Opens the event\u2019s own page':'Search the web for this event'}">Mais Info ↗</a></div>
   </div></article>`; }
 
@@ -855,7 +877,7 @@ function picksHTML(){
   // Late in the weekend the range collapses to a single day; "Sun 13 – Sun 13" is silly.
   const when = label!=='this weekend' ? 'next seven days' : sat===sun ? fmt(sat) : `${fmt(sat)} – ${fmt(sun)}`;
   return `<section class="picks"><div class="day"><b>If you only do one thing ${label}</b><span>${when}</span></div>
-    <div class="grid">${chosen.map(e=>card(e,false)).join('')}</div></section>`;
+    <div class="grid">${chosen.map(e=>card(e)).join('')}</div></section>`;
 }
 
 // Every matching card used to go into the DOM at once: 520 cards was 7,961 nodes, a
@@ -887,7 +909,7 @@ function feedChunk(){
       box.insertAdjacentHTML('beforeend', dayHeader(key,t) + '<div class="grid"></div>');
       feed.grid = box.lastElementChild;
     }
-    buf += card(e,true); feed.i++; n++;
+    buf += card(e); feed.i++; n++;
   }
   flush();
   const done = feed.i >= feed.rows.length;
@@ -898,7 +920,7 @@ function feedChunk(){
 
 function flatChunk(){
   let out='',n=0;
-  while(feed.i<feed.rows.length && n<CHUNK){ out+=card(feed.rows[feed.i],false); feed.i++; n++; }
+  while(feed.i<feed.rows.length && n<CHUNK){ out+=card(feed.rows[feed.i]); feed.i++; n++; }
   feed.grid.insertAdjacentHTML('beforeend',out);
   const done=feed.i>=feed.rows.length;
   $('#feedMore').hidden=done;
@@ -958,7 +980,7 @@ function renderList(){ const rows=sortRows(filtered()); const t=today();
     ongoing.sort((a,b)=>a.end.localeCompare(b.end) || distSort(a)-distSort(b));
     tail = `<div class="day"><button class="secToggle stillOn" id="stillToggle" type="button" aria-expanded="${open}" aria-controls="stillOn">
         <b>Still on</b><span>${ongoing.length} run${ongoing.length===1?'':'s'} &amp; exhibitions already under way</span><span class="chev" aria-hidden="true">▾</span></button></div>
-      <div class="grid" id="stillOn"${open?'':' hidden'}>${open?ongoing.map(e=>card(e,false)).join(''):''}</div>`; }
+      <div class="grid" id="stillOn"${open?'':' hidden'}>${open?ongoing.map(e=>card(e)).join(''):''}</div>`; }
 
   feed = { rows:dated, i:0, day:null, grid:null };
   $('#list').innerHTML = picksHTML() + `<div id="feed"></div>`
@@ -1059,8 +1081,8 @@ function renderFreenif(){ $('#fnMeta').textContent = `${FREENIF.length} places`;
 // ---------- render ----------
 function render(){ save(); VIEWS.forEach(v=>$('#v-'+v).classList.toggle('hidden',state.view!==v));
   const railFilters = state.view==='markets'||state.view==='freenif';
-  document.querySelectorAll('#cats,#when,#onlyField').forEach(el=>{ el.closest('.f').style.display = railFilters?'none':''; });
-  if(!railFilters) paintChips();
+  document.querySelectorAll('#onlyField').forEach(el=>{ el.closest('.f').style.display = railFilters?'none':''; });
+  if(!railFilters){ paintChips(); buildDayRibbon(); }
   ({list:renderList,freenif:renderFreenif,markets:renderMarkets})[state.view](); }
 // Opening on the weekend is only a good idea when the weekend has something in it. On a
 // quiet week — or late on a Sunday, when "this weekend" is nearly spent — widen to seven
