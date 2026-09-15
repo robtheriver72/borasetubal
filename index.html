@@ -104,7 +104,15 @@ a{color:var(--accent)}
 .railToggle{display:none}
 .railBody{display:flex;flex-direction:column;gap:18px}
 @media (max-width:900px){
-  .railToggle{display:flex;align-items:center;justify-content:space-between;width:100%;border:0;background:transparent;color:var(--ink);font-weight:800;font-size:15px;padding:8px 0 2px;margin-top:2px;border-top:1px solid var(--line);cursor:pointer}
+  /* One tappable bar in the brand accent, matching the pressed state of the view
+     tabs above it, so it reads as "more controls live here" rather than a plain
+     text link — and it's the only thing between the view tabs and the list. */
+  .railToggle{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;border:0;background:var(--accent);color:var(--accent-ink);font-weight:800;font-size:14px;padding:10px 14px;border-radius:999px;box-shadow:var(--shadow);cursor:pointer}
+  .railToggleLabel{display:flex;align-items:center;gap:7px}
+  .railToggle .material-symbols-outlined{font-size:19px}
+  #railChevron{font-size:15px;display:inline-block;transition:transform .15s}
+  @media (prefers-reduced-motion:reduce){#railChevron{transition:none}}
+  .railToggle[aria-expanded="true"] #railChevron{transform:rotate(180deg)}
   .railBody{display:none;margin-top:14px}
   .rail.open .railBody{display:flex}
   /* Export actions are not discovery — on a phone they belong under the events,
@@ -127,9 +135,11 @@ a{color:var(--accent)}
 .chip[aria-pressed="true"]{background:var(--mustard);color:#2B2A1F}
 .chip[data-zero]{opacity:.45}
 .chip .n{font-family:"IBM Plex Mono",monospace;font-size:11px;opacity:.75}
-.seg{display:flex;gap:4px;flex-wrap:wrap}
+.seg{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
 .seg button{border:0;background:var(--bg3);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;color:var(--ink2)}
 .seg button[aria-pressed="true"]{background:var(--mustard);color:#2B2A1F}
+.seg input[type=date]{border:0;background:var(--bg3);border-radius:999px;padding:5px 10px;font-size:12.5px;font-weight:700;color:var(--ink2);font-family:inherit}
+.seg input[type=date].active{background:var(--mustard);color:#2B2A1F}
 .range{display:flex;align-items:center;gap:10px}
 .range input{flex:1;accent-color:var(--mustard)}
 .range output{min-width:52px;text-align:right;color:var(--ink2);font-weight:700}
@@ -297,13 +307,20 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
 
 <div class="wrap">
   <aside class="rail" id="rail">
-    <!-- Search and When sit OUTSIDE railBody so a phone shows them without a tap;
-         only the long tail of filters collapses behind the toggle. -->
-    <div class="f railHead"><label for="q">Search</label><input id="q" type="search" placeholder="Fado, jazz, walk, Palmela…"></div>
-    <div class="f railHead"><span class="lbl">When</span><div class="seg" id="when">
-      <button data-w="all" aria-pressed="true">All</button><button data-w="weekend" aria-pressed="false">This weekend</button><button data-w="7" aria-pressed="false">Next 7 days</button><button data-w="30" aria-pressed="false">Next 30 days</button></div></div>
-    <button class="railToggle" id="railToggle" type="button" aria-expanded="false">More filters <span id="railChevron">▾</span></button>
+    <!-- On a phone every field lives behind one tap so the page opens with a single
+         compact bar under the view tabs instead of Search + When + "More filters"
+         stacked as three full-width rows before any event is visible. Desktop is
+         unaffected: .railBody is un-gated outside the mobile media query, so these
+         same fields simply sit in the sidebar exactly as before. -->
+    <button class="railToggle" id="railToggle" type="button" aria-expanded="false" aria-controls="railBody">
+      <span class="railToggleLabel"><span class="material-symbols-outlined" aria-hidden="true">tune</span>Search &amp; filters</span>
+      <span id="railChevron" aria-hidden="true">▾</span>
+    </button>
     <div class="railBody" id="railBody">
+    <div class="f"><label for="q">Search</label><input id="q" type="search" placeholder="Fado, jazz, walk, Palmela…"></div>
+    <div class="f"><span class="lbl">When</span><div class="seg" id="when">
+      <button data-w="all" aria-pressed="true">All</button><button data-w="weekend" aria-pressed="false">This weekend</button><button data-w="7" aria-pressed="false">Next 7 days</button><button data-w="30" aria-pressed="false">Next 30 days</button>
+      <input type="date" id="whenDate" aria-label="Pick a specific date"></div></div>
     <div class="f"><label for="near">Where</label><select id="near"><option value="">Anywhere in Portugal</option></select>
       <button class="btn" id="nearMe" type="button" style="margin-top:7px"><span class="material-symbols-outlined">my_location</span>Use my location</button></div>
     <div class="f" id="kmField" hidden><label for="km" id="kmLbl">Distance</label><div class="range"><input id="km" type="range" min="0" max="22" step="1" value="22"><output for="km" id="kmOut" class="mono">Anywhere + islands</output></div></div>
@@ -477,6 +494,10 @@ const $ = s => document.querySelector(s);
 const isoLocal = d => new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
 const today = () => isoLocal(new Date());
 const addDays = (iso,n) => { const d=new Date(iso+'T00:00:00'); d.setDate(d.getDate()+n); return isoLocal(d); };
+// state.when is normally a preset ('all'/'weekend'/'7'/'30'), but picking a day on
+// the date input stores that ISO date directly — this is how the rest of the code
+// tells the two apart.
+const isDateWhen = w => /^\d{4}-\d{2}-\d{2}$/.test(w);
 // Inclusive day count: a single-day event is 1, a Fri-Sat run is 2.
 const spanDays = e => Math.round((new Date(e.end+'T00:00:00') - new Date(e.start+'T00:00:00'))/86400000) + 1;
 const fmt = iso => new Date(iso+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
@@ -581,7 +602,10 @@ function weekendRange(){ const t=today(); const d=new Date(t+'T00:00:00'); const
   const toSat = dow===0 ? -1 : 6-dow; const sat = addDays(t,toSat); return [dow===0?t:sat, addDays(sat,1)]; }
 function inWindow(e){ const t=today(); if (e.end < t) return false;
   if (state.when==='all') return true;
-  let a=t,b; if (state.when==='weekend'){ [a,b]=weekendRange(); } else b=addDays(t, +state.when);
+  let a=t,b;
+  if (state.when==='weekend'){ [a,b]=weekendRange(); }
+  else if (isDateWhen(state.when)){ a=b=state.when; }
+  else b=addDays(t, +state.when);
   return e.start<=b && e.end>=a; }
 function filtered(){ const q=state.q.trim().toLowerCase();
   return EVENTS.filter(e => inWindow(e)
@@ -636,10 +660,15 @@ function buildRail(){
   kmOpt.disabled = !state.near;
   if(!state.near && state.sort==='km'){ state.sort='date'; $('#sort').value='date'; }
   $('#freeCount').textContent = EVENTS.filter(e=>e.end>=today() && /^free/i.test(e.fp||'')).length;
-  document.querySelectorAll('#when button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.w===state.when));
+  const onDate = isDateWhen(state.when);
+  document.querySelectorAll('#when button').forEach(b=>b.setAttribute('aria-pressed', !onDate && b.dataset.w===state.when));
+  $('#whenDate').value = onDate ? state.when : '';
+  $('#whenDate').classList.toggle('active', onDate);
+  $('#whenDate').min = today();
 }
 $('#cats').addEventListener('click', e=>{ const b=e.target.closest('.chip'); if(!b) return; const c=b.dataset.cat; state.cats.has(c)?state.cats.delete(c):state.cats.add(c); b.setAttribute('aria-pressed',state.cats.has(c)); render(); });
-$('#when').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return; state.when=b.dataset.w; document.querySelectorAll('#when button').forEach(x=>x.setAttribute('aria-pressed',x===b)); render(); });
+$('#when').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return; state.when=b.dataset.w; buildRail(); render(); });
+$('#whenDate').addEventListener('change', e=>{ if(!e.target.value) return; state.when=e.target.value; buildRail(); render(); });
 $('#q').addEventListener('input', e=>{ state.q=e.target.value; render(); });
 $('#freeOnly').addEventListener('change', e=>{ state.free=e.target.checked; render(); });
 $('#savedOnly').addEventListener('change', e=>{ state.saved=e.target.checked; render(); });
@@ -661,7 +690,7 @@ $('#nearMe').addEventListener('click', ()=>{
   }, ()=>{ btn.disabled=false; toast('Location not shared — pick a town instead'); }, {timeout:8000});
 });
 $('#sort').addEventListener('change', e=>{ state.sort=e.target.value; render(); });
-$('#railToggle').addEventListener('click', ()=>{ const open=$('#rail').classList.toggle('open'); $('#railToggle').setAttribute('aria-expanded',open); $('#railChevron').textContent = open?'▴':'▾'; });
+$('#railToggle').addEventListener('click', ()=>{ const open=$('#rail').classList.toggle('open'); $('#railToggle').setAttribute('aria-expanded',open); });
 $('#reset').addEventListener('click', ()=>{ Object.assign(state,{q:'',when:'all',cats:new Set(),free:false,saved:false,km:KM_ANY,near:'',town:''}); buildRail(); render(); });
 document.querySelectorAll('.views button').forEach(b=>b.addEventListener('click',()=>{ state.view=b.dataset.view; document.querySelectorAll('.views button').forEach(x=>x.setAttribute('aria-pressed',x===b)); render(); }));
 
@@ -867,7 +896,8 @@ function armFeed(){
 function renderList(){ const rows=sortRows(filtered()); const t=today();
   const total=EVENTS.filter(e=>e.end>=t).length;   // freshness lives in the header now
   $('#sumMeta').textContent = rows.length===total ? `${total} events` : `${rows.length} of ${total} events`;
-  const w={all:'Que se passa?',weekend:'This weekend',7:'The next 7 days',30:'The next 30 days'}[state.when];
+  const w = isDateWhen(state.when) ? fmt(state.when)
+    : {all:'Que se passa?',weekend:'This weekend',7:'The next 7 days',30:'The next 30 days'}[state.when];
   // The headline is a sentence with its own punctuation, so a place clause can't just
   // be tacked on ("Que se passa? within 40 km of Setúbal"). Drop the mark and
   // join with a dash when there is something to append.
