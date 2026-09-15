@@ -529,6 +529,12 @@ const save = () => { try { localStorage.setItem('bora.filters', JSON.stringify({
 const eid = e => e.start+'·'+e.name;
 let SAVED = new Set(); try { SAVED = new Set(JSON.parse(localStorage.getItem('bora.saved')||'[]')); } catch(e){}
 const persistSaved = () => { try { localStorage.setItem('bora.saved', JSON.stringify([...SAVED])); } catch(e){} };
+// Finished events drop off the list, so their stars can never be clicked off —
+// the saved count only ever grew. Prune anything that isn't a currently listed,
+// still-live (end date today or later) event, once, on load.
+{ const live = new Set(EVENTS.filter(e => e.end >= today()).map(eid));
+  const pruned = new Set([...SAVED].filter(id => live.has(id)));
+  if (pruned.size !== SAVED.size) { SAVED = pruned; persistSaved(); } }
 function updateSavedCount(){ const el=$('#savedCount'); if(!el) return; el.textContent=SAVED.size; el.hidden=!SAVED.size; }
 
 // ---------- shareable view (filters in the URL hash) ----------
