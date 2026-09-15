@@ -239,6 +239,9 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
 .ev .sub .cat{color:var(--cc);font-weight:700}
 .ev .sub .mono{font-family:"IBM Plex Mono",monospace;font-size:11.5px}
 .ev p{margin:0;color:var(--ink2);font-size:13px}
+/* Stand-in for a missing description — frequency/distance moved up from the sub
+   line so the wide column isn't just blank — so it reads as metadata, not prose. */
+.ev p.filler{font-family:"IBM Plex Mono",monospace;font-size:11.5px;color:var(--ink3)}
 .ev .side{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 /* A row this wide with title/venue in one narrow left-hung column left most of
    its own width empty — the description just stacked underneath instead of
@@ -823,23 +826,34 @@ function pricePill(e){
   return `<span class="pricepill pill ${priceClass(e.fp)}">${esc(e.fp + amount)}</span>`;
 }
 
-// underDay: the card sits under a "Sun, 13 Sept" heading, so repeating the date on it
-// is pure noise — except for a run, where the range is the thing worth knowing.
+// Every row carries its own date column now (see evDate below), so unlike the old
+// card layout there's no day-heading context to duplicate against.
 function card(e){ const id=eid(e), sv=SAVED.has(id), d=distOrKm(e), t=today();
   const direct = eventPage(e);
   const [titleMain, titleGloss] = splitGloss(e.name);
   const anchor = e.start < t ? t : e.start;
   const ad = new Date(anchor+'T00:00:00');
   const dow = anchor===t ? 'Today' : anchor===addDays(t,1) ? 'Tmrw' : ad.toLocaleDateString('en-GB',{weekday:'short'});
+  // No description means the wide second column sits empty next to a short title —
+  // rather than leave it blank, fall back to whichever of frequency/distance is both
+  // real and not already shown elsewhere on the row. Never fabricate a filler.
+  let fillerText = '', showFreqInSub = usefulFreq(e.freq), showKmInSide = !!state.near;
+  if(!e.desc){
+    const bits = [];
+    if(state.near && d!=null){ bits.push(`${d} km from ${state.near}`); showKmInSide = false; }
+    if(usefulFreq(e.freq)){ bits.push(e.freq); showFreqInSub = false; }
+    fillerText = bits.join(' · ');
+  }
+  const descHTML = e.desc ? `<p>${esc(e.desc)}</p>` : fillerText ? `<p class="filler">${esc(fillerText)}</p>` : '';
   return `<article class="ev${sv?' saved':''}" style="--cc:var(${catVar(e.cat)})">
   <div class="evDate"><b>${ad.getDate()}</b><span>${dow}</span></div>
   <div class="evMain">
   <div class="top"><span class="cat">${esc(e.cat)}</span>${pricePill(e)}
   <button class="fav" type="button" data-id="${esc(id)}" aria-pressed="${sv}" aria-label="${sv?'Remove from saved':'Save this event'}" title="${sv?'Saved':'Save'}"><span class="material-symbols-outlined">star</span></button></div>
   <h3>${esc(titleMain)}${titleGloss?`<span class="gloss">(${esc(titleGloss)})</span>`:''}</h3>
-  <div class="sub"><span><span class="town">${esc(e.town)}</span>${e.venue&&e.venue!==e.town?' · '+esc(e.venue):''}</span>${usefulFreq(e.freq)?`<span>${esc(e.freq)}</span>`:''}${e.start!==e.end?`<span class="mono">${fmtRange(e)}</span>`:''}</div>
-  ${e.desc?`<p>${esc(e.desc)}</p>`:''}
-  <div class="side">${state.near?`<span class="km">${d==null?'distance n/a':d+' km from '+esc(state.near)}</span>`:''}
+  <div class="sub"><span><span class="town">${esc(e.town)}</span>${e.venue&&e.venue!==e.town?' · '+esc(e.venue):''}</span>${showFreqInSub?`<span>${esc(e.freq)}</span>`:''}${e.start!==e.end?`<span class="mono">${fmtRange(e)}</span>`:''}</div>
+  ${descHTML}
+  <div class="side">${showKmInSide?`<span class="km">${d==null?'distance n/a':d+' km from '+esc(state.near)}</span>`:''}
   <a class="src find stretch" href="${esc(direct||searchURL(e))}" target="_blank" rel="noopener" lang="pt" title="${direct?'Opens the event\u2019s own page':'Search the web for this event'}">Mais Info ↗</a></div>
   </div></article>`; }
 
