@@ -255,7 +255,7 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
      price/star column didn't line up. Capping it short of that edge also means a
      short description wraps to two lines instead of stretching thin across one,
      using more of the row's own height instead of just sitting in open space. */
-  .evMain>p{grid-column:2;grid-row:2/span 2;align-self:start;font-size:13.5px;max-width:620px}
+  .evMain>p{grid-column:2;grid-row:2/span 2;align-self:start;font-size:13.5px;max-width:440px}
   .evMain>.side{grid-column:1/-1}
 }
 .pill{display:inline-block;border-radius:999px;padding:3px 9px;font-size:12px;font-weight:800}
@@ -363,14 +363,10 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
       <span class="railToggleLabel"><span class="material-symbols-outlined" aria-hidden="true">tune</span>Search &amp; filters</span>
       <span id="railChevron" aria-hidden="true"></span>
     </button>
-    <!-- Category and day are the two questions a reader arrives with, not a
-         secondary filter — they stay visible outside the collapsible panel below
-         on every screen size, mobile included, rather than requiring a tap to open
-         "Search & filters" just to see today's categories. -->
-    <div class="f"><span class="lbl">Category</span><div class="chips" id="cats"></div></div>
-    <div class="f"><span class="lbl">Day</span><div class="dayRibbon" id="dayRibbon"></div></div>
     <div class="railBody" id="railBody">
     <div class="f"><label for="q">Search</label><input id="q" type="search" placeholder="Fado, jazz, walk, Palmela…"></div>
+    <div class="f"><span class="lbl">Category</span><div class="chips" id="cats"></div></div>
+    <div class="f"><span class="lbl">Day</span><div class="dayRibbon" id="dayRibbon"></div></div>
     <div class="f"><label for="whenDate">Jump to a date</label><input type="date" id="whenDate"></div>
     <div class="f"><label for="near">Where</label><select id="near"><option value="">Anywhere in Portugal</option></select>
       <button class="btn" id="nearMe" type="button" style="margin-top:7px"><span class="material-symbols-outlined">my_location</span>Use my location</button></div>
