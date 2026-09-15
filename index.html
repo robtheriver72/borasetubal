@@ -92,6 +92,7 @@ a{color:var(--accent)}
   .views::-webkit-scrollbar{display:none}
   .views button{padding:7px 12px;font-size:13px}
   .wrap{padding:14px 14px 48px}
+  .railToggle{width:calc(100% + 28px);margin:0 -14px}
 }
 
 /* layout */
@@ -104,16 +105,20 @@ a{color:var(--accent)}
 .railToggle{display:none}
 .railBody{display:flex;flex-direction:column;gap:18px}
 @media (max-width:900px){
-  /* One tappable bar in the brand accent, matching the pressed state of the view
-     tabs above it, so it reads as "more controls live here" rather than a plain
-     text link — and it's the only thing between the view tabs and the list. */
-  .railToggle{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;border:0;background:var(--accent);color:var(--accent-ink);font-weight:800;font-size:14px;padding:10px 14px;border-radius:999px;box-shadow:var(--shadow);cursor:pointer}
+  /* A flat, solid bar the full width of the page — not a pill floating inside the
+     rounded rail card, which just looked like a bubble inside a bubble. So the
+     card chrome (rounded corners, border, padding, shadow) moves off .rail and
+     onto .railBody instead: it only appears once there's something to frame. */
+  .rail{background:transparent;border:0;border-radius:0;padding:0;box-shadow:none;gap:0;align-self:stretch;width:100%}
+  .railToggle{display:flex;align-items:center;justify-content:space-between;gap:10px;
+    width:calc(100% + 40px);margin:0 -20px;border:0;background:var(--accent);color:var(--accent-ink);
+    font-weight:800;font-size:13.5px;padding:8px 20px;border-radius:0;cursor:pointer}
   .railToggleLabel{display:flex;align-items:center;gap:7px}
-  .railToggle .material-symbols-outlined{font-size:19px}
+  .railToggle .material-symbols-outlined{font-size:17px}
   #railChevron{font-size:15px;display:inline-block;transition:transform .15s}
   @media (prefers-reduced-motion:reduce){#railChevron{transition:none}}
   .railToggle[aria-expanded="true"] #railChevron{transform:rotate(180deg)}
-  .railBody{display:none;margin-top:14px}
+  .railBody{display:none;margin-top:14px;background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
   .rail.open .railBody{display:flex}
   /* Export actions are not discovery — on a phone they belong under the events,
      not between the reader and the first card. */
