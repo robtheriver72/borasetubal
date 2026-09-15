@@ -120,9 +120,11 @@ a{color:var(--accent)}
     font-weight:800;font-size:13.5px;padding:8px 20px;border-radius:0;cursor:pointer}
   .railToggleLabel{display:flex;align-items:center;gap:7px}
   .railToggle .material-symbols-outlined{font-size:17px}
-  #railChevron{font-size:15px;display:inline-block;transition:transform .15s}
-  @media (prefers-reduced-motion:reduce){#railChevron{transition:none}}
-  .railToggle[aria-expanded="true"] #railChevron{transform:rotate(180deg)}
+  /* A triangle that rotates asks the reader to already know what "pointing down"
+     vs "pointing up" means for a toggle. A plus that becomes a minus doesn't. */
+  #railChevron{font-size:17px;font-weight:800;display:inline-block;width:1em;text-align:center;line-height:1}
+  #railChevron::before{content:"+"}
+  .railToggle[aria-expanded="true"] #railChevron::before{content:"\2212"}
   .railBody{display:none;margin-top:14px;background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
   .rail.open .railBody{display:flex}
   /* Export actions are not discovery — on a phone they belong under the events,
@@ -135,9 +137,9 @@ a{color:var(--accent)}
 .f input[type=search],.f select{border:1px solid var(--line);border-bottom:2px solid var(--mustard);background:var(--bg);color:var(--ink);border-radius:9px;padding:9px 11px;width:100%;font-weight:600}
 .f input[type=search]::placeholder{color:var(--ink3);font-weight:500}
 .secToggle{display:flex;align-items:center;gap:6px;width:100%;border:0;background:transparent;padding:0;cursor:pointer;text-align:left}
-.secToggle .chev{margin-left:auto;font-size:19px;line-height:1;opacity:.95;transition:transform .15s}
-@media (prefers-reduced-motion:reduce){.secToggle .chev{transition:none}}
-.secToggle[aria-expanded="false"] .chev{transform:rotate(-90deg)}
+.secToggle .chev{margin-left:auto;font-size:19px;font-weight:800;line-height:1;width:1em;text-align:center;display:inline-block}
+.secToggle .chev::before{content:"+"}
+.secToggle[aria-expanded="true"] .chev::before{content:"\2212"}
 /* Category is the first question a reader arrives with, so its chips live at the
    top of the results now, not three menus deep — always visible rather than
    collapsed behind a "Category" toggle, and now lives in the sidebar rather than
@@ -231,7 +233,7 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
 .ev h3{font-variation-settings:"opsz" 20,"SOFT" 40;margin:0;font-size:16px;font-weight:600;line-height:1.22;font-family:var(--display);letter-spacing:-.005em}
 .ev h3 .gloss{display:block;font-family:"Manrope",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:12.5px;font-weight:700;font-style:italic;letter-spacing:0;color:var(--ink2);margin-top:1px}
 .ev .sub{color:var(--ink2);font-size:12.5px;display:flex;flex-wrap:wrap;gap:3px 10px}
-.ev .sub .town{color:var(--ochre);font-weight:800}
+.ev .sub .town{color:var(--mustard);font-weight:800}
 .ev .sub .cat{color:var(--cc);font-weight:700}
 .ev .sub .mono{font-family:"IBM Plex Mono",monospace;font-size:11.5px}
 .ev p{margin:0;color:var(--ink2);font-size:13px}
@@ -253,7 +255,7 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
      price/star column didn't line up. Capping it short of that edge also means a
      short description wraps to two lines instead of stretching thin across one,
      using more of the row's own height instead of just sitting in open space. */
-  .evMain>p{grid-column:2;grid-row:2/span 2;align-self:start;font-size:13.5px;max-width:calc(100% - 130px)}
+  .evMain>p{grid-column:2;grid-row:2/span 2;align-self:start;font-size:13.5px;max-width:620px}
   .evMain>.side{grid-column:1/-1}
 }
 .pill{display:inline-block;border-radius:999px;padding:3px 9px;font-size:12px;font-weight:800}
@@ -359,15 +361,16 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
          same fields simply sit in the sidebar exactly as before. -->
     <button class="railToggle" id="railToggle" type="button" aria-expanded="false" aria-controls="railBody">
       <span class="railToggleLabel"><span class="material-symbols-outlined" aria-hidden="true">tune</span>Search &amp; filters</span>
-      <span id="railChevron" aria-hidden="true">▾</span>
+      <span id="railChevron" aria-hidden="true"></span>
     </button>
-    <div class="railBody" id="railBody">
-    <div class="f"><label for="q">Search</label><input id="q" type="search" placeholder="Fado, jazz, walk, Palmela…"></div>
-    <!-- Category and day used to sit above the results, always visible on desktop —
-         but that split filtering across two places on screen. Every control lives
-         in the sidebar now, on desktop and mobile alike. -->
+    <!-- Category and day are the two questions a reader arrives with, not a
+         secondary filter — they stay visible outside the collapsible panel below
+         on every screen size, mobile included, rather than requiring a tap to open
+         "Search & filters" just to see today's categories. -->
     <div class="f"><span class="lbl">Category</span><div class="chips" id="cats"></div></div>
     <div class="f"><span class="lbl">Day</span><div class="dayRibbon" id="dayRibbon"></div></div>
+    <div class="railBody" id="railBody">
+    <div class="f"><label for="q">Search</label><input id="q" type="search" placeholder="Fado, jazz, walk, Palmela…"></div>
     <div class="f"><label for="whenDate">Jump to a date</label><input type="date" id="whenDate"></div>
     <div class="f"><label for="near">Where</label><select id="near"><option value="">Anywhere in Portugal</option></select>
       <button class="btn" id="nearMe" type="button" style="margin-top:7px"><span class="material-symbols-outlined">my_location</span>Use my location</button></div>
@@ -969,7 +972,7 @@ function renderList(){ const rows=sortRows(filtered()); const t=today();
   if(ongoing.length){ const open=state.onOpen;
     ongoing.sort((a,b)=>a.end.localeCompare(b.end) || distSort(a)-distSort(b));
     tail = `<div class="day"><button class="secToggle stillOn" id="stillToggle" type="button" aria-expanded="${open}" aria-controls="stillOn">
-        <b>Still on</b><span>${ongoing.length} run${ongoing.length===1?'':'s'} &amp; exhibitions already under way</span><span class="chev" aria-hidden="true">▾</span></button></div>
+        <b>Still on</b><span>${ongoing.length} run${ongoing.length===1?'':'s'} &amp; exhibitions already under way</span><span class="chev" aria-hidden="true"></span></button></div>
       <div class="grid" id="stillOn"${open?'':' hidden'}>${open?ongoing.map(e=>card(e)).join(''):''}</div>`; }
 
   feed = { rows:dated, i:0, day:null, grid:null };
