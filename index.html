@@ -125,13 +125,6 @@ a{color:var(--accent)}
   .railToggle[aria-expanded="true"] #railChevron{transform:rotate(180deg)}
   .railBody{display:none;margin-top:14px;background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
   .rail.open .railBody{display:flex}
-  /* Category tiles and the day ribbon are the two questions a reader arrives with,
-     but on a phone they're still filtering controls — folded into the same "Search
-     & filters" reveal as everything else instead of floating outside it. .rail and
-     .main are siblings in that DOM order regardless of the flex `order` below, so
-     this sibling selector tracks .rail's own open/closed state correctly. */
-  #catDayWrap{display:none;margin-bottom:14px}
-  .rail.open ~ .main #catDayWrap{display:block}
   /* Export actions are not discovery — on a phone they belong under the events,
      not between the reader and the first card. */
   #v-list{display:flex;flex-direction:column}
@@ -147,14 +140,10 @@ a{color:var(--accent)}
 .secToggle[aria-expanded="false"] .chev{transform:rotate(-90deg)}
 /* Category is the first question a reader arrives with, so its chips live at the
    top of the results now, not three menus deep — always visible rather than
-   collapsed behind a "Category" toggle. 17 categories at a size worth tapping
-   wrapped to six-plus rows on a phone before a single event was on screen, so
-   this scrolls sideways instead, same as the day ribbon right below it. */
+   collapsed behind a "Category" toggle, and now lives in the sidebar rather than
+   above the results — narrow at any screen size, so it scrolls sideways rather
+   than wrapping to six-plus rows the sidebar isn't wide enough to lay out well. */
 .chips{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:2px 2px 6px;margin:0 0 4px;scrollbar-width:thin}
-/* Desktop has the vertical room to show all 17 at a glance — scrolling sideways
-   through a row that could just wrap would hide most of them for no reason. The
-   scroll strip is a phone-width fix, not the desktop layout. */
-@media (min-width:900px){.chips{flex-wrap:wrap;overflow-x:visible;padding:2px 0 0}}
 .chip{border:0;background:var(--bg3);border-radius:999px;padding:7px 13px 7px 10px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:7px;color:var(--ink2);flex:none;white-space:nowrap}
 .chip i{width:9px;height:9px;border-radius:50%;background:var(--cc);display:inline-block}
 .chip[aria-pressed="true"]{background:var(--mustard);color:#2B2A1F}
@@ -259,7 +248,12 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
   .evMain>.top{grid-column:1/-1}
   .evMain>h3{grid-column:1}
   .evMain>.sub{grid-column:1}
-  .evMain>p{grid-column:2;grid-row:2/span 2;align-self:start;font-size:13.5px}
+  /* Left unconstrained, this ran the full width of the row, well past where the
+     price pill and star sit at the top-right — the description column and the
+     price/star column didn't line up. Capping it short of that edge also means a
+     short description wraps to two lines instead of stretching thin across one,
+     using more of the row's own height instead of just sitting in open space. */
+  .evMain>p{grid-column:2;grid-row:2/span 2;align-self:start;font-size:13.5px;max-width:calc(100% - 130px)}
   .evMain>.side{grid-column:1/-1}
 }
 .pill{display:inline-block;border-radius:999px;padding:3px 9px;font-size:12px;font-weight:800}
@@ -369,6 +363,11 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
     </button>
     <div class="railBody" id="railBody">
     <div class="f"><label for="q">Search</label><input id="q" type="search" placeholder="Fado, jazz, walk, Palmela…"></div>
+    <!-- Category and day used to sit above the results, always visible on desktop —
+         but that split filtering across two places on screen. Every control lives
+         in the sidebar now, on desktop and mobile alike. -->
+    <div class="f"><span class="lbl">Category</span><div class="chips" id="cats"></div></div>
+    <div class="f"><span class="lbl">Day</span><div class="dayRibbon" id="dayRibbon"></div></div>
     <div class="f"><label for="whenDate">Jump to a date</label><input type="date" id="whenDate"></div>
     <div class="f"><label for="near">Where</label><select id="near"><option value="">Anywhere in Portugal</option></select>
       <button class="btn" id="nearMe" type="button" style="margin-top:7px"><span class="material-symbols-outlined">my_location</span>Use my location</button></div>
@@ -382,15 +381,6 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
 
   <main class="main">
     <section id="v-list">
-      <!-- Category first, then day — the two questions a reader actually arrives with —
-           sit above the results on desktop, always visible. On a phone they used to
-           float outside the "Search & filters" panel too, splitting filtering across
-           two separate places on screen; #catDayWrap folds them into the same panel
-           there instead (CSS below), so every control lives in one spot on mobile. -->
-      <div id="catDayWrap">
-      <div class="chips" id="cats"></div>
-      <div class="dayRibbon" id="dayRibbon"></div>
-      </div>
       <div class="sum"><h2 id="sumTitle">Que se passa?</h2><span class="meta" id="sumMeta"></span>
         <div class="sort"><label for="sort">Sort</label><select id="sort"><option value="date">Date</option><option value="km">Distance</option><option value="name">Name</option><option value="cat">Category</option></select></div></div>
       <p class="freenote" id="freeNote" hidden></p>
@@ -1081,7 +1071,7 @@ function renderFreenif(){ $('#fnMeta').textContent = `${FREENIF.length} places`;
 // ---------- render ----------
 function render(){ save(); VIEWS.forEach(v=>$('#v-'+v).classList.toggle('hidden',state.view!==v));
   const railFilters = state.view==='markets'||state.view==='freenif';
-  document.querySelectorAll('#onlyField').forEach(el=>{ el.closest('.f').style.display = railFilters?'none':''; });
+  document.querySelectorAll('#onlyField,#cats,#dayRibbon').forEach(el=>{ el.closest('.f').style.display = railFilters?'none':''; });
   if(!railFilters){ paintChips(); buildDayRibbon(); }
   ({list:renderList,freenif:renderFreenif,markets:renderMarkets})[state.view](); }
 // Opening on the weekend is only a good idea when the weekend has something in it. On a
