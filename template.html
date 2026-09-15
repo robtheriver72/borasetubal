@@ -708,9 +708,12 @@ const searchURL = e => {
     encodeURIComponent([e.name, venue, e.town, e.start.slice(0,4)].filter(Boolean).join(' '));
 };
 
-// "One-off", "Annual", "Run" told the reader nothing and cost a whole row. Keep the
-// frequency line only when it actually says when something happens.
-const usefulFreq = f => /\d|mon|tue|wed|thu|fri|sat|sun|week|daily/i.test(f||'');
+// "One-off" and "Annual" told the reader nothing and cost a whole row, so those stay
+// hidden. But "Run" or "Two performances" next to a date range like "10 Sep – 4 Oct"
+// matters: without it the range reads as nightly, when it may really be a handful of
+// dates within it. Keep the frequency line whenever it says when, or how many times,
+// something happens.
+const usefulFreq = f => /\d|mon|tue|wed|thu|fri|sat|sun|week|daily|run|performance/i.test(f||'');
 
 // Only show a figure when there is a real one. "Paid · Ticketed" and "Paid · Museum
 // ticket" said nothing over "Paid" and overflowed the pill; "Unknown" was pure noise,
