@@ -196,6 +196,7 @@ body.no-icons .fav::before{content:'\2605';font-size:16px;line-height:1}
 body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
 .ev .body{padding:11px 13px 12px;min-width:0;display:flex;flex-direction:column;gap:5px;flex:1}
 .ev h3{font-variation-settings:"opsz" 20,"SOFT" 40;margin:0;font-size:16px;font-weight:600;line-height:1.22;font-family:var(--display);letter-spacing:-.005em}
+.ev h3 .gloss{display:block;font-family:"Manrope",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:12.5px;font-weight:500;letter-spacing:0;color:var(--ink2);margin-top:1px}
 .ev .sub{color:var(--ink2);font-size:12.5px;display:flex;flex-wrap:wrap;gap:3px 10px}
 .ev .sub .cat{color:var(--cc);font-weight:700}
 .ev p{margin:0;color:var(--ink2);font-size:13px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -487,6 +488,11 @@ const fmtRange = e => { if(e.start===e.end) return fmt(e.start);
     ? `${a.getDate()} – ${b.toLocaleDateString('en-GB',o)}`
     : `${a.toLocaleDateString('en-GB',o)} – ${b.toLocaleDateString('en-GB',o)}`; };
 const esc = s => String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+// Titles keep their Portuguese original with an English gloss trailing in brackets
+// ("Elsa e o Reino do Gelo (Frozen)") — inline that read as one run-on phrase, so
+// split it onto its own quieter line instead of leaving it competing with the title.
+const GLOSS_RE = /^(.+?)\s+\(([^()]+)\)$/;
+const splitGloss = name => { const m = GLOSS_RE.exec(name); return m ? [m[1], m[2]] : [name, null]; };
 const priceClass = fp => /^free/i.test(fp)?'free':/^paid/i.test(fp)?'paid':/mixed|donation/i.test(fp)?'mixed':'unk';
 
 // ---------- state ----------
@@ -738,11 +744,12 @@ function pricePill(e){
 function card(e, underDay){ const id=eid(e), sv=SAVED.has(id), d=distOrKm(e);
   const direct = eventPage(e);
   const showDate = !underDay || e.start!==e.end;
+  const [titleMain, titleGloss] = splitGloss(e.name);
   return `<article class="ev${sv?' saved':''}" style="--cc:var(${catVar(e.cat)})">
   <div class="body">
   <div class="top"><span class="cat">${esc(e.cat)}</span>${pricePill(e)}
   <button class="fav" type="button" data-id="${esc(id)}" aria-pressed="${sv}" aria-label="${sv?'Remove from saved':'Save this event'}" title="${sv?'Saved':'Save'}"><span class="material-symbols-outlined">star</span></button></div>
-  <h3>${esc(e.name)}</h3>
+  <h3>${esc(titleMain)}${titleGloss?`<span class="gloss">${esc(titleGloss)}</span>`:''}</h3>
   <div class="sub"><span>${esc(e.town)}${e.venue&&e.venue!==e.town?' · '+esc(e.venue):''}</span>${usefulFreq(e.freq)?`<span>${esc(e.freq)}</span>`:''}</div>
   ${e.desc?`<p>${esc(e.desc)}</p>`:''}
   <div class="side">${showDate?`<span class="mono" style="font-size:11.5px;color:var(--ink2);font-weight:700">${fmtRange(e)}</span>`:''}
