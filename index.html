@@ -316,7 +316,7 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
 
   <main class="main">
     <section id="v-list">
-      <div class="sum"><h2 id="sumTitle">Que os bons tempos comecem!</h2><span class="meta" id="sumMeta"></span>
+      <div class="sum"><h2 id="sumTitle">Que se passa?</h2><span class="meta" id="sumMeta"></span>
         <div class="sort"><label for="sort">Sort</label><select id="sort"><option value="date">Date</option><option value="km">Distance</option><option value="name">Name</option><option value="cat">Category</option></select></div></div>
       <p class="freenote" id="freeNote" hidden></p>
       <div class="tools">
@@ -476,6 +476,8 @@ const $ = s => document.querySelector(s);
 const isoLocal = d => new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
 const today = () => isoLocal(new Date());
 const addDays = (iso,n) => { const d=new Date(iso+'T00:00:00'); d.setDate(d.getDate()+n); return isoLocal(d); };
+// Inclusive day count: a single-day event is 1, a Fri-Sat run is 2.
+const spanDays = e => Math.round((new Date(e.end+'T00:00:00') - new Date(e.start+'T00:00:00'))/86400000) + 1;
 const fmt = iso => new Date(iso+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
 // A single date earns its weekday; a range does not, and "9 – 27 Sept" fits on the card
 // where "Wed, 9 Sept – Sun, 27 Sept" pushed Mais Info onto a second line.
@@ -819,10 +821,14 @@ function feedChunk(){
   const flush = () => { if(buf && feed.grid){ feed.grid.insertAdjacentHTML('beforeend', buf); } buf=''; };
   while(feed.i < feed.rows.length && n < CHUNK){
     const e = feed.rows[feed.i];
-    if(e.start !== feed.day){
+    // A short run already under way (start before today, kept out of "Still on" by
+    // its length) groups under today's heading rather than opening its own heading
+    // for a past date — the card's own date range still shows when it really started.
+    const key = e.start < t ? t : e.start;
+    if(key !== feed.day){
       flush();
-      feed.day = e.start;
-      box.insertAdjacentHTML('beforeend', dayHeader(e.start,t) + '<div class="grid"></div>');
+      feed.day = key;
+      box.insertAdjacentHTML('beforeend', dayHeader(key,t) + '<div class="grid"></div>');
       feed.grid = box.lastElementChild;
     }
     buf += card(e,true); feed.i++; n++;
@@ -854,13 +860,13 @@ function armFeed(){
 function renderList(){ const rows=sortRows(filtered()); const t=today();
   const total=EVENTS.filter(e=>e.end>=t).length;   // freshness lives in the header now
   $('#sumMeta').textContent = rows.length===total ? `${total} events` : `${rows.length} of ${total} events`;
-  const w={all:'Que os bons tempos comecem!',weekend:'This weekend',7:'The next 7 days',30:'The next 30 days'}[state.when];
-  // The headline is a sentence with its own exclamation mark, so a place clause can't just
-  // be tacked on ("Que os bons tempos comecem! within 40 km of Setúbal"). Drop the mark and
+  const w={all:'Que se passa?',weekend:'This weekend',7:'The next 7 days',30:'The next 30 days'}[state.when];
+  // The headline is a sentence with its own punctuation, so a place clause can't just
+  // be tacked on ("Que se passa? within 40 km of Setúbal"). Drop the mark and
   // join with a dash when there is something to append.
   const place = state.near ? (state.km<=0 ? 'in '+state.near : `within ${state.km>=KM_ANY?'reach of':state.km+' km of'} ${state.near}`) : '';
   $('#sumTitle').textContent = (state.saved?'Saved — ':'')+(state.cats.size===1?[...state.cats][0]+'s — ':'')
-    +(place ? w.replace(/!\s*$/,'')+' — '+place : w);
+    +(place ? w.replace(/[!?]\s*$/,'')+' — '+place : w);
   // 62% of live events have no price recorded, so "Free" quietly hides far more than it
   // shows. Say so rather than letting the filter imply the site has nothing free.
   const unpriced = EVENTS.filter(e=>e.end>=t && !/^(free|paid)/i.test(e.fp||'')).length;
@@ -880,10 +886,16 @@ function renderList(){ const rows=sortRows(filtered()); const t=today();
     feed.grid = $('#feed'); feed.day = '\u0000';   // one grid, no day headings
     flatChunk(); armFeed(); return; }
 
-  // A site called "é agora" should not open with a LEGO show that runs until January.
-  // Anything that started before today is a run you can catch any time: it goes to the
-  // bottom under "Still on", ordered by what disappears first.
-  const ongoing = rows.filter(e=>e.start < t), dated = rows.filter(e=>e.start >= t);
+  // A site called "é agora" should not open with a LEGO show that runs until January —
+  // but a 3-night theatre run that opened Thursday and closes Sunday is exactly what
+  // "é agora" means, not background wallpaper. So the test isn't "did it start before
+  // today", it's "is it long enough to read as a standing exhibition rather than a run
+  // worth catching this weekend": total span over LONG_RUN_DAYS goes to the bottom under
+  // "Still on", ordered by what disappears first; anything shorter stays in the main feed
+  // even once it's under way.
+  const LONG_RUN_DAYS = 10;
+  const isLongRun = e => e.start < t && spanDays(e) > LONG_RUN_DAYS;
+  const ongoing = rows.filter(isLongRun), dated = rows.filter(e=>!isLongRun(e));
   let tail = '';
   if(ongoing.length){ const open=state.onOpen;
     ongoing.sort((a,b)=>a.end.localeCompare(b.end) || distSort(a)-distSort(b));
