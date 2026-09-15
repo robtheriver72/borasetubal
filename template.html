@@ -214,10 +214,13 @@ a{color:var(--accent)}
 .evMain{min-width:0;flex:1;display:flex;flex-direction:column;gap:4px}
 .ev .top{display:flex;align-items:center;gap:8px;margin-bottom:1px}
 .ev .top .cat{color:var(--cc);font-weight:800;font-size:11.5px;letter-spacing:.02em;text-transform:uppercase;min-width:0}
-.ev .top .pricepill{margin-left:auto;font-weight:800;font-size:11px;padding:3px 9px;border-radius:999px;white-space:nowrap;flex:none}
-.ev .top .fav{margin-left:0}
+/* Whatever comes right after category — the price pill if there is one, the star
+   if there isn't — gets pushed to the far right as a single anchored group, rather
+   than the pill and the star each carrying their own auto-margin and splitting the
+   gap between them: that left the pill stranded alone in the middle of the row. */
+.ev .top .cat + *{margin-left:auto}
+.ev .top .pricepill{font-weight:800;font-size:11px;padding:3px 9px;border-radius:999px;white-space:nowrap;flex:none}
 .ev .top .pricepill + .fav{margin-left:2px}
-.ev .top .fav:only-of-type{margin-left:auto}
 /* The whole card is the click target: the Mais Info link stretches invisibly over it,
    so there is still exactly one link per card for a screen reader or keyboard user. */
 .ev .src.stretch::after{content:"";position:absolute;inset:0;z-index:1}
