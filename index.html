@@ -190,12 +190,6 @@ a{color:var(--accent)}
 
 /* list */
 .day{margin:26px 0 10px;display:flex;align-items:baseline;gap:10px;border-bottom:3px solid var(--mustard);padding-bottom:6px}
-/* the editorial strip */
-.picks{margin:0 0 8px;padding:2px 16px 14px;background:var(--bg3);border:1px solid var(--line);border-radius:16px}
-.picks .day{margin:14px 0 4px;border-bottom-width:2px}
-.picks .day b{font-size:19px}
-.picks .grid{margin:12px 0 0}
-.picks .ev{background:var(--bg2)}
 /* "Still on" collapses the long runs out of the way */
 .day .secToggle.stillOn{align-items:baseline;gap:10px}
 .day .secToggle.stillOn b{font-family:var(--display);font-weight:700;font-size:18px;color:var(--ink)}
@@ -242,6 +236,18 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
 .ev .sub .mono{font-family:"IBM Plex Mono",monospace;font-size:11.5px}
 .ev p{margin:0;color:var(--ink2);font-size:13px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .ev .side{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+/* A row this wide with title/venue in one narrow left-hung column left most of
+   its own width empty — the description just stacked underneath instead of
+   using it. Past ~760px, run title+venue and the description side by side as
+   two real columns, top/side (category, price, star, Mais Info) spanning both. */
+@media (min-width:760px){
+  .evMain{display:grid;grid-template-columns:minmax(230px,380px) 1fr;column-gap:26px;row-gap:2px}
+  .evMain>.top{grid-column:1/-1}
+  .evMain>h3{grid-column:1}
+  .evMain>.sub{grid-column:1}
+  .evMain>p{grid-column:2;grid-row:2/span 2;align-self:start;-webkit-line-clamp:3;font-size:13.5px}
+  .evMain>.side{grid-column:1/-1}
+}
 .pill{display:inline-block;border-radius:999px;padding:3px 9px;font-size:12px;font-weight:800}
 .pill.free{background:var(--free-soft);color:var(--free)} .pill.paid{background:var(--paid-soft);color:var(--paid)} .pill.mixed{background:var(--accent-soft);color:var(--accent)} .pill.unk{background:var(--bg3);color:var(--ink3)}
 .km{font-size:12px;color:var(--ink3)}
@@ -844,47 +850,6 @@ document.addEventListener('click', ev=>{ const b=ev.target.closest('.fav'); if(!
     const card=x.closest('.ev'); if(card) card.classList.toggle('saved',on); });
   toast(on?'Saved':'Removed from saved');
   if(state.saved) render(); });
-// ---------- editorial picks ----------
-// The list answers "what is on". This answers "what would we actually do", which is the
-// difference between a database and a guide. No new data: it scores what is already here.
-const DISTINCTIVE = new Set(['Pride','Food festival','Wine festival','Medieval festival','Market',
-  'Community','Heritage & talks','Workshop','Family','Unique experience']);
-function pickScore(e, wkStart){
-  let s = 0;
-  if(/^free/i.test(e.fp)) s += 3;                      // free is the site's whole origin story
-  if(DISTINCTIVE.has(e.cat)) s += 2;
-  if(e.cat==='Major concert') s -= 2;                  // an arena tour is not a discovery
-  const days = (new Date(e.end) - new Date(e.start))/864e5;
-  if(days <= 3) s += 1;                                // a one-off beats a three-month run
-  if(e.start >= wkStart) s += 1;
-  const d = distOrKm(e);
-  if(d != null){ if(d <= 30) s += 2; else if(d <= 100) s += 1; }
-  return s;
-}
-function picksHTML(){
-  if(state.saved || state.sort!=='date') return '';    // they have already curated
-  const [sat,sun] = weekendRange();
-  // A workshop running 1–29 Sept technically "overlaps the weekend", but it is not a
-  // weekend pick — it is a thing you can catch any time. Only short runs, or runs that
-  // actually begin in the window, qualify.
-  const runDays = e => Math.round((new Date(e.end) - new Date(e.start))/864e5);
-  const weekendShaped = e => runDays(e) <= 7 || e.start >= sat;
-  let pool = filtered().filter(e => e.start <= sun && e.end >= sat && weekendShaped(e)), label = 'this weekend';
-  if(pool.length < 3){ const b = addDays(today(),7);
-    pool = filtered().filter(e => e.start <= b && e.end >= today() && runDays(e) <= 14); label = 'the week ahead'; }
-  if(pool.length < 3) return '';
-  const ranked = pool.map(e=>({e, s:pickScore(e, sat)})).sort((a,b)=> b.s-a.s || a.e.start.localeCompare(b.e.start));
-  const chosen=[], cats=new Set(), towns=new Set();
-  for(const {e} of ranked){ if(chosen.length===3) break;
-    if(cats.has(e.cat) || towns.has(e.town)) continue;  // three of the same thing is not a pick
-    chosen.push(e); cats.add(e.cat); towns.add(e.town); }
-  for(const {e} of ranked){ if(chosen.length===3) break; if(!chosen.includes(e)) chosen.push(e); }
-  // Late in the weekend the range collapses to a single day; "Sun 13 – Sun 13" is silly.
-  const when = label!=='this weekend' ? 'next seven days' : sat===sun ? fmt(sat) : `${fmt(sat)} – ${fmt(sun)}`;
-  return `<section class="picks"><div class="day"><b>If you only do one thing ${label}</b><span>${when}</span></div>
-    <div class="grid">${chosen.map(e=>card(e)).join('')}</div></section>`;
-}
-
 // Every matching card used to go into the DOM at once: 520 cards was 7,961 nodes, a
 // 91,000px page and 2.2s to first paint on a throttled phone — and the crawl adds ~300
 // events a run, so that only got worse. Now a chunk is rendered, and the next chunk is
@@ -988,7 +953,7 @@ function renderList(){ const rows=sortRows(filtered()); const t=today();
       <div class="grid" id="stillOn"${open?'':' hidden'}>${open?ongoing.map(e=>card(e)).join(''):''}</div>`; }
 
   feed = { rows:dated, i:0, day:null, grid:null };
-  $('#list').innerHTML = picksHTML() + `<div id="feed"></div>`
+  $('#list').innerHTML = `<div id="feed"></div>`
     + `<div id="feedSentinel"></div><button class="btn moreBtn" id="feedMore" type="button">Show more <span id="feedCount"></span></button>`
     + `<div id="listTail">${tail}</div>`;
   feedChunk(); armFeed(); }
