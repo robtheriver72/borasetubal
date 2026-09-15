@@ -134,16 +134,21 @@ a{color:var(--accent)}
 .f label,.f .lbl{font-size:12.5px;letter-spacing:0;font-weight:800;color:var(--ink2)}
 .f input[type=search],.f select{border:1px solid var(--line);border-bottom:2px solid var(--mustard);background:var(--bg);color:var(--ink);border-radius:9px;padding:9px 11px;width:100%;font-weight:600}
 .f input[type=search]::placeholder{color:var(--ink3);font-weight:500}
-.chips{display:flex;flex-wrap:wrap;gap:6px}
 .secToggle{display:flex;align-items:center;gap:6px;width:100%;border:0;background:transparent;padding:0;cursor:pointer;text-align:left}
 .secToggle .chev{margin-left:auto;font-size:19px;line-height:1;opacity:.95;transition:transform .15s}
 @media (prefers-reduced-motion:reduce){.secToggle .chev{transition:none}}
 .secToggle[aria-expanded="false"] .chev{transform:rotate(-90deg)}
 /* Category is the first question a reader arrives with, so its chips live at the
-   top of the results now, not three menus deep — bigger and always visible rather
-   than collapsed behind a "Category" toggle. */
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
-.chip{border:0;background:var(--bg3);border-radius:999px;padding:8px 14px 8px 11px;font-size:13.5px;font-weight:700;display:inline-flex;align-items:center;gap:7px;color:var(--ink2)}
+   top of the results now, not three menus deep — always visible rather than
+   collapsed behind a "Category" toggle. 17 categories at a size worth tapping
+   wrapped to six-plus rows on a phone before a single event was on screen, so
+   this scrolls sideways instead, same as the day ribbon right below it. */
+.chips{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:2px 2px 6px;margin:0 0 4px;scrollbar-width:thin}
+/* Desktop has the vertical room to show all 17 at a glance — scrolling sideways
+   through a row that could just wrap would hide most of them for no reason. The
+   scroll strip is a phone-width fix, not the desktop layout. */
+@media (min-width:900px){.chips{flex-wrap:wrap;overflow-x:visible;padding:2px 0 0}}
+.chip{border:0;background:var(--bg3);border-radius:999px;padding:7px 13px 7px 10px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:7px;color:var(--ink2);flex:none;white-space:nowrap}
 .chip i{width:9px;height:9px;border-radius:50%;background:var(--cc);display:inline-block}
 .chip[aria-pressed="true"]{background:var(--mustard);color:#2B2A1F}
 .chip[data-zero]{opacity:.45}
