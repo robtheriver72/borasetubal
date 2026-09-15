@@ -45,7 +45,7 @@ button{cursor:pointer}
 a{color:var(--accent)}
 
 /* header */
-.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px)}
 .top-in{max-width:1400px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
 .brand{display:flex;align-items:center;margin-right:auto;min-width:0}
 /* The mark is one flat colour on transparency, so it ships as a CSS mask rather than
@@ -109,7 +109,12 @@ a{color:var(--accent)}
      rounded rail card, which just looked like a bubble inside a bubble. So the
      card chrome (rounded corners, border, padding, shadow) moves off .rail and
      onto .railBody instead: it only appears once there's something to frame. */
-  .rail{background:transparent;border:0;border-radius:0;padding:0;box-shadow:none;gap:0;align-self:stretch;width:100%}
+  /* position:sticky on the bar itself doesn't work: its containing block is .rail,
+     and .rail is barely taller than the bar (railBody is display:none until
+     opened), so there's no room within the parent for the child to stick — it
+     just scrolls away with it. .rail is the thing that needs to be sticky; on
+     mobile its own height when collapsed is the bar's height anyway. */
+  .rail{position:sticky;top:var(--headerH,64px);z-index:15;background:transparent;border:0;border-radius:0;padding:0;box-shadow:none;gap:0;align-self:stretch;width:100%}
   .railToggle{display:flex;align-items:center;justify-content:space-between;gap:10px;
     width:calc(100% + 40px);margin:0 -20px;border:0;background:var(--accent);color:var(--accent-ink);
     font-weight:800;font-size:13.5px;padding:8px 20px;border-radius:0;cursor:pointer}
@@ -696,6 +701,12 @@ $('#nearMe').addEventListener('click', ()=>{
 });
 $('#sort').addEventListener('change', e=>{ state.sort=e.target.value; render(); });
 $('#railToggle').addEventListener('click', ()=>{ const open=$('#rail').classList.toggle('open'); $('#railToggle').setAttribute('aria-expanded',open); });
+// The mobile filter bar sticks right under the header, so it needs the header's
+// real height — which varies (the view tabs wrap onto their own row below ~620px)
+// — rather than a guessed pixel value that would leave a gap or an overlap.
+const setHeaderH = () => document.documentElement.style.setProperty('--headerH', $('header.top').offsetHeight + 'px');
+setHeaderH();
+window.addEventListener('resize', setHeaderH);
 $('#reset').addEventListener('click', ()=>{ Object.assign(state,{q:'',when:'all',cats:new Set(),free:false,saved:false,km:KM_ANY,near:'',town:''}); buildRail(); render(); });
 document.querySelectorAll('.views button').forEach(b=>b.addEventListener('click',()=>{ state.view=b.dataset.view; document.querySelectorAll('.views button').forEach(x=>x.setAttribute('aria-pressed',x===b)); render(); }));
 
