@@ -148,8 +148,12 @@ a{color:var(--accent)}
 .seg{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
 .seg button{border:0;background:var(--bg3);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;color:var(--ink2)}
 .seg button[aria-pressed="true"]{background:var(--mustard);color:#2B2A1F}
-.seg input[type=date]{border:0;background:var(--bg3);border-radius:999px;padding:5px 10px;font-size:12.5px;font-weight:700;color:var(--ink2);font-family:inherit}
-.seg input[type=date].active{background:var(--mustard);color:#2B2A1F}
+/* Safari has a long-standing bug where a native date input's own text (the
+   mm/dd/yyyy placeholder included) doesn't reliably follow `color` once the
+   control has any custom background — it can render blank. -webkit-text-fill-color
+   is the actual property Safari paints that text with; Chromium/Firefox ignore it. */
+.seg input[type=date]{border:0;background:var(--bg3);border-radius:999px;padding:5px 10px;min-width:132px;font-size:13px;font-weight:700;color:var(--ink2);-webkit-text-fill-color:var(--ink2);font-family:inherit}
+.seg input[type=date].active{background:var(--mustard);color:#2B2A1F;-webkit-text-fill-color:#2B2A1F}
 .range{display:flex;align-items:center;gap:10px}
 .range input{flex:1;accent-color:var(--mustard)}
 .range output{min-width:52px;text-align:right;color:var(--ink2);font-weight:700}
