@@ -749,7 +749,7 @@ function card(e, underDay){ const id=eid(e), sv=SAVED.has(id), d=distOrKm(e);
   <div class="body">
   <div class="top"><span class="cat">${esc(e.cat)}</span>${pricePill(e)}
   <button class="fav" type="button" data-id="${esc(id)}" aria-pressed="${sv}" aria-label="${sv?'Remove from saved':'Save this event'}" title="${sv?'Saved':'Save'}"><span class="material-symbols-outlined">star</span></button></div>
-  <h3>${esc(titleMain)}${titleGloss?`<span class="gloss">${esc(titleGloss)}</span>`:''}</h3>
+  <h3>${esc(titleMain)}${titleGloss?`<span class="gloss">(${esc(titleGloss)})</span>`:''}</h3>
   <div class="sub"><span>${esc(e.town)}${e.venue&&e.venue!==e.town?' · '+esc(e.venue):''}</span>${usefulFreq(e.freq)?`<span>${esc(e.freq)}</span>`:''}</div>
   ${e.desc?`<p>${esc(e.desc)}</p>`:''}
   <div class="side">${showDate?`<span class="mono" style="font-size:11.5px;color:var(--ink2);font-weight:700">${fmtRange(e)}</span>`:''}
