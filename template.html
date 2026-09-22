@@ -188,10 +188,6 @@ a{color:var(--accent)}
 
 /* list */
 .day{margin:26px 0 10px;display:flex;align-items:baseline;gap:10px;border-bottom:3px solid var(--mustard);padding-bottom:6px}
-/* "Still on" collapses the long runs out of the way */
-.day .secToggle.stillOn{align-items:baseline;gap:10px}
-.day .secToggle.stillOn b{font-family:var(--display);font-weight:700;font-size:18px;color:var(--ink)}
-.day .secToggle.stillOn span:not(.chev){color:var(--ink3);font-size:12.5px;font-weight:700}
 .day b{font-variation-settings:"opsz" 36,"SOFT" 30;font-family:var(--display);font-weight:700;font-size:19px;letter-spacing:-.01em}
 .day span{color:var(--ink3);font-size:12.5px;font-weight:700}
 /* A list, not a card grid: rows stacked in one column, each divided from the next
@@ -528,7 +524,7 @@ const TOWNS = { // lat, lon (approx town centres) — mainland Portugal
   'Montijo':[38.706,-8.974],'Alcochete':[38.755,-8.961],'Vila Franca de Xira':[38.955,-8.990],'Mafra':[38.937,-9.327],'Loures':[38.830,-9.168],'Odivelas':[38.795,-9.184],'Alenquer':[39.053,-9.010],
   'Quarteira':[37.070,-8.100],'Almancil':[37.086,-8.024],'Vila Real de Santo António':[37.195,-7.416],'Olhão':[37.026,-7.841],'Castro Marim':[37.219,-7.443],'Aljezur':[37.318,-8.803],'Vila do Bispo':[37.083,-8.912],'Lagoa':[37.135,-8.453],
   'Matosinhos':[41.183,-8.690],'Póvoa de Varzim':[41.383,-8.767],'Vila do Conde':[41.353,-8.744],'Maia':[41.235,-8.620],'Gondomar':[41.140,-8.532],'Valongo':[41.190,-8.500],'Paredes':[41.206,-8.333],'Penafiel':[41.207,-8.284],'Santo Tirso':[41.343,-8.476],'Trofa':[41.338,-8.561],'Amarante':[41.271,-8.081],'Marco de Canaveses':[41.181,-8.148],'Lousada':[41.277,-8.284],'Felgueiras':[41.371,-8.194],'Baião':[41.174,-8.035],
-  'Santa Maria da Feira':[40.927,-8.545],'Ovar':[40.859,-8.626],'Espinho':[41.007,-8.641],'São João da Madeira':[40.902,-8.492],'Oliveira de Azeméis':[40.840,-8.476],'Vale de Cambra':[40.851,-8.392],'Albergaria-a-Velha':[40.696,-8.482],'Águeda':[40.577,-8.445],'Arouca':[40.929,-8.245],
+  'Santa Maria da Feira':[40.927,-8.545],'Ovar':[40.859,-8.626],'Espinho':[41.007,-8.641],'São João da Madeira':[40.902,-8.492],'Oliveira de Azeméis':[40.840,-8.476],'Vale de Cambra':[40.851,-8.392],'Albergaria-a-Velha':[40.696,-8.482],'Águeda':[40.577,-8.445],'Arouca':[40.929,-8.245],'Ílhavo':[40.600,-8.669],'Vagos':[40.556,-8.681],
   'Barcelos':[41.532,-8.616],'Vila Nova de Famalicão':[41.407,-8.519],'Fafe':[41.452,-8.170],'Esposende':[41.535,-8.783],'Vizela':[41.375,-8.300],'Cabeceiras de Basto':[41.516,-8.000],'Ponte de Lima':[41.767,-8.583],'Arcos de Valdevez':[41.846,-8.420],'Monção':[42.078,-8.482],'Valença':[42.028,-8.644],'Caminha':[41.874,-8.838],'Vila Nova de Cerveira':[41.940,-8.745],
   'Vila Real':[41.301,-7.744],'Montalegre':[41.824,-7.791],'Mirandela':[41.485,-7.184],'Macedo de Cavaleiros':[41.540,-6.958],'Miranda do Douro':[41.496,-6.273],
   'Marinha Grande':[39.750,-8.933],'Alcobaça':[39.548,-8.977],'Pombal':[39.916,-8.628],'Caldas da Rainha':[39.407,-9.136],'Bombarral':[39.268,-9.157],'Tomar':[39.604,-8.410],'Ourém':[39.653,-8.583],'Cartaxo':[39.163,-8.788],'Entroncamento':[39.467,-8.468],'Golegã':[39.403,-8.485],
@@ -579,7 +575,7 @@ const KM_ANY = 9999;   // sentinel for "no limit" — a finite number so it surv
 const KM_STOPS = [0,5,10,15,20,25,30,40,50,60,75,100,125,150,200,250,300,350,400,450,500,560,KM_ANY];
 const snapKm = n => Number.isFinite(n) ? (n>560 ? KM_ANY : KM_STOPS.reduce((a,b)=>Math.abs(b-n)<Math.abs(a-n)?b:a)) : KM_ANY;
 const kmIdx = () => Math.max(0, KM_STOPS.indexOf(snapKm(state.km)));
-const state = { view:'list', q:'', when:'weekend', cats:new Set(), onOpen:false, free:false, saved:false, km:KM_ANY, near:'', sort:'date' };
+const state = { view:'list', q:'', when:'weekend', cats:new Set(), free:false, saved:false, km:KM_ANY, near:'', sort:'date' };
 const R=6371;
 const haversine=(a,b)=>{ if(!a||!b) return null; const [lat1,lon1]=a,[lat2,lon2]=b; const toRad=d=>d*Math.PI/180;
   const dLat=toRad(lat2-lat1), dLon=toRad(lon2-lon1); const h=Math.sin(dLat/2)**2+Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
@@ -655,6 +651,15 @@ function inWindow(e){ const t=today(); if (e.end < t) return false;
   else if (isDateWhen(state.when)){ a=b=state.when; }
   else b=addDays(t, +state.when);
   return e.start<=b && e.end>=a; }
+// The day the list is "looking from". Normally today, but when the user has picked a
+// day (or the weekend chip) it is that day instead. Without this, a run that opened on
+// Thursday anchors to Thursday even when Saturday is the day asked for: the card heads
+// a Thursday group ABOVE where the reader is looking, so scrolling to Saturday scrolls
+// straight past it and the run reads as already missed. Never earlier than today.
+function viewAnchor(){ const t=today();
+  if(state.when==='weekend'){ const a=weekendRange()[0]; return a>t?a:t; }
+  if(isDateWhen(state.when)) return state.when>t?state.when:t;
+  return t; }
 function filtered(){ const q=state.q.trim().toLowerCase();
   return EVENTS.filter(e => inWindow(e)
     && (!state.cats.size || state.cats.has(e.cat))
@@ -667,7 +672,7 @@ const distOrKm = e => state.near ? distFor(e) : e.km;      // may be null = unkn
 const distSort = e => distOrKm(e) ?? 1e9;                   // unknowns sort last, never as 0 km
 function sortRows(rows){ const s=state.sort; return rows.slice().sort((a,b)=> s==='km'? distSort(a)-distSort(b) || a.start.localeCompare(b.start)
   : s==='name'? a.name.localeCompare(b.name) : s==='cat'? a.cat.localeCompare(b.cat)||a.start.localeCompare(b.start)
-  : (a.start>today()?a.start:today()).localeCompare(b.start>today()?b.start:today()) || distSort(a)-distSort(b)); }
+  : (()=>{const A=viewAnchor(); return (a.start>A?a.start:A).localeCompare(b.start>A?b.start:A) || distSort(a)-distSort(b);})()); }
 
 // ---------- rail ----------
 // Chip counts show what each category would give you *under the filters you already
@@ -832,10 +837,10 @@ function pricePill(e){
 
 // Every row carries its own date column now (see evDate below), so unlike the old
 // card layout there's no day-heading context to duplicate against.
-function card(e){ const id=eid(e), sv=SAVED.has(id), d=distOrKm(e), t=today();
+function card(e){ const id=eid(e), sv=SAVED.has(id), d=distOrKm(e), t=today(), A=viewAnchor();
   const direct = eventPage(e);
   const [titleMain, titleGloss] = splitGloss(e.name);
-  const anchor = e.start < t ? t : e.start;
+  const anchor = e.start < A ? A : e.start;
   const ad = new Date(anchor+'T00:00:00');
   const dow = anchor===t ? 'Today' : anchor===addDays(t,1) ? 'Tmrw' : ad.toLocaleDateString('en-GB',{weekday:'short'});
   // No description means the wide second column sits empty next to a short title —
@@ -886,15 +891,15 @@ function dayHeader(key,t){ return `<div class="day"><b>${fmt(key)}</b><span>${ke
 // dangling for the next one to continue — the parser closes it and the following cards
 // land loose in #feed. Hold a reference to the open grid and append into it instead.
 function feedChunk(){
-  const t = today(), box = $('#feed'); if(!box) return;
+  const t = today(), A = viewAnchor(), box = $('#feed'); if(!box) return;
   let n = 0, buf = '';
   const flush = () => { if(buf && feed.grid){ feed.grid.insertAdjacentHTML('beforeend', buf); } buf=''; };
   while(feed.i < feed.rows.length && n < CHUNK){
     const e = feed.rows[feed.i];
-    // A short run already under way (start before today, kept out of "Still on" by
-    // its length) groups under today's heading rather than opening its own heading
-    // for a past date — the card's own date range still shows when it really started.
-    const key = e.start < t ? t : e.start;
+    // A run already under way groups under the day being looked at rather than opening
+    // its own heading for a date that has passed — the card's own range still shows when
+    // it really started.
+    const key = e.start < A ? A : e.start;
     if(key !== feed.day){
       flush();
       feed.day = key;
@@ -957,35 +962,15 @@ function renderList(){ const rows=sortRows(filtered()); const t=today();
     feed.grid = $('#feed'); feed.day = '\u0000';   // one grid, no day headings
     flatChunk(); armFeed(); return; }
 
-  // A site called "é agora" should not open with a LEGO show that runs until January —
-  // but a 3-night theatre run that opened Thursday and closes Sunday is exactly what
-  // "é agora" means, not background wallpaper. So the test isn't "did it start before
-  // today", it's "is it long enough to read as a standing exhibition rather than a run
-  // worth catching this weekend": total span over LONG_RUN_DAYS goes to the bottom under
-  // "Still on", ordered by what disappears first; anything shorter stays in the main feed
-  // even once it's under way.
-  const LONG_RUN_DAYS = 10;
-  const isLongRun = e => e.start < t && spanDays(e) > LONG_RUN_DAYS;
-  const ongoing = rows.filter(isLongRun), dated = rows.filter(e=>!isLongRun(e));
-  let tail = '';
-  if(ongoing.length){ const open=state.onOpen;
-    ongoing.sort((a,b)=>a.end.localeCompare(b.end) || distSort(a)-distSort(b));
-    tail = `<div class="day"><button class="secToggle stillOn" id="stillToggle" type="button" aria-expanded="${open}" aria-controls="stillOn">
-        <b>Still on</b><span>${ongoing.length} run${ongoing.length===1?'':'s'} &amp; exhibitions already under way</span><span class="chev" aria-hidden="true"></span></button></div>
-      <div class="grid" id="stillOn"${open?'':' hidden'}>${open?ongoing.map(e=>card(e)).join(''):''}</div>`; }
-
-  feed = { rows:dated, i:0, day:null, grid:null };
+  // Every run sits in the one dated feed, anchored to the day being looked at. There is
+  // no separate collapsed bucket: a long run is still on THIS Saturday, and putting it
+  // behind a toggle at the bottom is the same as hiding it.
+  feed = { rows, i:0, day:null, grid:null };
   $('#list').innerHTML = `<div id="feed"></div>`
-    + `<div id="feedSentinel"></div><button class="btn moreBtn" id="feedMore" type="button">Show more <span id="feedCount"></span></button>`
-    + `<div id="listTail">${tail}</div>`;
+    + `<div id="feedSentinel"></div><button class="btn moreBtn" id="feedMore" type="button">Show more <span id="feedCount"></span></button>`;
   feedChunk(); armFeed(); }
 const nextChunk = () => (state.sort==='date' ? feedChunk : flatChunk)();
 document.addEventListener('click', ev=>{ if(ev.target.closest('#feedMore')) nextChunk(); });
-document.addEventListener('click', ev=>{ if(!ev.target.closest('#stillToggle')) return;
-  state.onOpen=!state.onOpen; save(); renderList();
-  // keep the toggle under the thumb rather than jumping to the top of the list
-  const b=$('#stillToggle'); if(b) b.scrollIntoView({block:'center'}); });
-
 document.addEventListener('click', ev=>{ if(ev.target.closest('.resetProxy')) $('#reset').click(); });
 
 // ---------- share & calendar export ----------
