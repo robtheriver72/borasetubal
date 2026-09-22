@@ -660,6 +660,26 @@ function viewAnchor(){ const t=today();
   if(state.when==='weekend'){ const a=weekendRange()[0]; return a>t?a:t; }
   if(isDateWhen(state.when)) return state.when>t?state.when:t;
   return t; }
+// The active window as [from,to]; to is null for "no end". Mirrors inWindow().
+function windowBounds(){ const t=today();
+  if(state.when==='all') return [t,null];
+  if(state.when==='weekend'){ const [a,b]=weekendRange(); return [a<t?t:a,b]; }
+  if(isDateWhen(state.when)) return [state.when<t?t:state.when, state.when<t?t:state.when];
+  return [t, addDays(t,+state.when)]; }
+// A run is on every day it runs, so it gets a card under EVERY one of those days, not
+// just the first. Anything else means scrolling to Saturday and seeing no sign of a play
+// that opened on Thursday and is on all week.
+function occurrences(rows){
+  const [a,b]=windowBounds(), out=[];
+  for(const e of rows){
+    let from = e.start<a ? a : e.start;
+    let to   = (b && e.end>b) ? b : e.end;
+    if(to<from) continue;   // no overlap with the window: no card, not a forced one
+    for(let dte=from; dte<=to; dte=addDays(dte,1)) out.push({key:dte, e, opens:dte===e.start});
+  }
+  // day first; within a day what OPENS that day leads, then what is continuing, then distance
+  out.sort((x,y)=> x.key.localeCompare(y.key) || (y.opens-x.opens) || distSort(x.e)-distSort(y.e));
+  return out; }
 function filtered(){ const q=state.q.trim().toLowerCase();
   return EVENTS.filter(e => inWindow(e)
     && (!state.cats.size || state.cats.has(e.cat))
@@ -837,10 +857,10 @@ function pricePill(e){
 
 // Every row carries its own date column now (see evDate below), so unlike the old
 // card layout there's no day-heading context to duplicate against.
-function card(e){ const id=eid(e), sv=SAVED.has(id), d=distOrKm(e), t=today(), A=viewAnchor();
+function card(e, dayKey){ const id=eid(e), sv=SAVED.has(id), d=distOrKm(e), t=today(), A=viewAnchor();
   const direct = eventPage(e);
   const [titleMain, titleGloss] = splitGloss(e.name);
-  const anchor = e.start < A ? A : e.start;
+  const anchor = dayKey || (e.start < A ? A : e.start);
   const ad = new Date(anchor+'T00:00:00');
   const dow = anchor===t ? 'Today' : anchor===addDays(t,1) ? 'Tmrw' : ad.toLocaleDateString('en-GB',{weekday:'short'});
   // No description means the wide second column sits empty next to a short title —
@@ -895,18 +915,18 @@ function feedChunk(){
   let n = 0, buf = '';
   const flush = () => { if(buf && feed.grid){ feed.grid.insertAdjacentHTML('beforeend', buf); } buf=''; };
   while(feed.i < feed.rows.length && n < CHUNK){
-    const e = feed.rows[feed.i];
+    const occ = feed.rows[feed.i], e = occ.e;
     // A run already under way groups under the day being looked at rather than opening
     // its own heading for a date that has passed — the card's own range still shows when
     // it really started.
-    const key = e.start < A ? A : e.start;
+    const key = occ.key;
     if(key !== feed.day){
       flush();
       feed.day = key;
       box.insertAdjacentHTML('beforeend', dayHeader(key,t) + '<div class="grid"></div>');
       feed.grid = box.lastElementChild;
     }
-    buf += card(e); feed.i++; n++;
+    buf += card(e, occ.key); feed.i++; n++;
   }
   flush();
   const done = feed.i >= feed.rows.length;
@@ -965,7 +985,7 @@ function renderList(){ const rows=sortRows(filtered()); const t=today();
   // Every run sits in the one dated feed, anchored to the day being looked at. There is
   // no separate collapsed bucket: a long run is still on THIS Saturday, and putting it
   // behind a toggle at the bottom is the same as hiding it.
-  feed = { rows, i:0, day:null, grid:null };
+  feed = { rows:occurrences(rows), i:0, day:null, grid:null };
   $('#list').innerHTML = `<div id="feed"></div>`
     + `<div id="feedSentinel"></div><button class="btn moreBtn" id="feedMore" type="button">Show more <span id="feedCount"></span></button>`;
   feedChunk(); armFeed(); }
