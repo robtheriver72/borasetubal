@@ -198,7 +198,7 @@ a{color:var(--accent)}
   .sheetFoot{display:flex;order:0;align-items:center;gap:14px;flex:none;
     padding:12px 16px calc(12px + env(safe-area-inset-bottom));
     border-top:1px solid var(--line);background:var(--bg2)}
-  .sheetFoot .reset{flex:none;padding:8px 4px;font-size:14px}
+  .sheetFoot .reset{flex:none;align-self:stretch;padding:0 18px;font-size:14px}
   .sheetFoot .doneBtn{display:block}
   .doneBtn{flex:1 1 auto;border:0;border-radius:12px;background:var(--accent);color:var(--accent-ink);
     font-weight:800;font-size:15.5px;padding:14px;cursor:pointer}
@@ -291,7 +291,11 @@ mark{background:var(--mark);color:var(--mark-ink);border-radius:3px;padding:0 1p
 .toggles{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
 .tgl{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;cursor:pointer;color:var(--ink2)}
 .tgl input{accent-color:var(--accent);width:16px;height:16px}
-.reset{border:0;background:transparent;color:var(--accent);font-weight:800;font-size:13px;padding:0;cursor:pointer;text-decoration:underline;text-decoration-color:var(--mustard);text-underline-offset:3px}
+.reset{border:1.5px solid var(--mustard);background:color-mix(in srgb,var(--mustard) 14%,transparent);
+  color:var(--ochre);font-weight:800;font-size:13px;padding:7px 14px;border-radius:999px;cursor:pointer;
+  text-decoration:none;line-height:1;white-space:nowrap}
+.reset:hover{background:color-mix(in srgb,var(--mustard) 26%,transparent)}
+.reset:active{background:var(--mustard);color:#2B2A1F}
 
 /* main */
 .main{min-width:0}
