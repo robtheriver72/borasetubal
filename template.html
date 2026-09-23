@@ -111,7 +111,7 @@ a{color:var(--accent)}
 .rail{position:sticky;top:64px;align-self:start;display:flex;flex-direction:column;gap:16px;max-height:calc(100vh - 80px);overflow:auto;background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
 @media (max-width:900px){.rail{position:static;max-height:none;overflow:visible;order:-1}.main{order:1}.wrap{display:flex;flex-direction:column}}
 .railToggle{display:none}
-.railBody{display:flex;flex-direction:column;gap:18px}
+.railBody{display:flex;flex-direction:column;gap:13px}
 @media (max-width:900px){
   /* A flat, solid bar the full width of the page — not a pill floating inside the
      rounded rail card, which just looked like a bubble inside a bubble. So the
@@ -143,7 +143,7 @@ a{color:var(--accent)}
   #railChevron{font-size:24px;font-weight:800;display:inline-block;width:1em;text-align:center;line-height:1}
   #railChevron::before{content:"+"}
   .railToggle[aria-expanded="true"] #railChevron::before{content:"\2212"}
-  .railBody{display:none;margin-top:14px;background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
+  .railBody{display:none;margin-top:12px;background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow)}
   .rail.open .railBody{display:flex}
   /* 16px keeps iOS from zooming the viewport when the field takes focus. */
   .searchField input[type=search]{font-size:16px}
@@ -157,7 +157,7 @@ a{color:var(--accent)}
   #v-list{display:flex;flex-direction:column}
   #v-list .sum{order:1} #v-list .freenote{order:2} #v-list .activeFilters{order:2} #v-list #list{order:3} #v-list .tools{order:4;margin-top:18px}
 }
-.f{display:flex;flex-direction:column;gap:6px}
+.f{display:flex;flex-direction:column;gap:5px}
 /* Search field: a clear button inside the box, so a phone user can drop a query
    without selecting text in a tiny input. */
 .searchBox{position:relative;display:flex}
@@ -195,7 +195,15 @@ mark{background:var(--mark);color:var(--mark-ink);border-radius:3px;padding:0 1p
    collapsed behind a "Category" toggle, and now lives in the sidebar rather than
    above the results — narrow at any screen size, so it scrolls sideways rather
    than wrapping to six-plus rows the sidebar isn't wide enough to lay out well. */
-.chips{display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:2px 2px 6px;margin:0 0 4px;scrollbar-width:thin}
+/* Wrapping, not scrolling: a sideways strip gives the reader no way to know it
+   continues past the right edge. .clamped shows about two rows; the "+N more" chip
+   under it carries the count. */
+.chips{display:flex;flex-wrap:wrap;gap:7px;padding:1px;margin:0}
+.chips.clamped{max-height:80px;overflow:hidden}
+.moreChips{align-self:flex-start;margin-top:7px;border:1px dashed var(--line);background:transparent;color:var(--accent);
+  border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:800;cursor:pointer}
+.moreChips:hover{background:var(--bg3)}
+.moreChips[hidden]{display:none}
 .chip{border:0;background:var(--bg3);border-radius:999px;padding:7px 13px 7px 10px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:7px;color:var(--ink2);flex:none;white-space:nowrap}
 .chip i{width:9px;height:9px;border-radius:50%;background:var(--cc);display:inline-block}
 .chip[aria-pressed="true"]{background:var(--mustard);color:#2B2A1F}
@@ -204,25 +212,36 @@ mark{background:var(--mark);color:var(--mark-ink);border-radius:3px;padding:0 1p
 /* Day comes right after category: a horizontal strip you scroll rather than a
    date picker you have to open. Today/Tmrw/weekday label under a plain day
    number, "All" and "Weekend" as plain-text chips ahead of it. */
-.dayRibbon{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:2px 2px 8px;margin:0 0 6px;scrollbar-width:thin}
-.dayRibbon button{border:0;background:var(--bg3);border-radius:11px;font-weight:700;color:var(--ink2);flex:none;cursor:pointer}
-.dayRibbon button[aria-pressed="true"]{background:var(--mustard);color:#2B2A1F}
-.dayRibbon>button:not(.dayChip){padding:0 14px;font-size:13px;align-self:center}
-.dayRibbon .dayChip{display:flex;flex-direction:column;align-items:center;gap:1px;min-width:42px;padding:6px 4px}
-.dayRibbon .dayChip b{font-family:var(--display);font-size:16px;font-weight:700;line-height:1.05}
-.dayRibbon .dayChip span{font-size:10px;text-transform:uppercase;letter-spacing:.03em;opacity:.85}
 /* Safari has a long-standing bug where a native date input's own text (the
    mm/dd/yyyy placeholder included) doesn't reliably follow `color` once the
    control has any custom background — it can render blank. -webkit-text-fill-color
    is the actual property Safari paints that text with; Chromium/Firefox ignore it. */
-#whenDate{border:1px solid var(--line);border-bottom:2px solid var(--mustard);background:var(--bg);border-radius:9px;padding:9px 11px;font-size:13px;font-weight:600;color:var(--ink);-webkit-text-fill-color:var(--ink);font-family:inherit}
+
 .range{display:flex;align-items:center;gap:10px}
+/* Four choices, all visible, wrapping when they must — replaces the scrolling day
+   ribbon and the separate "jump to a date" field. */
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{flex:1 1 auto;border:1px solid var(--line);background:var(--bg3);color:var(--ink2);
+  border-radius:10px;padding:9px 12px;font-size:13.5px;font-weight:800;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--mustard);color:#2B2A1F;border-color:transparent}
+.rangeRow{display:flex;align-items:center;gap:8px;margin-top:8px}
+.rangeRow[hidden]{display:none}
+.rangeRow input[type=date]{flex:1 1 0;min-width:0;border:1px solid var(--line);border-bottom:2px solid var(--mustard);
+  background:var(--bg);border-radius:9px;padding:9px 10px;font-size:13px;font-weight:600;color:var(--ink);
+  -webkit-text-fill-color:var(--ink);font-family:inherit}
+.rangeSep{color:var(--ink3);font-weight:800;flex:none}
+/* The location button becomes an icon beside the select instead of a full-width row. */
+.whereRow{display:flex;gap:8px;align-items:stretch}
+.whereRow select{flex:1 1 auto;min-width:0}
+.iconBtn{flex:none;width:42px;border:1px solid var(--line);border-bottom:2px solid var(--mustard);background:var(--bg2);
+  color:var(--accent);border-radius:9px;cursor:pointer;display:grid;place-items:center}
+.iconBtn:hover{background:var(--bg3)}
 .range input{flex:1;accent-color:var(--mustard)}
 .range output{min-width:52px;text-align:right;color:var(--ink2);font-weight:700}
 .toggles{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
 .tgl{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;cursor:pointer;color:var(--ink2)}
 .tgl input{accent-color:var(--accent);width:16px;height:16px}
-.reset{align-self:flex-start;border:0;background:transparent;color:var(--accent);font-weight:800;font-size:13px;padding:0;text-decoration:underline;text-decoration-color:var(--mustard);text-underline-offset:3px}
+.reset{margin-left:auto;border:0;background:transparent;color:var(--accent);font-weight:800;font-size:13px;padding:0;cursor:pointer;text-decoration:underline;text-decoration-color:var(--mustard);text-underline-offset:3px}
 
 /* main */
 .main{min-width:0}
@@ -316,7 +335,7 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
 .scopenote{margin:2px 0 14px;color:var(--ink3);font-size:12.5px;line-height:1.5;max-width:78ch}
 .freenote{margin:6px 0 0;color:var(--ochre);font-size:12.5px;font-weight:600}
 .moreBtn{display:block;margin:18px auto 0}
-#nearMe{width:100%;justify-content:center}
+#nearMe{justify-content:center}
 #feedSentinel{height:1px}
 .empty{padding:40px 20px;text-align:center;color:var(--ink3);border:2px dashed var(--line);border-radius:16px}
 .empty .btn{margin-top:12px}
@@ -415,23 +434,47 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
       <span id="railChevron" aria-hidden="true"></span>
     </button>
     <div class="railBody" id="railBody">
+    <!-- No visible "Search" label: the placeholder already says what the box is, and
+         a label row here costs more than it explains. -->
     <div class="f searchField" id="searchField">
-      <label for="q">Search</label>
+      <label for="q" class="sr-only">Search</label>
       <div class="searchBox">
         <input id="q" type="search" placeholder="Fado, jazz, walk, Palmela…" autocomplete="off" enterkeyhint="search">
         <button type="button" id="qClear" class="qClear" aria-label="Clear search" hidden>&times;</button>
       </div>
     </div>
-    <div class="f"><span class="lbl">Category</span><div class="chips" id="cats"></div></div>
-    <div class="f"><span class="lbl">Day</span><div class="dayRibbon" id="dayRibbon"></div></div>
-    <div class="f"><label for="whenDate">Jump to a date</label><input type="date" id="whenDate"></div>
-    <div class="f"><label for="near">Where</label><select id="near"><option value="">Anywhere in Portugal</option></select>
-      <button class="btn" id="nearMe" type="button" style="margin-top:7px"><span class="material-symbols-outlined">my_location</span>Use my location</button></div>
+    <!-- When: four choices, no scrolling ribbon. The old ribbon ran All / Weekend then
+         a horizontally-scrolling strip of individual days, with nothing on screen to
+         say the strip continued past the right edge — and a separate "Jump to a date"
+         field below it doing a third version of the same job. -->
+    <div class="f" id="whenField">
+      <span class="lbl">When</span>
+      <div class="seg" id="whenSeg" role="group" aria-label="When">
+        <button type="button" data-w="all">All</button>
+        <button type="button" data-w="today">Today</button>
+        <button type="button" data-w="weekend">This weekend</button>
+        <button type="button" data-w="range">Date range</button>
+      </div>
+      <div class="rangeRow" id="rangeRow" hidden>
+        <input type="date" id="wFrom" aria-label="From date">
+        <span class="rangeSep" aria-hidden="true">→</span>
+        <input type="date" id="wTo" aria-label="To date">
+      </div>
+    </div>
+    <!-- Categories wrap instead of scrolling sideways, for the same reason. Collapsed
+         to two rows so the panel stays short, with a chip that says how many are
+         hidden — a count the reader can act on, unlike a cut-off edge. -->
+    <div class="f" id="catField"><span class="lbl">Category</span><div class="chips" id="cats"></div>
+      <button type="button" class="moreChips" id="catMore" hidden></button></div>
+    <div class="f"><label for="near">Where</label>
+      <div class="whereRow"><select id="near"><option value="">Anywhere in Portugal</option></select>
+      <button class="iconBtn" id="nearMe" type="button" aria-label="Use my location" title="Use my location"><span class="material-symbols-outlined">my_location</span></button></div></div>
     <div class="f" id="kmField" hidden><label for="km" id="kmLbl">Distance</label><div class="range"><input id="km" type="range" min="0" max="22" step="1" value="22"><output for="km" id="kmOut" class="mono">Anywhere + islands</output></div></div>
+    <!-- Reset shares this row rather than taking one of its own. -->
     <div class="f" id="onlyField"><span class="lbl">Show only</span><div class="toggles">
       <label class="tgl"><input type="checkbox" id="freeOnly"> Free <span class="n" id="freeCount"></span></label>
-      <label class="tgl"><input type="checkbox" id="savedOnly"> Saved <span class="savedcount" id="savedCount" hidden>0</span></label></div></div>
-    <button class="reset" id="reset" type="button">Reset filters</button>
+      <label class="tgl"><input type="checkbox" id="savedOnly"> Saved <span class="savedcount" id="savedCount" hidden>0</span></label>
+      <button class="reset" id="reset" type="button">Reset</button></div></div>
     </div>
   </aside>
 
@@ -602,6 +645,19 @@ const addDays = (iso,n) => { const d=new Date(iso+'T00:00:00'); d.setDate(d.getD
 // the date input stores that ISO date directly — this is how the rest of the code
 // tells the two apart.
 const isDateWhen = w => /^\d{4}-\d{2}-\d{2}$/.test(w);
+// state.when is 'all', 'today', 'weekend', or a range 'FROM..TO' where either side
+// may be blank ('..' is everything, '2026-10-01..' is open-ended). Links shared before
+// the ribbon was replaced carry '7', '30' or a bare date, so those still resolve.
+const isRangeWhen = w => typeof w==='string' && w.includes('..');
+function rangeOf(w){ const t=today();
+  if(w==='today') return [t,t];
+  if(w==='weekend'){ const [a,b]=weekendRange(); return [a<t?t:a,b]; }
+  if(isDateWhen(w)){ const d=w<t?t:w; return [d,d]; }           // legacy single day
+  if(w==='7'||w==='30') return [t, addDays(t,+w)];              // legacy presets
+  if(isRangeWhen(w)){ const [a,b]=w.split('..');
+    return [a&&a>t?a:t, b||null]; }
+  return [t,null];                                              // 'all'
+}
 // Inclusive day count: a single-day event is 1, a Fri-Sat run is 2.
 const spanDays = e => Math.round((new Date(e.end+'T00:00:00') - new Date(e.start+'T00:00:00'))/86400000) + 1;
 const fmt = iso => new Date(iso+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
@@ -641,7 +697,9 @@ const KM_ANY = 9999;   // sentinel for "no limit" — a finite number so it surv
 const KM_STOPS = [0,5,10,15,20,25,30,40,50,60,75,100,125,150,200,250,300,350,400,450,500,560,KM_ANY];
 const snapKm = n => Number.isFinite(n) ? (n>560 ? KM_ANY : KM_STOPS.reduce((a,b)=>Math.abs(b-n)<Math.abs(a-n)?b:a)) : KM_ANY;
 const kmIdx = () => Math.max(0, KM_STOPS.indexOf(snapKm(state.km)));
-const state = { view:'list', q:'', when:'weekend', cats:new Set(), free:false, saved:false, km:KM_ANY, near:'', sort:'date' };
+const state = { view:'list', q:'', when:'weekend', cats:new Set(), catsOpen:false, free:false, saved:false, km:KM_ANY, near:'', sort:'date' };
+// Roughly two rows' worth at phone width; the rest hide behind the "+N more" chip.
+const CAT_ROWS_SHOWN = 6;
 const R=6371;
 const haversine=(a,b)=>{ if(!a||!b) return null; const [lat1,lon1]=a,[lat2,lon2]=b; const toRad=d=>d*Math.PI/180;
   const dLat=toRad(lat2-lat1), dLon=toRad(lon2-lon1); const h=Math.sin(dLat/2)**2+Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
@@ -711,27 +769,16 @@ let toastT; function toast(msg){ let el=$('#toast');
 function weekendRange(){ const t=today(); const d=new Date(t+'T00:00:00'); const dow=d.getDay(); // 0 Sun
   const toSat = dow===0 ? -1 : 6-dow; const sat = addDays(t,toSat); return [dow===0?t:sat, addDays(sat,1)]; }
 function inWindow(e){ const t=today(); if (e.end < t) return false;
-  if (state.when==='all') return true;
-  let a=t,b;
-  if (state.when==='weekend'){ [a,b]=weekendRange(); }
-  else if (isDateWhen(state.when)){ a=b=state.when; }
-  else b=addDays(t, +state.when);
-  return e.start<=b && e.end>=a; }
+  const [a,b]=rangeOf(state.when);
+  return e.end>=a && (b===null || e.start<=b); }
 // The day the list is "looking from". Normally today, but when the user has picked a
 // day (or the weekend chip) it is that day instead. Without this, a run that opened on
 // Thursday anchors to Thursday even when Saturday is the day asked for: the card heads
 // a Thursday group ABOVE where the reader is looking, so scrolling to Saturday scrolls
 // straight past it and the run reads as already missed. Never earlier than today.
-function viewAnchor(){ const t=today();
-  if(state.when==='weekend'){ const a=weekendRange()[0]; return a>t?a:t; }
-  if(isDateWhen(state.when)) return state.when>t?state.when:t;
-  return t; }
+function viewAnchor(){ return rangeOf(state.when)[0]; }
 // The active window as [from,to]; to is null for "no end". Mirrors inWindow().
-function windowBounds(){ const t=today();
-  if(state.when==='all') return [t,null];
-  if(state.when==='weekend'){ const [a,b]=weekendRange(); return [a<t?t:a,b]; }
-  if(isDateWhen(state.when)) return [state.when<t?t:state.when, state.when<t?t:state.when];
-  return [t, addDays(t,+state.when)]; }
+function windowBounds(){ return rangeOf(state.when); }
 // A run is on every day it runs, so it gets a card under EVERY one of those days, not
 // just the first. Anything else means scrolling to Saturday and seeing no sign of a play
 // that opened on Thursday and is on all week.
@@ -766,8 +813,19 @@ function sortRows(rows){ const s=state.sort; return rows.slice().sort((a,b)=> s=
 function paintChips(){
   const held=state.cats; state.cats=new Set(); const ctx={}; filtered().forEach(e=>ctx[e.cat]=(ctx[e.cat]||0)+1); state.cats=held;
   const all={}; EVENTS.forEach(e=>{ if(e.end>=today()) all[e.cat]=(all[e.cat]||0)+1; });
-  $('#cats').innerHTML = CATS.filter(([c])=>all[c]).map(([c,v])=>{ const n=ctx[c]||0;
+  const live = CATS.filter(([c])=>all[c]);
+  // Selected categories are pulled to the front, so collapsing can never hide a chip
+  // that is currently doing something to the list.
+  const order = [...live].sort((a,b)=> (state.cats.has(b[0])?1:0)-(state.cats.has(a[0])?1:0));
+  $('#cats').innerHTML = order.map(([c,v])=>{ const n=ctx[c]||0;
     return `<button class="chip" type="button" data-cat="${esc(c)}" aria-pressed="${state.cats.has(c)}"${n?'':' data-zero="1"'} style="--cc:var(${v})"><i></i>${esc(c)}<span class="n">${n}</span></button>`; }).join('');
+  $('#cats').classList.toggle('clamped', !state.catsOpen);
+  // The count is what makes this better than a cut-off row: "+11 more" is something
+  // the reader can decide about; an edge disappearing off screen is not.
+  const more=$('#catMore'), hidden=Math.max(0, order.length-CAT_ROWS_SHOWN);
+  more.hidden = hidden===0 && !state.catsOpen;
+  more.textContent = state.catsOpen ? 'Show fewer' : `+${hidden} more`;
+  more.setAttribute('aria-expanded', !!state.catsOpen);
 }
 function buildRail(){
   paintChips();
@@ -792,30 +850,50 @@ function buildRail(){
   kmOpt.disabled = !state.near;
   if(!state.near && state.sort==='km'){ state.sort='date'; $('#sort').value='date'; }
   $('#freeCount').textContent = EVENTS.filter(e=>e.end>=today() && /^free/i.test(e.fp||'')).length;
-  buildDayRibbon();
-  $('#whenDate').value = isDateWhen(state.when) ? state.when : '';
-  $('#whenDate').min = today();
+  buildWhen();
 }
 // The ribbon covers the near future by design; a date further out than that still
 // needs a way in, so "Jump to a date" (in the secondary filters) sets the exact same
 // state.when an ISO date and reuses the ribbon/inWindow's date handling untouched.
 const RIBBON_DAYS = 21;
-function buildDayRibbon(){
-  const t = today();
-  const parts = [
-    `<button data-w="all" aria-pressed="${state.when==='all'}">All</button>`,
-    `<button data-w="weekend" aria-pressed="${state.when==='weekend'}">Weekend</button>`,
-  ];
-  for(let i=0; i<RIBBON_DAYS; i++){
-    const d = addDays(t,i);
-    const label = i===0 ? 'Today' : i===1 ? 'Tmrw' : new Date(d+'T00:00:00').toLocaleDateString('en-GB',{weekday:'short'});
-    parts.push(`<button class="dayChip" data-w="${d}" aria-pressed="${state.when===d}"><b>${new Date(d+'T00:00:00').getDate()}</b><span>${label}</span></button>`);
-  }
-  $('#dayRibbon').innerHTML = parts.join('');
+// Which of the four segments is lit. Anything with an end or a start the reader
+// chose — including the legacy '7'/'30'/single-date links — reads as a range.
+const whenMode = w => w==='today'||w==='weekend' ? w : (w==='all' ? 'all' : 'range');
+function whenLabel(){
+  const w=state.when;
+  if(w==='today') return 'Today';
+  if(w==='weekend') return 'This weekend';
+  const [a,b]=rangeOf(w);
+  if(!b) return 'From '+fmt(a);
+  if(a===b) return fmt(a);
+  return fmt(a)+' – '+fmt(b);
+}
+function buildWhen(){
+  const mode=whenMode(state.when);
+  $('#whenSeg').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.w===mode));
+  const row=$('#rangeRow'); row.hidden = mode!=='range';
+  const [a,b]=rangeOf(state.when);
+  $('#wFrom').min=today(); $('#wTo').min=today();
+  if(mode==='range'){ $('#wFrom').value = a||''; $('#wTo').value = b||''; }
+}
+// Build the range from whatever the two inputs hold. An empty "to" is deliberate and
+// means open-ended, so it is never back-filled.
+function readRange(){
+  const f=$('#wFrom').value, t=$('#wTo').value;
+  state.when = (f||'')+'..'+(t||'');
+  if(f && t && t<f){ $('#wTo').value=f; state.when=f+'..'+f; }
+  buildWhen(); render();
 }
 $('#cats').addEventListener('click', e=>{ const b=e.target.closest('.chip'); if(!b) return; const c=b.dataset.cat; state.cats.has(c)?state.cats.delete(c):state.cats.add(c); b.setAttribute('aria-pressed',state.cats.has(c)); render(); });
-$('#dayRibbon').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return; state.when=b.dataset.w; buildRail(); render(); });
-$('#whenDate').addEventListener('change', e=>{ if(!e.target.value) return; state.when=e.target.value; buildRail(); render(); });
+$('#whenSeg').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return;
+  const m=b.dataset.w;
+  // Opening "Date range" with nothing in it would empty the list for no reason, so it
+  // starts from today, open-ended — the same set "All" was showing.
+  state.when = m==='range' ? (isRangeWhen(state.when) ? state.when : today()+'..') : m;
+  buildWhen(); render(); });
+$('#rangeRow').addEventListener('change', readRange);
+// Collapsed categories: two rows, then a chip saying how many more there are.
+$('#catMore').addEventListener('click', ()=>{ state.catsOpen=!state.catsOpen; paintChips(); });
 $('#q').addEventListener('input', e=>{ state.q=e.target.value; syncQClear(); render(); });
 $('#freeOnly').addEventListener('change', e=>{ state.free=e.target.checked; render(); });
 $('#savedOnly').addEventListener('change', e=>{ state.saved=e.target.checked; render(); });
@@ -852,10 +930,8 @@ function activeFilterList(){
   // not being applied, and hand the reader a chip that changes nothing.
   if(state.view==='markets'||state.view==='freenif') return out;
   [...state.cats].forEach(c=> out.push({k:'cat:'+c, label:c, clear:()=>state.cats.delete(c)}));
-  if(state.when!=='all'){
-    const w = isDateWhen(state.when) ? fmt(state.when)
-      : {weekend:'This weekend',7:'Next 7 days',30:'Next 30 days'}[state.when] || state.when;
-    out.push({k:'when', label:w, clear:()=>{ state.when='all'; }});
+  if(state.when!=='all' && state.when!=='..'){
+    out.push({k:'when', label:whenLabel(), clear:()=>{ state.when='all'; }});
   }
   if(state.near) out.push({k:'near', label: state.km>=KM_ANY ? state.near : `within ${state.km} km of ${state.near}`,
                            clear:()=>{ state.near=''; state.km=KM_ANY; }});
@@ -895,7 +971,7 @@ $('#qClear').addEventListener('click', ()=>{ state.q=''; $('#q').value=''; syncQ
 const setHeaderH = () => document.documentElement.style.setProperty('--headerH', $('header.top').offsetHeight + 'px');
 setHeaderH();
 window.addEventListener('resize', setHeaderH);
-$('#reset').addEventListener('click', ()=>{ Object.assign(state,{q:'',when:'all',cats:new Set(),free:false,saved:false,km:KM_ANY,near:'',town:''}); buildRail(); render(); });
+$('#reset').addEventListener('click', ()=>{ Object.assign(state,{q:'',when:'all',cats:new Set(),catsOpen:false,free:false,saved:false,km:KM_ANY,near:'',town:''}); buildRail(); render(); });
 document.querySelectorAll('.views button').forEach(b=>b.addEventListener('click',()=>{ state.view=b.dataset.view; document.querySelectorAll('.views button').forEach(x=>x.setAttribute('aria-pressed',x===b)); render(); }));
 
 // ---------- list ----------
@@ -1072,8 +1148,7 @@ function armFeed(){
 function renderList(){ const rows=sortRows(filtered()); const t=today();
   const total=EVENTS.filter(e=>e.end>=t).length;   // freshness lives in the header now
   $('#sumMeta').textContent = rows.length===total ? `${total} events` : `${rows.length} of ${total} events`;
-  const w = isDateWhen(state.when) ? fmt(state.when)
-    : {all:'Que se passa?',weekend:'This weekend',7:'The next 7 days',30:'The next 30 days'}[state.when];
+  const w = (state.when==='all'||state.when==='..') ? 'Que se passa?' : whenLabel();
   // The headline is a sentence with its own punctuation, so a place clause can't just
   // be tacked on ("Que se passa? within 40 km of Setúbal"). Drop the mark and
   // join with a dash when there is something to append.
@@ -1195,8 +1270,8 @@ function renderFreenif(){ $('#fnMeta').textContent = `${FREENIF.length} places`;
 // ---------- render ----------
 function render(){ save(); VIEWS.forEach(v=>$('#v-'+v).classList.toggle('hidden',state.view!==v));
   const railFilters = state.view==='markets'||state.view==='freenif';
-  document.querySelectorAll('#onlyField,#cats,#dayRibbon').forEach(el=>{ el.closest('.f').style.display = railFilters?'none':''; });
-  if(!railFilters){ paintChips(); buildDayRibbon(); }
+  document.querySelectorAll('#onlyField,#catField,#whenField').forEach(el=>{ el.closest('.f').style.display = railFilters?'none':''; });
+  if(!railFilters){ paintChips(); buildWhen(); }
   renderActiveFilters(); syncQClear();
   ({list:renderList,freenif:renderFreenif,markets:renderMarkets})[state.view](); }
 // Opening on the weekend is only a good idea when the weekend has something in it. On a
@@ -1204,7 +1279,7 @@ function render(){ save(); VIEWS.forEach(v=>$('#v-'+v).classList.toggle('hidden'
 // days and then to everything, rather than greet a first-time reader with a blank page.
 if(!hadSavedFilters && !location.hash){
   const count = w => { const held=state.when; state.when=w; const n=filtered().length; state.when=held; return n; };
-  if(count('weekend') < 8) state.when = count('7') < 8 ? 'all' : '7';
+  if(count('weekend') < 8) state.when = 'all';
 }
 buildRail(); render();
 document.querySelectorAll('.views button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.view===state.view));
