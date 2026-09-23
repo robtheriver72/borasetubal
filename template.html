@@ -83,9 +83,27 @@ a{color:var(--accent)}
 .status #theme{padding:4px 7px;display:inline-flex;align-items:center}
 .status #theme .material-symbols-outlined{font-size:17px}
 @media (max-width:620px){
-  .top-in{gap:10px;padding:10px 14px}
-  .brand .word{width:142px}
-  .brand .tile{width:32px}
+  /* 407px of a 844px screen went by before the first event. The wordmark and the
+     view tabs were most of it. */
+  .top-in{gap:8px;padding:7px 14px}
+  .brand .word{width:118px}
+  .brand .tile{width:27px}
+  .views button{padding:6px 11px;font-size:12.5px}
+  .views{padding:2px}
+  /* .wrap keeps its grid gap when it turns into a flex column, so the rail and the
+     list were 20px apart for no reason on a phone. */
+  .wrap{gap:8px}
+  .sum h2{font-size:21px}
+  .day{margin:14px 0 7px}
+  /* the run of events starts right under the filter bar, not a heading-height below it */
+  #list .day:first-child{margin-top:4px}
+  /* Sort kept wrapping to a row of its own next to the filter chips. The word
+     "SHOWING" and the word "Sort" are both inferable from what sits beside them,
+     and dropping them buys the ~200px that lets the two share one line. */
+  .afLbl{display:none}
+  .sort label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+  .sort select{padding:4px 7px;font-size:12.5px}
+  .resultBar{gap:7px 10px}
   /* Three stacked rows made the sticky header a fifth of a phone screen. Put the
      theme button up beside the banner and drop the freshness text, which is nice
      to know but not worth a row of its own on a phone. */
@@ -94,7 +112,7 @@ a{color:var(--accent)}
   .views{overflow-x:auto;max-width:100%;scrollbar-width:none}
   .views::-webkit-scrollbar{display:none}
   .views button{padding:7px 12px;font-size:13px}
-  .wrap{padding:14px 14px 48px}
+  .wrap{padding:10px 14px 26px}
   /* Town, venue, how often and the date range wrapped into one 12.5px run on a
      phone, which read as a single grey smear and was the main reason two cards
      were hard to tell apart. One fact per line costs a little height and buys
@@ -104,7 +122,7 @@ a{color:var(--accent)}
 }
 
 /* layout */
-.wrap{max-width:1400px;margin:0 auto;padding:18px 20px 60px;display:grid;grid-template-columns:270px 1fr;gap:22px}
+.wrap{max-width:1400px;margin:0 auto;padding:14px 20px 36px;display:grid;grid-template-columns:270px 1fr;gap:20px}
 @media (max-width:900px){.wrap{grid-template-columns:1fr}}
 /* Was a saturated blue slab that competed with the content it serves. Now a light
    panel with the navy kept as an accent. */
@@ -112,6 +130,10 @@ a{color:var(--accent)}
 @media (max-width:900px){.rail{position:static;max-height:none;overflow:visible;order:-1}.main{order:1}.wrap{display:flex;flex-direction:column}}
 .railToggle{display:none}
 .railBody{display:flex;flex-direction:column;gap:13px}
+.sheetHead,.sheetFoot,.sheetBackdrop{display:none}
+/* display:contents keeps the desktop sidebar's flex column exactly as it was — the
+   wrapper only becomes a real scroll container inside the mobile sheet. */
+.sheetScroll{display:contents}
 @media (max-width:900px){
   /* A flat, solid bar the full width of the page — not a pill floating inside the
      rounded rail card, which just looked like a bubble inside a bubble. So the
@@ -123,6 +145,9 @@ a{color:var(--accent)}
      just scrolls away with it. .rail is the thing that needs to be sticky; on
      mobile its own height when collapsed is the bar's height anyway. */
   .rail{position:sticky;top:var(--headerH,64px);z-index:15;background:transparent;border:0;border-radius:0;padding:0;box-shadow:none;gap:0;align-self:stretch;width:100%}
+  /* The whole rail has to out-rank the backdrop, not just the sheet inside it:
+     z-index on a child cannot escape the stacking context its parent creates. */
+  .rail.open{z-index:70}
   /* This bar is the only way to reach search on a phone, so it has to read as a
      button worth pressing rather than a section heading. Taller, bigger type, a
      magnifier leading it, and a mustard underline that ties it to the brand and
@@ -143,8 +168,33 @@ a{color:var(--accent)}
   #railChevron{font-size:24px;font-weight:800;display:inline-block;width:1em;text-align:center;line-height:1}
   #railChevron::before{content:"+"}
   .railToggle[aria-expanded="true"] #railChevron::before{content:"\2212"}
-  .railBody{display:none;margin-top:12px;background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow)}
-  .rail.open .railBody{display:flex}
+  /* THE FIX. The panel used to be an ordinary block that grew downwards inside a
+     sticky rail: once it was taller than the screen there was nothing to scroll —
+     the page scrolled behind it instead, dragging the event list past while the
+     filters sat still. Now it is a fixed sheet pinned under the header with its
+     own scrolling middle, so a swipe inside it moves the filters and nothing else.
+     The page behind is frozen while it is open (see lockScroll). */
+  .railBody{display:none}
+  .rail.open .railBody{display:flex;flex-direction:column;gap:0;
+    position:fixed;left:0;right:0;top:var(--headerH,64px);bottom:0;z-index:60;
+    background:var(--bg2);border:0;border-radius:0;padding:0;margin:0;box-shadow:none}
+  .sheetHead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex:none;
+    padding:13px 16px;border-bottom:1px solid var(--line);font-weight:800;font-size:16px;
+    background:var(--bg2);color:var(--ink)}
+  .sheetX{border:0;background:var(--bg3);color:var(--ink);width:34px;height:34px;border-radius:999px;
+    font-size:22px;line-height:1;cursor:pointer;display:grid;place-items:center}
+  /* min-height:0 is what actually lets this scroll: without it the flex item refuses
+     to shrink below its content and the overflow never engages. */
+  .sheetScroll{display:flex;flex-direction:column;gap:14px;flex:1 1 auto;min-height:0;
+    overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px;overscroll-behavior:contain}
+  /* Always reachable with a thumb, so you never have to scroll back up to get out. */
+  .sheetFoot{display:block;flex:none;padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+    border-top:1px solid var(--line);background:var(--bg2)}
+  .doneBtn{width:100%;border:0;border-radius:12px;background:var(--accent);color:var(--accent-ink);
+    font-weight:800;font-size:15.5px;padding:14px;cursor:pointer}
+  .doneBtn:active{filter:brightness(.94)}
+  .sheetBackdrop{display:block;position:fixed;inset:0;z-index:55;background:rgba(10,29,46,.45)}
+  .sheetBackdrop[hidden]{display:none}
   /* 16px keeps iOS from zooming the viewport when the field takes focus. */
   .searchField input[type=search]{font-size:16px}
   /* The count of what is set, on the collapsed bar, so the reader knows there are
@@ -155,7 +205,7 @@ a{color:var(--accent)}
   /* Export actions are not discovery — on a phone they belong under the events,
      not between the reader and the first card. */
   #v-list{display:flex;flex-direction:column}
-  #v-list .sum{order:1} #v-list .freenote{order:2} #v-list .activeFilters{order:2} #v-list #list{order:3} #v-list .tools{order:4;margin-top:18px}
+  #v-list .sum{order:1} #v-list .freenote{order:2} #v-list .resultBar{order:2} #v-list #list{order:3} #v-list .tools{order:4;margin-top:14px}
 }
 .f{display:flex;flex-direction:column;gap:5px}
 /* Search field: a clear button inside the box, so a phone user can drop a query
@@ -170,8 +220,10 @@ a{color:var(--accent)}
    lives behind the toggle, so without this there is nothing on screen telling you
    why the list is short — you just see fewer events and no reason. Each chip
    clears its own filter. */
-.activeFilters{display:none;flex-wrap:wrap;align-items:center;gap:7px;margin:0 0 12px}
+.resultBar{display:flex;align-items:center;gap:8px 12px;flex-wrap:wrap;margin:0 0 8px}
+.activeFilters{display:none;flex-wrap:wrap;align-items:center;gap:7px;flex:1 1 auto;min-width:0}
 .activeFilters.on{display:flex}
+.sort{flex:none}
 .activeFilters .afLbl{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:var(--ink3)}
 .afChip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--bg2);
   color:var(--ink);border-radius:999px;padding:4px 6px 4px 11px;font-size:12.5px;font-weight:700;cursor:pointer}
@@ -190,28 +242,16 @@ mark{background:var(--mark);color:var(--mark-ink);border-radius:3px;padding:0 1p
 .secToggle .chev{margin-left:auto;font-size:19px;font-weight:800;line-height:1;width:1em;text-align:center;display:inline-block}
 .secToggle .chev::before{content:"+"}
 .secToggle[aria-expanded="true"] .chev::before{content:"\2212"}
-/* Category is the first question a reader arrives with, so its chips live at the
-   top of the results now, not three menus deep — always visible rather than
-   collapsed behind a "Category" toggle, and now lives in the sidebar rather than
-   above the results — narrow at any screen size, so it scrolls sideways rather
-   than wrapping to six-plus rows the sidebar isn't wide enough to lay out well. */
-/* Wrapping, not scrolling: a sideways strip gives the reader no way to know it
-   continues past the right edge. .clamped shows about two rows; the "+N more" chip
-   under it carries the count. */
+/* Every category, wrapped, always visible. A sideways strip gave the reader no way
+   to know it continued past the right edge, and the sheet scrolls now, so there is
+   no reason to hide any of them. */
 .chips{display:flex;flex-wrap:wrap;gap:7px;padding:1px;margin:0}
-.chips.clamped{max-height:80px;overflow:hidden}
-.moreChips{align-self:flex-start;margin-top:7px;border:1px dashed var(--line);background:transparent;color:var(--accent);
-  border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:800;cursor:pointer}
-.moreChips:hover{background:var(--bg3)}
-.moreChips[hidden]{display:none}
 .chip{border:0;background:var(--bg3);border-radius:999px;padding:7px 13px 7px 10px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:7px;color:var(--ink2);flex:none;white-space:nowrap}
 .chip i{width:9px;height:9px;border-radius:50%;background:var(--cc);display:inline-block}
 .chip[aria-pressed="true"]{background:var(--mustard);color:#2B2A1F}
 .chip[data-zero]{opacity:.45}
 .chip .n{font-family:"IBM Plex Mono",monospace;font-size:11px;opacity:.75}
-/* Day comes right after category: a horizontal strip you scroll rather than a
-   date picker you have to open. Today/Tmrw/weekday label under a plain day
-   number, "All" and "Weekend" as plain-text chips ahead of it. */
+
 /* Safari has a long-standing bug where a native date input's own text (the
    mm/dd/yyyy placeholder included) doesn't reliably follow `color` once the
    control has any custom background — it can render blank. -webkit-text-fill-color
@@ -245,7 +285,7 @@ mark{background:var(--mark);color:var(--mark-ink);border-radius:3px;padding:0 1p
 
 /* main */
 .main{min-width:0}
-.sum{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+.sum{display:flex;align-items:baseline;gap:6px 14px;flex-wrap:wrap;margin-bottom:10px}
 /* The wordmark is a warm high-contrast serif; every heading used to answer in Baloo 2,
    a rounded sans — two different brands on one page. Fraunces is the closest thing on
    Google Fonts to the lettering in the logo, and it replaces Baloo rather than joining
@@ -256,7 +296,7 @@ mark{background:var(--mark);color:var(--mark-ink);border-radius:3px;padding:0 1p
 .sort select{border:1px solid var(--line);background:var(--bg2);border-radius:8px;padding:5px 8px;font-size:13px}
 
 /* list */
-.day{margin:26px 0 10px;display:flex;align-items:baseline;gap:10px;border-bottom:3px solid var(--mustard);padding-bottom:6px}
+.day{margin:18px 0 8px;display:flex;align-items:baseline;gap:10px;border-bottom:3px solid var(--mustard);padding-bottom:6px}
 .day b{font-variation-settings:"opsz" 36,"SOFT" 30;font-family:var(--display);font-weight:700;font-size:19px;letter-spacing:-.01em}
 .day span{color:var(--ink3);font-size:12.5px;font-weight:700}
 /* A list, not a card grid: rows stacked in one column, each divided from the next
@@ -352,7 +392,7 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
 .btn{border:1px solid var(--line);background:var(--bg2);color:var(--ink2);border-radius:8px;padding:5px 10px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
 .btn:hover{border-color:var(--accent);color:var(--accent)}
 .btn .material-symbols-outlined{font-size:16px}
-.tools{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 10px}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:700;font-size:13px;box-shadow:var(--shadow);z-index:50;max-width:90vw;text-align:center}
 @media (prefers-reduced-motion:no-preference){.toast{animation:rise .18s ease-out}@keyframes rise{from{opacity:0;transform:translate(-50%,8px)}}}
 .savedcount{background:var(--mustard);color:#2B2A1F;border-radius:999px;padding:0 6px;font-size:11px;font-weight:800;margin-left:5px}
@@ -370,7 +410,7 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
 .mkc.on{border-color:var(--free);box-shadow:inset 0 0 0 1px var(--free)}
 .mkc .badge{align-self:flex-start;background:var(--free-soft);color:var(--free);border-radius:6px;padding:1px 7px;font-size:11px;font-weight:700}
 
-.foot{max-width:1400px;margin:0 auto;padding:0 20px 40px;color:var(--ink3);font-size:12px;line-height:1.6}
+.foot{max-width:1400px;margin:0 auto;padding:0 20px 26px;color:var(--ink3);font-size:12px;line-height:1.6}
 .hidden{display:none!important}
 [hidden]{display:none!important}
 .range output{font-size:12px}
@@ -378,7 +418,7 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
 /* ---------- Tip us off ---------- */
 /* A static site can't receive a POST, so the form composes a mailto: instead —
    no backend, no third-party form service, nothing to go stale. */
-.tip{max-width:1400px;margin:0 auto 28px;padding:0 20px}
+.tip{max-width:1400px;margin:0 auto 18px;padding:0 20px}
 .tip-in{background:var(--bg2);border:1px solid var(--line);border-top:3px solid var(--mustard);
   border-radius:16px;padding:20px 22px;box-shadow:var(--shadow)}
 .tip h2{margin:0 0 4px;font-size:20px;font-family:var(--display);font-weight:700;letter-spacing:-.01em}
@@ -434,6 +474,11 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
       <span id="railChevron" aria-hidden="true"></span>
     </button>
     <div class="railBody" id="railBody">
+      <!-- Head and foot are display:none on desktop; on a phone the body becomes a
+           fixed-position sheet and these become its chrome. -->
+      <div class="sheetHead"><span>Search &amp; filters</span>
+        <button type="button" class="sheetX" id="sheetClose" aria-label="Close filters">&times;</button></div>
+      <div class="sheetScroll" id="sheetScrollArea">
     <!-- No visible "Search" label: the placeholder already says what the box is, and
          a label row here costs more than it explains. -->
     <div class="f searchField" id="searchField">
@@ -464,8 +509,7 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
     <!-- Categories wrap instead of scrolling sideways, for the same reason. Collapsed
          to two rows so the panel stays short, with a chip that says how many are
          hidden — a count the reader can act on, unlike a cut-off edge. -->
-    <div class="f" id="catField"><span class="lbl">Category</span><div class="chips" id="cats"></div>
-      <button type="button" class="moreChips" id="catMore" hidden></button></div>
+    <div class="f" id="catField"><span class="lbl">Category</span><div class="chips" id="cats"></div></div>
     <div class="f"><label for="near">Where</label>
       <div class="whereRow"><select id="near"><option value="">Anywhere in Portugal</option></select>
       <button class="iconBtn" id="nearMe" type="button" aria-label="Use my location" title="Use my location"><span class="material-symbols-outlined">my_location</span></button></div></div>
@@ -475,15 +519,22 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
       <label class="tgl"><input type="checkbox" id="freeOnly"> Free <span class="n" id="freeCount"></span></label>
       <label class="tgl"><input type="checkbox" id="savedOnly"> Saved <span class="savedcount" id="savedCount" hidden>0</span></label>
       <button class="reset" id="reset" type="button">Reset</button></div></div>
+      </div>
+      <div class="sheetFoot"><button type="button" class="doneBtn" id="sheetDone">Show events</button></div>
     </div>
   </aside>
+  <div class="sheetBackdrop" id="sheetBackdrop" hidden></div>
 
   <main class="main">
     <section id="v-list">
-      <div class="sum"><h2 id="sumTitle">Que se passa?</h2><span class="meta" id="sumMeta"></span>
-        <div class="sort"><label for="sort">Sort</label><select id="sort"><option value="date">Date</option><option value="km">Distance</option><option value="name">Name</option><option value="cat">Category</option></select></div></div>
+      <div class="sum"><h2 id="sumTitle">Que se passa?</h2><span class="meta" id="sumMeta"></span></div>
       <p class="freenote" id="freeNote" hidden></p>
-      <div class="activeFilters" id="activeFilters" aria-live="polite"></div>
+      <!-- Active filters and Sort share one row. Sort had a whole row to itself, with
+           its own gap above and below, to hold one small select. -->
+      <div class="resultBar">
+        <div class="activeFilters" id="activeFilters" aria-live="polite"></div>
+        <div class="sort"><label for="sort">Sort</label><select id="sort"><option value="date">Date</option><option value="km">Distance</option><option value="name">Name</option><option value="cat">Category</option></select></div>
+      </div>
       <div class="tools">
         <button class="btn" id="share" type="button"><span class="material-symbols-outlined">link</span>Copy link to this view</button>
         <button class="btn" id="ics" type="button"><span class="material-symbols-outlined">calendar_add_on</span>Download these as a calendar</button>
@@ -698,8 +749,6 @@ const KM_STOPS = [0,5,10,15,20,25,30,40,50,60,75,100,125,150,200,250,300,350,400
 const snapKm = n => Number.isFinite(n) ? (n>560 ? KM_ANY : KM_STOPS.reduce((a,b)=>Math.abs(b-n)<Math.abs(a-n)?b:a)) : KM_ANY;
 const kmIdx = () => Math.max(0, KM_STOPS.indexOf(snapKm(state.km)));
 const state = { view:'list', q:'', when:'weekend', cats:new Set(), catsOpen:false, free:false, saved:false, km:KM_ANY, near:'', sort:'date' };
-// Roughly two rows' worth at phone width; the rest hide behind the "+N more" chip.
-const CAT_ROWS_SHOWN = 6;
 const R=6371;
 const haversine=(a,b)=>{ if(!a||!b) return null; const [lat1,lon1]=a,[lat2,lon2]=b; const toRad=d=>d*Math.PI/180;
   const dLat=toRad(lat2-lat1), dLon=toRad(lon2-lon1); const h=Math.sin(dLat/2)**2+Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2;
@@ -819,13 +868,6 @@ function paintChips(){
   const order = [...live].sort((a,b)=> (state.cats.has(b[0])?1:0)-(state.cats.has(a[0])?1:0));
   $('#cats').innerHTML = order.map(([c,v])=>{ const n=ctx[c]||0;
     return `<button class="chip" type="button" data-cat="${esc(c)}" aria-pressed="${state.cats.has(c)}"${n?'':' data-zero="1"'} style="--cc:var(${v})"><i></i>${esc(c)}<span class="n">${n}</span></button>`; }).join('');
-  $('#cats').classList.toggle('clamped', !state.catsOpen);
-  // The count is what makes this better than a cut-off row: "+11 more" is something
-  // the reader can decide about; an edge disappearing off screen is not.
-  const more=$('#catMore'), hidden=Math.max(0, order.length-CAT_ROWS_SHOWN);
-  more.hidden = hidden===0 && !state.catsOpen;
-  more.textContent = state.catsOpen ? 'Show fewer' : `+${hidden} more`;
-  more.setAttribute('aria-expanded', !!state.catsOpen);
 }
 function buildRail(){
   paintChips();
@@ -873,32 +915,61 @@ function buildWhen(){
   $('#whenSeg').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed', b.dataset.w===mode));
   const row=$('#rangeRow'); row.hidden = mode!=='range';
   const [a,b]=rangeOf(state.when);
-  $('#wFrom').min=today(); $('#wTo').min=today();
   if(mode==='range'){ $('#wFrom').value = a||''; $('#wTo').value = b||''; }
+  syncRangeLimits();
 }
-// Build the range from whatever the two inputs hold. An empty "to" is deliberate and
-// means open-ended, so it is never back-filled.
-function readRange(){
+// The two pickers constrain each other, so the calendar itself refuses an impossible
+// range instead of letting one be picked and then silently rewritten underneath.
+// "To" cannot open before "From"; "From" cannot open after "To".
+function syncRangeLimits(){
+  const f=$('#wFrom'), t=$('#wTo');
+  f.min = today();
+  t.min = f.value || today();
+  f.max = t.value || '';
+}
+// Picking a start date almost always means picking an end next, so hand the reader
+// straight to it with the calendar already open on the right month.
+function openPicker(el){ el.focus({preventScroll:true}); try{ el.showPicker(); }catch(_){} }
+function readRange(from){
   const f=$('#wFrom').value, t=$('#wTo').value;
-  state.when = (f||'')+'..'+(t||'');
-  if(f && t && t<f){ $('#wTo').value=f; state.when=f+'..'+f; }
-  buildWhen(); render();
+  // A "to" left behind by an earlier, later "from" is cleared rather than fought over.
+  if(f && t && t<f){ $('#wTo').value=''; }
+  state.when = (f||'')+'..'+($('#wTo').value||'');
+  syncRangeLimits();
+  renderAndReturnToTop();
+  if(from==='wFrom' && !$('#wTo').value) openPicker($('#wTo'));
 }
-$('#cats').addEventListener('click', e=>{ const b=e.target.closest('.chip'); if(!b) return; const c=b.dataset.cat; state.cats.has(c)?state.cats.delete(c):state.cats.add(c); b.setAttribute('aria-pressed',state.cats.has(c)); render(); });
+
+// ---------- where you are left standing after a filter changes ----------
+// Narrowing the list shrinks the document under the reader's feet: scrolled 6,000px
+// into "All" and then picking one category took the page from 15,411px to 3,542px,
+// and the browser clamped the scroll to the new bottom — dumping you on the "did we
+// miss an event?" form with no events in sight. A filter change means a new list, so
+// the only sane place to stand is its top.
+function renderAndReturnToTop(){
+  render();
+  if(document.body.style.position==='fixed'){ sheetScrollY = 0; return; } // sheet open: land at top on close
+  const anchor=$('#v-'+state.view);
+  if(!anchor) { window.scrollTo(0,0); return; }
+  const y = anchor.getBoundingClientRect().top + window.scrollY - (parseInt(getComputedStyle(document.documentElement).getPropertyValue('--headerH'))||64) - 8;
+  window.scrollTo({top:Math.max(0,y), behavior: matchMedia('(prefers-reduced-motion:reduce)').matches ? 'auto' : 'smooth'});
+}
+$('#cats').addEventListener('click', e=>{ const b=e.target.closest('.chip'); if(!b) return; const c=b.dataset.cat; state.cats.has(c)?state.cats.delete(c):state.cats.add(c); b.setAttribute('aria-pressed',state.cats.has(c)); renderAndReturnToTop(); });
 $('#whenSeg').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return;
   const m=b.dataset.w;
   // Opening "Date range" with nothing in it would empty the list for no reason, so it
   // starts from today, open-ended — the same set "All" was showing.
-  state.when = m==='range' ? (isRangeWhen(state.when) ? state.when : today()+'..') : m;
-  buildWhen(); render(); });
-$('#rangeRow').addEventListener('change', readRange);
-// Collapsed categories: two rows, then a chip saying how many more there are.
-$('#catMore').addEventListener('click', ()=>{ state.catsOpen=!state.catsOpen; paintChips(); });
+  const wasRange = isRangeWhen(state.when);
+  state.when = m==='range' ? (wasRange ? state.when : today()+'..') : m;
+  buildWhen(); renderAndReturnToTop();
+  if(m==='range' && !wasRange) openPicker($('#wFrom')); });
+$('#rangeRow').addEventListener('change', e=>readRange(e.target.id));
+
 $('#q').addEventListener('input', e=>{ state.q=e.target.value; syncQClear(); render(); });
-$('#freeOnly').addEventListener('change', e=>{ state.free=e.target.checked; render(); });
-$('#savedOnly').addEventListener('change', e=>{ state.saved=e.target.checked; render(); });
+$('#freeOnly').addEventListener('change', e=>{ state.free=e.target.checked; renderAndReturnToTop(); });
+$('#savedOnly').addEventListener('change', e=>{ state.saved=e.target.checked; renderAndReturnToTop(); });
 $('#km').addEventListener('input', e=>{ state.km=KM_STOPS[+e.target.value] ?? KM_ANY; $('#kmOut').textContent=kmLabel(); render(); });
-$('#near').addEventListener('change', e=>{ state.near=e.target.value; buildRail(); render(); });
+$('#near').addEventListener('change', e=>{ state.near=e.target.value; buildRail(); renderAndReturnToTop(); });
 // Pick the closest town we know coordinates for, so the distance slider and the km line
 // mean something without the reader having to know which town they are nearest to.
 $('#nearMe').addEventListener('click', ()=>{
@@ -914,8 +985,51 @@ $('#nearMe').addEventListener('click', ()=>{
     buildRail(); render(); toast(`Nearest we know: ${best} (~${Math.round(bd)} km)`);
   }, ()=>{ btn.disabled=false; toast('Location not shared — pick a town instead'); }, {timeout:8000});
 });
-$('#sort').addEventListener('change', e=>{ state.sort=e.target.value; render(); });
-$('#railToggle').addEventListener('click', ()=>{ const open=$('#rail').classList.toggle('open'); $('#railToggle').setAttribute('aria-expanded',open); });
+$('#sort').addEventListener('change', e=>{ state.sort=e.target.value; renderAndReturnToTop(); });
+// ---------- the filter sheet ----------
+// Freezing the page needs more than overflow:hidden on a phone — iOS Safari keeps
+// scrolling the document anyway. Pinning the body at its current offset is the one
+// approach that holds, so the scroll position is stashed and restored by hand.
+let sheetScrollY = 0;
+const isSheet = () => window.matchMedia('(max-width:900px)').matches;
+function lockScroll(){
+  sheetScrollY = window.scrollY;
+  document.body.style.position='fixed';
+  document.body.style.top = -sheetScrollY+'px';
+  document.body.style.left='0'; document.body.style.right='0';
+}
+function unlockScroll(){
+  document.body.style.position=''; document.body.style.top='';
+  document.body.style.left=''; document.body.style.right='';
+  window.scrollTo(0,sheetScrollY);
+}
+function openSheet(){
+  $('#rail').classList.add('open');
+  $('#railToggle').setAttribute('aria-expanded',true);
+  if(isSheet()){ $('#sheetBackdrop').hidden=false; lockScroll(); $('#sheetScrollArea') && ($('#sheetScrollArea').scrollTop=0); }
+  updateDoneLabel();
+}
+function closeSheet(){
+  const wasOpen = $('#rail').classList.contains('open');
+  $('#rail').classList.remove('open');
+  $('#railToggle').setAttribute('aria-expanded',false);
+  $('#sheetBackdrop').hidden=true;
+  if(wasOpen && isSheet()) unlockScroll();
+}
+function toggleSheet(){ $('#rail').classList.contains('open') ? closeSheet() : openSheet(); }
+// The footer button doubles as the result: it says what closing will show you.
+function updateDoneLabel(){
+  const n = state.view==='list' ? filtered().length : null;
+  $('#sheetDone').textContent = n===null ? 'Done' : n===0 ? 'No events match' : n===1 ? 'Show 1 event' : `Show ${n} events`;
+}
+$('#railToggle').addEventListener('click', toggleSheet);
+$('#sheetClose').addEventListener('click', closeSheet);
+$('#sheetDone').addEventListener('click', closeSheet);
+$('#sheetBackdrop').addEventListener('click', closeSheet);
+document.addEventListener('keydown', e=>{ if(e.key==='Escape' && $('#rail').classList.contains('open')) closeSheet(); });
+// Rotating to landscape or resizing past the breakpoint would otherwise leave the
+// body pinned with no sheet on screen to explain why nothing scrolls.
+window.addEventListener('resize', ()=>{ if(!isSheet() && document.body.style.position==='fixed') unlockScroll(); });
 
 // ---------- what is switched on, said out loud ----------
 // Every filter but search sits behind the toggle on a phone, so a short list with
@@ -959,7 +1073,7 @@ document.addEventListener('click', ev=>{
   const b=ev.target.closest('[data-af]'); if(!b) return;
   if(b.dataset.af==='__all'){ $('#reset').click(); return; }
   const f=activeFilterList().find(x=>x.k===b.dataset.af); if(!f) return;
-  f.clear(); buildRail(); render();
+  f.clear(); buildRail(); renderAndReturnToTop();
 });
 
 // ---------- clear the search box ----------
@@ -971,8 +1085,8 @@ $('#qClear').addEventListener('click', ()=>{ state.q=''; $('#q').value=''; syncQ
 const setHeaderH = () => document.documentElement.style.setProperty('--headerH', $('header.top').offsetHeight + 'px');
 setHeaderH();
 window.addEventListener('resize', setHeaderH);
-$('#reset').addEventListener('click', ()=>{ Object.assign(state,{q:'',when:'all',cats:new Set(),catsOpen:false,free:false,saved:false,km:KM_ANY,near:'',town:''}); buildRail(); render(); });
-document.querySelectorAll('.views button').forEach(b=>b.addEventListener('click',()=>{ state.view=b.dataset.view; document.querySelectorAll('.views button').forEach(x=>x.setAttribute('aria-pressed',x===b)); render(); }));
+$('#reset').addEventListener('click', ()=>{ Object.assign(state,{q:'',when:'all',cats:new Set(),catsOpen:false,free:false,saved:false,km:KM_ANY,near:'',town:''}); buildRail(); renderAndReturnToTop(); });
+document.querySelectorAll('.views button').forEach(b=>b.addEventListener('click',()=>{ state.view=b.dataset.view; document.querySelectorAll('.views button').forEach(x=>x.setAttribute('aria-pressed',x===b)); renderAndReturnToTop(); }));
 
 // ---------- list ----------
 const ICONS = { // Material Symbols (outlined) icon name, one per category
@@ -1273,6 +1387,7 @@ function render(){ save(); VIEWS.forEach(v=>$('#v-'+v).classList.toggle('hidden'
   document.querySelectorAll('#onlyField,#catField,#whenField').forEach(el=>{ el.closest('.f').style.display = railFilters?'none':''; });
   if(!railFilters){ paintChips(); buildWhen(); }
   renderActiveFilters(); syncQClear();
+  if($('#sheetDone')) updateDoneLabel();
   ({list:renderList,freenif:renderFreenif,markets:renderMarkets})[state.view](); }
 // Opening on the weekend is only a good idea when the weekend has something in it. On a
 // quiet week — or late on a Sunday, when "this weekend" is nearly spent — widen to seven
