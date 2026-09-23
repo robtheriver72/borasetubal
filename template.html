@@ -130,7 +130,11 @@ a{color:var(--accent)}
 @media (max-width:900px){.rail{position:static;max-height:none;overflow:visible;order:-1}.main{order:1}.wrap{display:flex;flex-direction:column}}
 .railToggle{display:none}
 .railBody{display:flex;flex-direction:column;gap:13px}
-.sheetHead,.sheetFoot,.sheetBackdrop{display:none}
+.sheetHead,.sheetBackdrop{display:none}
+/* Desktop has no sheet and so no footer: the row carries only Reset, hoisted to the
+   top of the sidebar where a sidebar reset is conventionally looked for. */
+.sheetFoot{display:flex;justify-content:flex-end;order:-1}
+.sheetFoot .doneBtn{display:none}
 /* display:contents keeps the desktop sidebar's flex column exactly as it was — the
    wrapper only becomes a real scroll container inside the mobile sheet. */
 .sheetScroll{display:contents}
@@ -178,9 +182,12 @@ a{color:var(--accent)}
   .rail.open .railBody{display:flex;flex-direction:column;gap:0;
     position:fixed;left:0;right:0;top:var(--headerH,64px);bottom:0;z-index:60;
     background:var(--bg2);border:0;border-radius:0;padding:0;margin:0;box-shadow:none}
-  .sheetHead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex:none;
-    padding:13px 16px;border-bottom:1px solid var(--line);font-weight:800;font-size:16px;
+  .sheetHead{display:flex;align-items:center;gap:14px;flex:none;
+    padding:12px 16px;border-bottom:1px solid var(--line);font-weight:800;font-size:16px;
     background:var(--bg2);color:var(--ink)}
+  .sheetHead .sheetTitle{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .sheetHead .reset{margin-right:auto;flex:none}
+  .sheetHead .sheetX{display:grid;flex:none}
   .sheetX{border:0;background:var(--bg3);color:var(--ink);width:34px;height:34px;border-radius:999px;
     font-size:22px;line-height:1;cursor:pointer;display:grid;place-items:center}
   /* min-height:0 is what actually lets this scroll: without it the flex item refuses
@@ -188,9 +195,12 @@ a{color:var(--accent)}
   .sheetScroll{display:flex;flex-direction:column;gap:14px;flex:1 1 auto;min-height:0;
     overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 16px;overscroll-behavior:contain}
   /* Always reachable with a thumb, so you never have to scroll back up to get out. */
-  .sheetFoot{display:block;flex:none;padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+  .sheetFoot{display:flex;order:0;align-items:center;gap:14px;flex:none;
+    padding:12px 16px calc(12px + env(safe-area-inset-bottom));
     border-top:1px solid var(--line);background:var(--bg2)}
-  .doneBtn{width:100%;border:0;border-radius:12px;background:var(--accent);color:var(--accent-ink);
+  .sheetFoot .reset{flex:none;padding:8px 4px;font-size:14px}
+  .sheetFoot .doneBtn{display:block}
+  .doneBtn{flex:1 1 auto;border:0;border-radius:12px;background:var(--accent);color:var(--accent-ink);
     font-weight:800;font-size:15.5px;padding:14px;cursor:pointer}
   .doneBtn:active{filter:brightness(.94)}
   .sheetBackdrop{display:block;position:fixed;inset:0;z-index:55;background:rgba(10,29,46,.45)}
@@ -281,7 +291,7 @@ mark{background:var(--mark);color:var(--mark-ink);border-radius:3px;padding:0 1p
 .toggles{display:flex;gap:18px;flex-wrap:wrap;align-items:center}
 .tgl{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;cursor:pointer;color:var(--ink2)}
 .tgl input{accent-color:var(--accent);width:16px;height:16px}
-.reset{margin-left:auto;border:0;background:transparent;color:var(--accent);font-weight:800;font-size:13px;padding:0;cursor:pointer;text-decoration:underline;text-decoration-color:var(--mustard);text-underline-offset:3px}
+.reset{border:0;background:transparent;color:var(--accent);font-weight:800;font-size:13px;padding:0;cursor:pointer;text-decoration:underline;text-decoration-color:var(--mustard);text-underline-offset:3px}
 
 /* main */
 .main{min-width:0}
@@ -476,24 +486,23 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
     <div class="railBody" id="railBody">
       <!-- Head and foot are display:none on desktop; on a phone the body becomes a
            fixed-position sheet and these become its chrome. -->
-      <div class="sheetHead"><span>Search &amp; filters</span>
+      <div class="sheetHead">
+        <span class="sheetTitle">Search &amp; filters</span>
         <button type="button" class="sheetX" id="sheetClose" aria-label="Close filters">&times;</button></div>
       <div class="sheetScroll" id="sheetScrollArea">
-    <!-- No visible "Search" label: the placeholder already says what the box is, and
-         a label row here costs more than it explains. -->
-    <div class="f searchField" id="searchField">
-      <label for="q" class="sr-only">Search</label>
-      <div class="searchBox">
-        <input id="q" type="search" placeholder="Fado, jazz, walk, Palmela…" autocomplete="off" enterkeyhint="search">
-        <button type="button" id="qClear" class="qClear" aria-label="Clear search" hidden>&times;</button>
-      </div>
-    </div>
+    <!-- Order is Location, Dates, Categories, Search: broadest cut first, narrowing
+         down to the free-text box, which is the thing you reach for last and only
+         when the three above have not already found it. -->
+    <div class="f" id="whereField"><label for="near">Location</label>
+      <div class="whereRow"><select id="near"><option value="">Anywhere in Portugal</option></select>
+      <button class="iconBtn" id="nearMe" type="button" aria-label="Use my location" title="Use my location"><span class="material-symbols-outlined">my_location</span></button></div></div>
+    <div class="f" id="kmField" hidden><label for="km" id="kmLbl">Distance</label><div class="range"><input id="km" type="range" min="0" max="22" step="1" value="22"><output for="km" id="kmOut" class="mono">Anywhere + islands</output></div></div>
     <!-- When: four choices, no scrolling ribbon. The old ribbon ran All / Weekend then
          a horizontally-scrolling strip of individual days, with nothing on screen to
          say the strip continued past the right edge — and a separate "Jump to a date"
          field below it doing a third version of the same job. -->
     <div class="f" id="whenField">
-      <span class="lbl">When</span>
+      <span class="lbl">Dates</span>
       <div class="seg" id="whenSeg" role="group" aria-label="When">
         <button type="button" data-w="all">All</button>
         <button type="button" data-w="today">Today</button>
@@ -506,21 +515,28 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
         <input type="date" id="wTo" aria-label="To date">
       </div>
     </div>
-    <!-- Categories wrap instead of scrolling sideways, for the same reason. Collapsed
-         to two rows so the panel stays short, with a chip that says how many are
-         hidden — a count the reader can act on, unlike a cut-off edge. -->
-    <div class="f" id="catField"><span class="lbl">Category</span><div class="chips" id="cats"></div></div>
-    <div class="f"><label for="near">Where</label>
-      <div class="whereRow"><select id="near"><option value="">Anywhere in Portugal</option></select>
-      <button class="iconBtn" id="nearMe" type="button" aria-label="Use my location" title="Use my location"><span class="material-symbols-outlined">my_location</span></button></div></div>
-    <div class="f" id="kmField" hidden><label for="km" id="kmLbl">Distance</label><div class="range"><input id="km" type="range" min="0" max="22" step="1" value="22"><output for="km" id="kmOut" class="mono">Anywhere + islands</output></div></div>
+    <!-- Every category, wrapped, all visible. -->
+    <div class="f" id="catField"><span class="lbl">Categories</span><div class="chips" id="cats"></div></div>
+    <div class="f searchField" id="searchField">
+      <label for="q" class="lbl">Search</label>
+      <div class="searchBox">
+        <input id="q" type="search" placeholder="Fado, jazz, walk, Palmela…" autocomplete="off" enterkeyhint="search">
+        <button type="button" id="qClear" class="qClear" aria-label="Clear search" hidden>&times;</button>
+      </div>
+    </div>
     <!-- Reset shares this row rather than taking one of its own. -->
     <div class="f" id="onlyField"><span class="lbl">Show only</span><div class="toggles">
       <label class="tgl"><input type="checkbox" id="freeOnly"> Free <span class="n" id="freeCount"></span></label>
-      <label class="tgl"><input type="checkbox" id="savedOnly"> Saved <span class="savedcount" id="savedCount" hidden>0</span></label>
-      <button class="reset" id="reset" type="button">Reset</button></div></div>
+      <label class="tgl"><input type="checkbox" id="savedOnly"> Saved <span class="savedcount" id="savedCount" hidden>0</span></label></div></div>
       </div>
-      <div class="sheetFoot"><button type="button" class="doneBtn" id="sheetDone">Show events</button></div>
+      <!-- Reset is a destructive secondary action, so it belongs beside the primary
+           commit button at the moment of decision — not next to the close button,
+           where a misclick costs the reader every filter they just set and where two
+           adjacent controls both read as "get me out of here". The footer is sticky,
+           so it is reachable from anywhere in a long panel. -->
+      <div class="sheetFoot">
+        <button class="reset" id="reset" type="button">Reset</button>
+        <button type="button" class="doneBtn" id="sheetDone">Show events</button></div>
     </div>
   </aside>
   <div class="sheetBackdrop" id="sheetBackdrop" hidden></div>
