@@ -766,6 +766,12 @@ const priceClass = fp => /^free/i.test(fp)?'free':/^paid/i.test(fp)?'paid':/mixe
 // out at the far end, where the difference between 400 and 450 km changes nothing.
 const KM_ANY = 9999;   // sentinel for "no limit" — a finite number so it survives JSON
 const KM_STOPS = [0,5,10,15,20,25,30,40,50,60,75,100,125,150,200,250,300,350,400,450,500,560,KM_ANY];
+// Picking a town should mean "near this town". Portugal is small enough that a 100 km
+// radius from Setúbal reaches Lisboa, Santarém, Évora and most of the Alentejo coast —
+// which is not what choosing a town is asking for. 15 km keeps a town and its
+// immediate neighbours (Setúbal->Palmela/Azeitão, Almada->Seixal/Barreiro) and nothing
+// further. Only applied when no radius has been chosen yet, so it never overrides one.
+const KM_NEAR_DEFAULT = 15;
 const snapKm = n => Number.isFinite(n) ? (n>560 ? KM_ANY : KM_STOPS.reduce((a,b)=>Math.abs(b-n)<Math.abs(a-n)?b:a)) : KM_ANY;
 const kmIdx = () => Math.max(0, KM_STOPS.indexOf(snapKm(state.km)));
 const state = { view:'list', q:'', when:'weekend', cats:new Set(), catsOpen:false, free:false, saved:false, km:KM_ANY, near:'', sort:'date' };
@@ -989,7 +995,9 @@ $('#q').addEventListener('input', e=>{ state.q=e.target.value; syncQClear(); ren
 $('#freeOnly').addEventListener('change', e=>{ state.free=e.target.checked; renderAndReturnToTop(); });
 $('#savedOnly').addEventListener('change', e=>{ state.saved=e.target.checked; renderAndReturnToTop(); });
 $('#km').addEventListener('input', e=>{ state.km=KM_STOPS[+e.target.value] ?? KM_ANY; $('#kmOut').textContent=kmLabel(); render(); });
-$('#near').addEventListener('change', e=>{ state.near=e.target.value; buildRail(); renderAndReturnToTop(); });
+$('#near').addEventListener('change', e=>{ state.near=e.target.value;
+  if(state.near && state.km>=KM_ANY) state.km=KM_NEAR_DEFAULT;
+  buildRail(); renderAndReturnToTop(); });
 // Pick the closest town we know coordinates for, so the distance slider and the km line
 // mean something without the reader having to know which town they are nearest to.
 $('#nearMe').addEventListener('click', ()=>{
@@ -1001,7 +1009,7 @@ $('#nearMe').addEventListener('click', ()=>{
     for(const t in TOWNS){ const d=haversine(here,TOWNS[t]); if(d!=null&&d<bd){bd=d;best=t;} }
     btn.disabled=false;
     if(!best) return toast('Could not place you');
-    state.near=best; if(state.km>=KM_ANY) state.km=100;
+    state.near=best; if(state.km>=KM_ANY) state.km=KM_NEAR_DEFAULT;
     buildRail(); render(); toast(`Nearest we know: ${best} (~${Math.round(bd)} km)`);
   }, ()=>{ btn.disabled=false; toast('Location not shared — pick a town instead'); }, {timeout:8000});
 });
