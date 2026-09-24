@@ -430,34 +430,19 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
 .range output{font-size:12px}
 
 /* ---------- Tip us off ---------- */
-/* A static site can't receive a POST, so the form composes a mailto: instead —
+/* A static site can't receive a POST, so this is just a mailto: link —
    no backend, no third-party form service, nothing to go stale. */
 .tip{max-width:1400px;margin:0 auto 18px;padding:0 20px}
 .tip-in{background:var(--bg2);border:1px solid var(--line);border-top:3px solid var(--mustard);
   border-radius:16px;padding:20px 22px;box-shadow:var(--shadow)}
 .tip h2{margin:0 0 4px;font-size:20px;font-family:var(--display);font-weight:700;letter-spacing:-.01em}
-.tip .blurb{margin:0 0 18px;color:var(--ink2);font-size:13.5px;max-width:78ch}
-.tip form{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 14px;align-items:end}
-.tip .fld{display:flex;flex-direction:column;gap:5px;min-width:0}
-.tip .fld.wide{grid-column:1/-1}
-.tip label{font-size:12.5px;font-weight:800;color:var(--ink2)}
-.tip input,.tip textarea{border:1px solid var(--line);border-bottom:2px solid var(--mustard);
-  background:var(--bg);color:var(--ink);border-radius:9px;padding:9px 11px;width:100%;
-  font:inherit;font-weight:600;box-sizing:border-box}
-.tip textarea{resize:vertical;min-height:70px;font-weight:500}
-.tip input::placeholder,.tip textarea::placeholder{color:var(--ink3);font-weight:500}
-.tip .go{display:flex;gap:12px;align-items:center;flex-wrap:wrap;grid-column:1/-1;margin-top:2px}
+.tip .blurb{margin:0 0 16px;color:var(--ink2);font-size:13.5px;max-width:78ch}
 .tip .sendbtn{display:inline-block;border:0;background:var(--accent);color:var(--accent-ink);
   border-radius:999px;padding:11px 22px;font:inherit;font-weight:800;cursor:pointer;
   box-shadow:var(--shadow);text-decoration:none;white-space:nowrap}
 .tip .sendbtn:hover{filter:brightness(1.08)}
-.tip .sendbtn[aria-disabled="true"]{opacity:.5;cursor:not-allowed}
-.tip .hint{font-size:12px;color:var(--ink3)}
-.tip .hint a{font-weight:700}
-@media (max-width:760px){
-  .tip{padding:0 14px}
-  .tip form{grid-template-columns:1fr}
-}
+@media (max-width:760px){ .tip{padding:0 14px} }
+
 </style>
 
 <header class="top"><div class="top-in">
@@ -580,38 +565,8 @@ body.no-icons #theme::before{content:'\25D0';font-size:14px;line-height:1}
     <h2 id="tipH">Missed an awesome event? <span lang="pt">Bora</span>, tell us.</h2>
     <p class="blurb">We sweep municipal agendas and venue programmes right across Portugal — but it's a big
       country, and the best stuff is often the stuff nobody puts online. Spotted a festa, a gig, a fair or a
-      one-off worth the drive? Send it over.</p>
-    <form id="tipForm" novalidate>
-      <div class="fld wide">
-        <label for="tEvent">What's on</label>
-        <input id="tEvent" name="event" type="text" placeholder="Feira Medieval de Palmela" autocomplete="off">
-      </div>
-      <div class="fld">
-        <label for="tDate">When</label>
-        <input id="tDate" name="date" type="text" placeholder="25–27 Sept, or a date" autocomplete="off">
-      </div>
-      <div class="fld">
-        <label for="tTown">Town</label>
-        <input id="tTown" name="town" type="text" placeholder="Palmela" autocomplete="off">
-      </div>
-      <div class="fld">
-        <label for="tVenue">Where exactly</label>
-        <input id="tVenue" name="venue" type="text" placeholder="Castelo de Palmela" autocomplete="off">
-      </div>
-      <div class="fld wide">
-        <label for="tLink">Link <span style="font-weight:600;color:var(--ink3)">— the event's own page, if you have one</span></label>
-        <input id="tLink" name="link" type="url" placeholder="https://…" autocomplete="off" spellcheck="false">
-      </div>
-      <div class="fld wide">
-        <label for="tNotes">Anything else</label>
-        <textarea id="tNotes" name="notes" placeholder="Free? Ticketed? Worth it? Tell us what makes it good."></textarea>
-      </div>
-      <div class="go">
-        <a id="tipSend" class="sendbtn" href="mailto:robertlarriviere@me.com">Send it in ↗</a>
-        <span class="hint" id="tipHint">Opens your email app with everything filled in — nothing is sent until you hit send.
-          Prefer to write it yourself? <a href="mailto:robertlarriviere@me.com?subject=Bora%20y%27all%21%20%E2%80%94%20event%20tip">Email us directly</a>.</span>
-      </div>
-    </form>
+      one-off worth the drive? Send it over — what it is, when, and where exactly.</p>
+    <a class="sendbtn" href="mailto:robertlarriviere@me.com?subject=Bora%20y%27all%21%20%E2%80%94%20event%20tip">Email us ↗</a>
   </div>
 </section>
 
@@ -970,7 +925,7 @@ function readRange(from){
 // Narrowing the list shrinks the document under the reader's feet: scrolled 6,000px
 // into "All" and then picking one category took the page from 15,411px to 3,542px,
 // and the browser clamped the scroll to the new bottom — dumping you on the "did we
-// miss an event?" form with no events in sight. A filter change means a new list, so
+// miss an event?" panel with no events in sight. A filter change means a new list, so
 // the only sane place to stand is its top.
 function renderAndReturnToTop(){
   render();
@@ -1439,49 +1394,4 @@ $('#statusText').textContent = `${EVENTS.filter(e=>e.end>=today()).length} event
 })();
 </script>
 
-<script>
-// Tip-off form -> mailto:. The send control is a real anchor whose href is rebuilt as
-// you type, so the browser handles the mailto natively — more reliable than assigning
-// location.href, which some mobile browsers block from inside a JS handler.
-// Kept out of the main IIFE so a failure here can never take the listings down with it.
-(() => {
-  const TO = 'robertlarriviere@me.com';
-  const form = document.getElementById('tipForm');
-  const send = document.getElementById('tipSend');
-  if (!form || !send) return;
-  const hint = document.getElementById('tipHint');
-  const val = id => (document.getElementById(id).value || '').trim();
 
-  function compose() {
-    const ev = val('tEvent'), date = val('tDate'), town = val('tTown'),
-          venue = val('tVenue'), link = val('tLink'), notes = val('tNotes');
-    // Something has to identify the event, or the mail is useless to read.
-    const ready = !!(ev || link);
-
-    const subject = 'Bora y\u2019all! \u2014 event tip' + (ev ? ': ' + ev : '');
-    const lines = [['What', ev], ['When', date], ['Town', town], ['Where', venue], ['Link', link]]
-      .filter(([, v]) => v).map(([k, v]) => k + ': ' + v);
-    if (notes) lines.push('', notes);
-    lines.push('', '\u2014 sent from ' + location.href.split('#')[0]);
-
-    send.href = 'mailto:' + TO + '?subject=' + encodeURIComponent(subject)
-              + '&body=' + encodeURIComponent(lines.join('\n'));
-    send.setAttribute('aria-disabled', ready ? 'false' : 'true');
-    return ready;
-  }
-
-  form.addEventListener('input', compose);
-  compose();
-
-  send.addEventListener('click', e => {
-    if (!compose()) {
-      e.preventDefault();
-      hint.textContent = 'Give us at least a name or a link and we\u2019re away.';
-      hint.style.color = 'var(--ochre)';
-      document.getElementById('tEvent').focus();
-    }
-  });
-  // Enter inside a field should send, not reload the page.
-  form.addEventListener('submit', e => { e.preventDefault(); send.click(); });
-})();
-</script>
