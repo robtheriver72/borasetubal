@@ -331,17 +331,17 @@ mark{background:var(--mark);color:var(--mark-ink);border-radius:3px;padding:0 1p
    lets the browser skip layout/paint for rows far off-screen; contain-intrinsic-size
    keeps the scrollbar honest while they are skipped. */
 .grid{display:flex;flex-direction:column;margin:6px 0}
-.ev{position:relative;display:flex;align-items:flex-start;gap:12px;padding:8px 2px;
+.ev{position:relative;display:flex;align-items:flex-start;gap:22px;padding:12px 2px 14px;
   border-bottom:1px solid var(--line);
   content-visibility:auto;contain-intrinsic-size:auto 78px}
 .ev:hover{background:var(--bg3)}
 .ev:last-child{border-bottom:0}
-.evDate{flex:0 0 auto;width:38px;padding-left:9px;border-left:3px solid var(--cc);
+.evDate{flex:0 0 auto;width:38px;padding-left:10px;padding-right:6px;border-left:3px solid var(--cc);
   display:flex;flex-direction:column;align-items:flex-start;line-height:1.05}
 .evDate b{font-family:var(--display);font-size:19px;font-weight:700;color:var(--ink)}
 .evDate span{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.03em;color:var(--cc)}
-.evMain{min-width:0;flex:1;display:flex;flex-direction:column;gap:3px}
-.ev .top{display:flex;align-items:center;gap:8px;margin-bottom:1px}
+.evMain{min-width:0;flex:1;display:flex;flex-direction:column;gap:5px}
+.ev .top{display:flex;align-items:center;gap:8px;margin-bottom:5px}
 .ev .top .cat{color:var(--cc);font-weight:800;font-size:11.5px;letter-spacing:.02em;text-transform:uppercase;min-width:0}
 /* Whatever comes right after category — the price pill if there is one, the star
    if there isn't — gets pushed to the far right as a single anchored group, rather
@@ -393,15 +393,15 @@ body.no-icons #nearMe::before{content:'\2316';font-size:15px;line-height:1}
      paragraph next door usually runs taller than title+venue, so this sits in
      space that would otherwise sit empty instead of adding a whole extra row. */
   .evMain>.side{grid-column:1}
-  /* margin-left:auto right-aligned this to the NARROW column's edge, which put it in
-     the gutter between the two columns, anchored to nothing the eye can see. The row
-     is position:relative, so pin it to the row's own bottom-right instead. */
-  .ev .src{position:absolute;right:4px;bottom:8px;margin-left:0}
+  /* Its own grid child now, filed in the description's column and left-aligned with
+     it, so it sits on the same vertical line as the text above it instead of being
+     anchored to a column edge the eye can't see, or stranded at the row's far right. */
+  .evMain>.src{grid-column:2;justify-self:start;margin-top:2px}
 }
 .pill{display:inline-block;border-radius:999px;padding:3px 9px;font-size:12px;font-weight:800}
 .pill.free{background:var(--free-soft);color:var(--free)} .pill.paid{background:var(--paid-soft);color:var(--paid)} .pill.mixed{background:var(--accent-soft);color:var(--accent)} .pill.unk{background:var(--bg3);color:var(--ink3)}
 .km{font-size:12.5px;color:var(--ink3)}
-.ev .src{font-size:12.5px;margin-left:auto}   /* stays right even when the date is absent */
+.ev .src{font-size:12.5px;align-self:flex-start;margin-left:0}   /* lines up under the description */
 .ev .top .cat{line-height:1.25}
 .scopenote{margin:2px 0 14px;color:var(--ink3);font-size:12.5px;line-height:1.5;max-width:78ch}
 .freenote{margin:6px 0 0;color:var(--ochre);font-size:12.5px;font-weight:600}
@@ -1188,8 +1188,8 @@ function card(e, dayKey){ const id=eid(e), sv=SAVED.has(id), d=distOrKm(e), t=to
   <h3>${hl(titleMain)}${titleGloss?`<span class="gloss">(${hl(titleGloss)})</span>`:''}</h3>
   <div class="sub"><span><span class="town">${hl(e.town)}</span>${e.venue&&e.venue!==e.town?`<span class="venue"> · ${hl(e.venue)}</span>`:''}</span>${showFreqInSub?`<span>${esc(e.freq)}</span>`:''}${e.start!==e.end?`<span class="mono">${fmtRange(e)}</span>`:''}</div>
   ${descHTML}
-  <div class="side">${showKmInSide?`<span class="km">${d==null?'distance n/a':d+' km from '+esc(state.near)}</span>`:''}
-  <a class="src find stretch" href="${esc(direct||searchURL(e))}" target="_blank" rel="noopener" title="${direct?'Opens the event\u2019s own page':'Search the web for this event'}">More info ↗</a></div>
+  ${showKmInSide?`<div class="side"><span class="km">${d==null?'distance n/a':d+' km from '+esc(state.near)}</span></div>`:''}
+  <a class="src find stretch" href="${esc(direct||searchURL(e))}" target="_blank" rel="noopener" lang="pt" title="${direct?'Opens the event\u2019s own page':'Search the web for this event'}">Mais Info ↗</a>
   </div></article>`; }
 
 // One delegated listener covers cards in the list, the calendar day panel and the map panel.
